@@ -12,11 +12,19 @@ class Config(object):
 
 
 class ProductionConfig(Config):
-    pass
+    PSQL_DBNAME = 'rrnvpnc'
+    PSQL_USER = 'railroadman'
+    PSQL_PASSWORD = ''
+    PSQL_HOST = '127.0.0.1'
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
+
+    PSQL_DBNAME = 'rrnvpnc'
+    PSQL_USER = 'railroadman'
+    PSQL_PASSWORD = 'railroadman'
+    PSQL_HOST = '127.0.0.1'
 
 
 class TestingConfig(Config):
