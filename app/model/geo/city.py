@@ -48,7 +48,7 @@ class CityDB(CityStored):
     _name_field = 'name'
     _created_date_field = 'created_date'
 
-    def __init__(self, storage_service: StorageService, **kwargs: dict):
+    def __init__(self, storage_service: StorageService, **kwargs):
         super().__init__(storage_service, **kwargs)
 
     def find(self):
