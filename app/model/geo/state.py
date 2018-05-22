@@ -38,7 +38,7 @@ class StateStored(State):
 
     _storage_service = None
 
-    def __init__(self, storage_service: StorageService, **kwargs: dict) -> None:
+    def __init__(self, storage_service: StorageService, **kwargs) -> None:
         super().__init__(**kwargs)
 
         self._storage_service = storage_service
@@ -52,7 +52,7 @@ class StateDB(StateStored):
     _name_field = 'name'
     _created_date_field = 'created_date'
 
-    def __init__(self, storage_service: StorageService, **kwargs: dict):
+    def __init__(self, storage_service: StorageService, **kwargs):
         super().__init__(storage_service, **kwargs)
 
     def find(self):

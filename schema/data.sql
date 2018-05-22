@@ -1,4 +1,13 @@
 
+-- geo position
+INSERT INTO public.geo_position (id, latitude, longitude, country_code, state_code, city_id, region_common, region_dvd, region_xbox360, region_xboxone, region_playstation3, region_playstation4, region_nintendo, created_date) VALUES (1, 55.108, 54.039, 'USA', null, 1, 0, 0, 0, 0, 0, 0, 0, '2018-05-22 13:17:42.947280');
+
+-- vpn server
+INSERT INTO public.vpnserver (uuid, version, state_version, type_id, status_id, bandwidth, load, geo_position_id, created_date) VALUES ('c872e7f0-76d6-4a4e-826e-c56a7c05958a', 1, 1, 1, 1, 0, 0, 1, '2018-05-22 13:18:14.041628');
+
+-- vpn server configuration
+INSERT INTO public.vpnserver_configuration (uuid, user_uuid, server_uuid, file_path, created_date) VALUES ('8f525324-f752-4135-bab7-38e0f1ff96f9', 'c872e7f0-76d6-4a4e-826e-c56a7c05958a', 'c872e7f0-76d6-4a4e-826e-c56a7c05958a', '/file/path', '2018-05-22 13:25:29.392613');
+
 -- NSI
 
 -- vpn server statuses
@@ -12,11 +21,10 @@ INSERT INTO public.vpnserver_status(id, code, description) VALUES(6, 'removed_te
 INSERT INTO public.vpnserver_status(id, code, description) VALUES(7, 'maintenance_test', 'Under Maintenance; test mode');
 INSERT INTO public.vpnserver_status(id, code, description) VALUES(8, 'op_nnc_test', 'Operational. No new connections available, preparing for Maintenance; test mode');
 
-
 -- vpn types
-INSERT INTO public.vpnserver_type(id,code, description) VALUES(0, 'unknown', 'Unknown, for reports only');
-INSERT INTO public.vpnserver_type(id,code, description) VALUES(1, 'openvpn', 'Standard OpenVPN server');
-INSERT INTO public.vpnserver_type(id,code, description) VALUES(2, 'ikev2', 'IPSec w IKEv2');
+INSERT INTO public.vpn_type (id, code, description) VALUES (0, 'unknown', 'Unknown, for reports only');
+INSERT INTO public.vpn_type (id, code, description) VALUES (1, 'openvpn', 'Standard OpenVPN server');
+INSERT INTO public.vpn_type (id, code, description) VALUES (2, 'ikev2', 'IPSec w IKEv2');
 
 
 INSERT INTO public.country(name, code) VALUES ('Afghanistan', 'AFG');

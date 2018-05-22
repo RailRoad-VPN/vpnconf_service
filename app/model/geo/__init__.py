@@ -49,7 +49,7 @@ class Geo(object):
 
     def to_dict(self):
         return {
-            'sid': self._sid,
+            'id': self._sid,
             'latitude': self._latitude,
             'longitude': self._longitude,
             'country_code': self._country_code,
@@ -71,7 +71,7 @@ class GeoStored(Geo):
 
     _storage_service = None
 
-    def __init__(self, storage_service: StorageService, **kwargs: dict) -> None:
+    def __init__(self, storage_service: StorageService, **kwargs) -> None:
         super().__init__(**kwargs)
 
         self._storage_service = storage_service
@@ -95,7 +95,7 @@ class GeoDB(GeoStored):
     _region_nintendo_field = 'region_nintendo'
     _created_date_field = 'created_date'
 
-    def __init__(self, storage_service: StorageService, **kwargs: dict):
+    def __init__(self, storage_service: StorageService, **kwargs):
         super().__init__(storage_service, **kwargs)
 
     def find(self):
@@ -125,7 +125,7 @@ class GeoDB(GeoStored):
 
         return geo_position_list
 
-    def find_by_id(self):
+    def find_by_sid(self):
         logging.info('GeoDB find_by_id method')
         select_sql = 'SELECT * FROM public.geo_position WHERE id = ?'
         logging.debug('Select SQL: %s' % select_sql)
@@ -270,8 +270,8 @@ class GeoDB(GeoStored):
     def __map_geodb_to_geo(self, geo_position_db):
         return Geo(
             sid=geo_position_db[self._sid_field],
-            latitude=geo_position_db[self._latitude_field],
-            longitude=geo_position_db[self._longitude_field],
+            latitude='{0:f}'.format(geo_position_db[self._latitude_field]),
+            longitude='{0:f}'.format(geo_position_db[self._longitude_field]),
             country_code=geo_position_db[self._country_code_field],
             state_code=geo_position_db[self._state_code_field],
             city_id=geo_position_db[self._city_id_field],
@@ -284,59 +284,3 @@ class GeoDB(GeoStored):
             region_nintendo=geo_position_db[self._region_nintendo_field],
             created_date=geo_position_db[self._created_date_field],
         )
-
-    @property
-    def _sid_field(self):
-        return type(self)._sid_field
-
-    @property
-    def _latitude_field(self):
-        return type(self)._latitude_field
-
-    @property
-    def _longitude_field(self):
-        return type(self)._longitude_field
-
-    @property
-    def _country_code_field(self):
-        return type(self)._country_code_field
-
-    @property
-    def _geo_position_code_field(self):
-        return type(self)._geo_position_code_field
-
-    @property
-    def _city_id_field(self):
-        return type(self)._city_id_field
-
-    @property
-    def _region_common_field(self):
-        return type(self)._region_common_field
-
-    @property
-    def _region_dvd_field(self):
-        return type(self)._region_dvd_field
-
-    @property
-    def _region_xbox360_field(self):
-        return type(self)._region_xbox360_field
-
-    @property
-    def _region_xboxone_field(self):
-        return type(self)._region_xboxone_field
-
-    @property
-    def _region_playstation3_field(self):
-        return type(self)._region_playstation3_field
-
-    @property
-    def _region_playstation4_field(self):
-        return type(self)._region_playstation4_field
-
-    @property
-    def _region_nintendo_field(self):
-        return type(self)._region_nintendo_field
-
-    @property
-    def _created_date_field(self):
-        return type(self)._created_date_field

@@ -2,11 +2,11 @@ from enum import IntEnum
 
 
 class VPNServerStatusEnum(IntEnum):
-    def __new__(cls, sid, code, description=''):
-        obj = int.__new__(cls, sid)
-        obj._id_ = sid
+    def __new__(cls, value, phrase, description=''):
+        obj = int.__new__(cls, value)
+        obj._value_ = value
 
-        obj.code = code
+        obj.phrase = phrase
         obj.description = description
         return obj
 
@@ -22,11 +22,11 @@ class VPNServerStatusEnum(IntEnum):
 
 
 class VPNTypeEnum(IntEnum):
-    def __new__(cls, sid, code, description=''):
-        obj = int.__new__(cls, sid)
-        obj._id_ = sid
+    def __new__(cls, value, phrase, description=''):
+        obj = int.__new__(cls, value)
+        obj._value_ = value
 
-        obj.code = code
+        obj.phrase = phrase
         obj.description = description
         return obj
 

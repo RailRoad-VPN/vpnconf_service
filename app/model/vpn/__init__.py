@@ -23,7 +23,7 @@ class VPNType(object):
 
     def to_dict(self):
         return {
-            'sid': self._sid,
+            'id': self._sid,
             'code': self._code,
             'description': self._description,
         }
@@ -34,7 +34,7 @@ class VPNTypeStored(VPNType):
 
     _storage_service = None
 
-    def __init__(self, storage_service: StorageService, **kwargs: dict) -> None:
+    def __init__(self, storage_service: StorageService, **kwargs) -> None:
         super().__init__(**kwargs)
 
         self._storage_service = storage_service
@@ -47,7 +47,7 @@ class VPNTypeDB(VPNTypeStored):
     _code_field = 'code'
     _description_field = 'description'
 
-    def __init__(self, storage_service: StorageService, **kwargs: dict):
+    def __init__(self, storage_service: StorageService, **kwargs):
         super().__init__(storage_service, **kwargs)
 
     def find(self):
@@ -121,15 +121,3 @@ class VPNTypeDB(VPNTypeStored):
             code=vpnserverstatusdb[self._code_field],
             description=vpnserverstatusdb[self._description_field],
         )
-
-    @property
-    def sid_field(self):
-        return type(self)._sid_field
-
-    @property
-    def code_field(self):
-        return type(self)._code_field
-
-    @property
-    def description_field(self):
-        return type(self)._description_field

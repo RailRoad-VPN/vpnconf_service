@@ -7,7 +7,7 @@ class Config(object):
     SECRET_KEY = APP_SESSION_SK
     TEMPLATES_AUTO_RELOAD = True
 
-    VERSION = '1.0'
+    VERSION = 'v1'
     API_BASE_URI = '/api/%s' % VERSION
 
 

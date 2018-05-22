@@ -107,8 +107,9 @@ CREATE OR REPLACE FUNCTION update_vpnserver_version()
   RETURNS TRIGGER AS $$
 BEGIN
   UPDATE public.vpnserver
-  SET version = version + 1
+  SET "version" = "version" + 1
   WHERE uuid = NEW.uuid;
+  RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -118,25 +119,26 @@ BEGIN
   UPDATE public.vpnserver
   SET state_version = state_version + 1
   WHERE uuid = NEW.uuid;
+  RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER check_vpnserver_update
   AFTER UPDATE ON public.vpnserver
   FOR EACH ROW
-  WHEN (OLD.* IS DISTINCT FROM NEW.*)
+  WHEN (OLD.* IS DISTINCT FROM NEW.* AND pg_trigger_depth() = 0)
   EXECUTE PROCEDURE update_vpnserver_version();
 
 CREATE TRIGGER check_vpnserver_state_update
   AFTER UPDATE ON public.vpnserver
   FOR EACH ROW
-  WHEN (OLD.load IS DISTINCT FROM NEW.load
+  WHEN ((OLD.load IS DISTINCT FROM NEW.load
         OR OLD.bandwidth IS DISTINCT FROM NEW.bandwidth
-        OR OLD.geo_position_id IS DISTINCT FROM NEW.geo_position_id)
+        OR OLD.geo_position_id IS DISTINCT FROM NEW.geo_position_id) AND pg_trigger_depth() = 0)
   EXECUTE PROCEDURE update_vpnserver_state_version();
 
 CREATE TRIGGER check_vpnserver_configuration_update
   AFTER UPDATE ON public.vpnserver_configuration
   FOR EACH ROW
-  WHEN (OLD.* IS DISTINCT FROM NEW.*)
+  WHEN (OLD.* IS DISTINCT FROM NEW.* AND pg_trigger_depth() = 0)
   EXECUTE PROCEDURE update_vpnserver_version();

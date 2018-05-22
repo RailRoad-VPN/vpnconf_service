@@ -10,6 +10,7 @@ from app.exception import *
 sys.path.insert(0, '../psql_library')
 from storage_service import StorageService
 
+
 class VPNServer(object):
     __version__ = 1
 
@@ -38,7 +39,7 @@ class VPNServer(object):
 
     def to_dict(self):
         return {
-            'suuid': self._suuid,
+            'uuid': self._suuid,
             'version': self._version,
             'state_version': self._state_version,
             'type_id': self._type_id,
@@ -55,7 +56,7 @@ class VPNServerStored(VPNServer):
 
     _storage_service = None
 
-    def __init__(self, storage_service: StorageService, **kwargs: dict) -> None:
+    def __init__(self, storage_service: StorageService, **kwargs) -> None:
         super().__init__(**kwargs)
 
         self._storage_service = storage_service
@@ -74,7 +75,7 @@ class VPNServerDB(VPNServerStored):
     _geo_position_id_field = 'geo_position_id'
     _created_date_field = 'created_date'
 
-    def __init__(self, storage_service: StorageService, **kwargs: dict):
+    def __init__(self, storage_service: StorageService, **kwargs):
         super().__init__(storage_service, **kwargs)
 
     def find(self):
@@ -132,7 +133,7 @@ class VPNServerDB(VPNServerStored):
             error_code = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR.value
             developer_message = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR.description
             raise VPNNotFoundException(error=error_message, error_code=error_code,
-                                             developer_message=developer_message)
+                                       developer_message=developer_message)
         else:
             error_message = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR.phrase
             developer_message = "%s. Find by specified uuid return more than 1 object. This is CAN NOT be! Something " \
@@ -265,17 +266,18 @@ class VPNServerDB(VPNServerStored):
         logging.debug('Update SQL: %s' % update_sql)
 
         update_params = (
-            self._suuid,
             self._type_id,
             self._status_id,
             self._bandwidth,
             self._geo_position_id,
             self._load,
+            self._suuid,
         )
 
         try:
             logging.debug("Call database service")
             updated = self._storage_service.update(sql=update_sql, data=update_params, is_return=True)
+            updated = updated[0]
         except DatabaseError as e:
             logging.error(e)
             try:
@@ -289,7 +291,7 @@ class VPNServerDB(VPNServerStored):
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         self._version = updated[self._version_field]
-        self._state_version = updated[self._state_version]
+        self._state_version = updated[self._state_version_field]
 
     def __map_vpnserverdb_to_vpnserver(self, vpnserver_db):
         return VPNServer(suuid=vpnserver_db[self._suuid_field], version=vpnserver_db[self._version_field],
@@ -298,35 +300,3 @@ class VPNServerDB(VPNServerStored):
                          bandwidth=vpnserver_db[self._bandwidth_field], load=vpnserver_db[self._load_field],
                          geo_position_id=vpnserver_db[self._geo_position_id_field],
                          created_date=vpnserver_db[self._created_date_field])
-
-    @property
-    def suuid_field(self):
-        return type(self)._suuid_field
-
-    @property
-    def version_field(self):
-        return type(self)._version_field
-
-    @property
-    def type_id_field(self):
-        return type(self)._type_id_field
-
-    @property
-    def status_id_field(self):
-        return type(self)._status_id_field
-
-    @property
-    def bandwidth_field(self):
-        return type(self)._bandwidth_field
-
-    @property
-    def load_field(self):
-        return type(self)._load_field
-
-    @property
-    def geo_position_id_field(self):
-        return type(self)._geo_position_id_field
-
-    @property
-    def created_date_field(self):
-        return type(self)._created_date_field

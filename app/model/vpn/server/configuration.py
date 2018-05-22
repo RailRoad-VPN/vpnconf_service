@@ -1,4 +1,3 @@
-import datetime
 import logging
 import sys
 import uuid
@@ -9,6 +8,7 @@ from app.exception import *
 
 sys.path.insert(0, '../psql_library')
 from storage_service import StorageService
+
 
 class VPNServerConfiguration(object):
     __version__ = 1
@@ -26,7 +26,7 @@ class VPNServerConfiguration(object):
 
     def to_dict(self):
         return {
-            'suuid': self._suuid,
+            'uuid': self._suuid,
             'user_suuid': self._user_suuid,
             'server_suuid': self._server_suuid,
             'file_path': self._file_path,
@@ -38,7 +38,7 @@ class VPNServerConfigurationStored(VPNServerConfiguration):
 
     _storage_service = None
 
-    def __init__(self, storage_service: StorageService, **kwargs: dict) -> None:
+    def __init__(self, storage_service: StorageService, **kwargs) -> None:
         super().__init__(**kwargs)
 
         self._storage_service = storage_service
@@ -52,7 +52,7 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
     _server_suuid_field = 'server_uuid'
     _file_path_field = 'file_path'
 
-    def __init__(self, storage_service: StorageService, **kwargs: dict):
+    def __init__(self, storage_service: StorageService, **kwargs):
         super().__init__(storage_service, **kwargs)
 
     def find(self):
@@ -71,6 +71,7 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                                 "Code: %s . %s" % (
                                     VPNCError.VPNSERVERCONFIG_FIND_ERROR_DB.description, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
+
         vpnserverconfig_list = []
 
         for vpnserverconfig_db in vpnserverconfig_list_db:
@@ -124,7 +125,7 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
         logging.info('VPNServerConfigurationDB find_by_server_suuid method')
         select_sql = 'SELECT * FROM public.vpnserver_configuration WHERE server_uuid = ?'
         logging.debug('Select SQL: %s' % select_sql)
-        params = (self._suuid,)
+        params = (self._server_suuid,)
 
         try:
             logging.debug('Call database service')
