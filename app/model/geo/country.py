@@ -14,18 +14,21 @@ class Country(object):
     __version__ = 1
 
     _code = None
+    _str_code = None
     _name = None
     _created_date = None
 
-    def __init__(self, code: str = None, name: str = None, created_date: datetime = None):
+    def __init__(self, code: int = None, str_code: str = None, name: str = None, created_date: datetime = None):
         self._code = code
         self._name = name
+        self._str_code = str_code
         self._created_date = created_date
 
     def to_dict(self):
         return {
             'code': self._code,
             'name': self._name,
+            'str_code': self._str_code,
             'created_date': self._created_date,
         }
 
@@ -46,6 +49,7 @@ class CountryDB(CountryStored):
 
     _code_field = 'code'
     _name_field = 'name'
+    _str_code_field = 'str_code'
     _created_date_field = 'created_date'
 
     def __init__(self, storage_service: StorageService, **kwargs):
@@ -116,92 +120,9 @@ class CountryDB(CountryStored):
 
         return self.__map_countrydb_to_country(country_db)
 
-    def create(self):
-        logging.info('CountryDB create method')
-        insert_sql = '''
-                      INSERT INTO public.country 
-                        (code, name) 
-                      VALUES 
-                        (?, ?)
-                     '''
-        insert_params = (
-            self._code,
-            self._name,
-        )
-        logging.debug('Create CountryDB SQL : %s' % insert_sql)
-
-        try:
-            logging.debug('Call database service')
-            data = self._storage_service.create(sql=insert_sql, data=insert_params, is_return=True)
-            self._code = data[self._code_field]
-        except DatabaseError as e:
-            self._storage_service.rollback()
-            logging.error(e)
-            try:
-                e = e.args[0]
-            except IndexError:
-                pass
-            error_message = VPNCError.COUNTRY_CREATE_ERROR_DB.phrase
-            error_code = VPNCError.COUNTRY_CREATE_ERROR_DB.value
-            developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
-                                "Code: %s . %s" % (
-                                    VPNCError.COUNTRY_CREATE_ERROR_DB.description, e.pgcode, e.pgerror)
-
-            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
-        logging.debug('CountryDB created.')
-
-        return self._code
-
-    def update(self):
-        logging.info('Country update method')
-
-        update_sql = '''
-                    UPDATE public.country 
-                    SET
-                        name = ?
-                    WHERE 
-                        code = ?
-                    '''
-
-        logging.debug('Update SQL: %s' % update_sql)
-
-        update_params = (
-            self._name,
-            self._code,
-        )
-
-        try:
-            logging.debug("Call database service")
-            self._storage_service.update(sql=update_sql, data=update_params)
-            logging.debug('Country updated.')
-        except DatabaseError as e:
-            logging.error(e)
-            try:
-                e = e.args[0]
-            except IndexError:
-                pass
-            error_message = VPNCError.COUNTRY_UPDATE_ERROR_DB.phrase
-            developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
-                                "Code: %s . %s" % (
-                                    VPNCError.COUNTRY_UPDATE_ERROR_DB.description, e.pgcode, e.pgerror)
-            error_code = VPNCError.COUNTRY_UPDATE_ERROR_DB.value
-            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
-
     def __map_countrydb_to_country(self, country_db):
         return Country(
             code=country_db[self._code_field],
             name=country_db[self._name_field],
             created_date=country_db[self._created_date_field],
         )
-
-    @property
-    def code_field(self):
-        return type(self)._code_field
-
-    @property
-    def name_field(self):
-        return type(self)._name_field
-
-    @property
-    def created_date_field(self):
-        return type(self)._created_date_field

@@ -27,7 +27,8 @@ DROP TABLE IF EXISTS public.vpn_type CASCADE;
 
 CREATE TABLE public.country
 (
-    code VARCHAR(3) PRIMARY KEY
+    code INT PRIMARY KEY
+  , str_code CHAR(3) NOT NULL
   , name VARCHAR(500) NOT NULL
   , created_date timestamptz NOT NULL DEFAULT now()
 );
@@ -35,7 +36,7 @@ CREATE TABLE public.country
 CREATE TABLE public.state
 (
     code VARCHAR(3) PRIMARY KEY
-  , country_code VARCHAR(3) REFERENCES public.country(code)
+  , country_code INT REFERENCES public.country(code)
   , name VARCHAR(500) NOT NULL
   , created_date timestamptz NOT NULL DEFAULT now()
 );
@@ -52,7 +53,7 @@ CREATE TABLE public.geo_position
     id SERIAL PRIMARY KEY
   , latitude NUMERIC
   , longitude NUMERIC
-  , country_code VARCHAR(3) REFERENCES public.country(code) NOT NULL
+  , country_code INT REFERENCES public.country(code) NOT NULL
   , state_code VARCHAR(5) REFERENCES public.state(code)
   , city_id INT REFERENCES public.city(id) NOT NULL
   , region_common INT DEFAULT 0

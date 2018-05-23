@@ -28,7 +28,7 @@ class Geo(object):
     _region_nintendo = None
     _created_date = None
 
-    def __init__(self, sid: int = None, latitude: str = None, longitude: str = None, country_code: str = None,
+    def __init__(self, sid: int = None, latitude: str = None, longitude: str = None, country_code: int = None,
                  state_code: str = None, city_id: int = None, region_common: int = None, region_dvd: int = None,
                  region_xbox360: int = None, region_xboxone: int = None, region_playstation3: int = None,
                  region_playstation4: int = None, region_nintendo: int = None, created_date: datetime = None):

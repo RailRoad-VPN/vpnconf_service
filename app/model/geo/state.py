@@ -14,20 +14,20 @@ class State(object):
     __version__ = 1
 
     _code = None
-    _state_code = None
+    _country_code = None
     _name = None
     _created_date = None
 
-    def __init__(self, code: str = None, state_code: str = None, name: str = None, created_date: datetime = None):
+    def __init__(self, code: str = None, country_code: int = None, name: str = None, created_date: datetime = None):
         self._code = code
-        self._state_code = state_code
+        self._country_code = country_code
         self._name = name
         self._created_date = created_date
 
     def to_dict(self):
         return {
             'code': self._code,
-            'state_code': self._state_code,
+            'country_code': self._country_code,
             'name': self._name,
             'created_date': self._created_date,
         }
@@ -48,7 +48,7 @@ class StateDB(StateStored):
     __version__ = 1
 
     _code_field = 'code'
-    _state_code_field = 'state_code'
+    _country_code_field = 'country_code'
     _name_field = 'name'
     _created_date_field = 'created_date'
 
@@ -124,20 +124,20 @@ class StateDB(StateStored):
         logging.info('StateDB create method')
         insert_sql = '''
                       INSERT INTO public.state 
-                        (code, name) 
+                        (code, country_code, name) 
                       VALUES 
-                        (?, ?)
+                        (?, ?, ?)
                      '''
         insert_params = (
             self._code,
+            self._country_code,
             self._name,
         )
         logging.debug('Create StateDB SQL : %s' % insert_sql)
 
         try:
             logging.debug('Call database service')
-            data = self._storage_service.create(sql=insert_sql, data=insert_params, is_return=True)
-            self._code = data[self._code_field]
+            self._storage_service.create(sql=insert_sql, data=insert_params)
         except DatabaseError as e:
             self._storage_service.rollback()
             logging.error(e)
@@ -162,7 +162,8 @@ class StateDB(StateStored):
         update_sql = '''
                     UPDATE public.state 
                     SET
-                        name = ?
+                        name = ?,
+                        country_code = ?
                     WHERE 
                         code = ?
                     '''
@@ -171,6 +172,7 @@ class StateDB(StateStored):
 
         update_params = (
             self._name,
+            self._country_code,
             self._code,
         )
 
@@ -194,22 +196,7 @@ class StateDB(StateStored):
     def __map_statedb_to_state(self, state_db):
         return State(
             code=state_db[self._code_field],
+            country_code=state_db[self._country_code_field],
             name=state_db[self._name_field],
             created_date=state_db[self._created_date_field],
         )
-
-    @property
-    def code_field(self):
-        return type(self)._code_field
-
-    @property
-    def state_code_field(self):
-        return type(self)._state_code_field
-
-    @property
-    def name_field(self):
-        return type(self)._name_field
-
-    @property
-    def created_date_field(self):
-        return type(self)._created_date_field
