@@ -3,7 +3,7 @@ import logging
 import sys
 from http import HTTPStatus
 
-from flask import Response, request, make_response
+from flask import Response, make_response
 
 from app.exception import *
 from app.model.geo.country import CountryDB
@@ -32,60 +32,19 @@ class CountryAPI(ResourceAPI):
         self.__db_storage_service = db_storage_service
 
     def post(self) -> Response:
-        request_json = request.json
+        response_data = APIResponse(status=APIResponseStatus.failed.value, code=HTTPStatus.METHOD_NOT_ALLOWED,
+                                    error=HTTPStatus.METHOD_NOT_ALLOWED.phrase,
+                                    error_code=HTTPStatus.METHOD_NOT_ALLOWED)
 
-        name = request_json.get(CountryDB._name_field, None)
-
-        country_db = CountryDB(storage_service=self.__db_storage_service, name=name)
-
-        try:
-            code = country_db.create()
-        except VPNException as e:
-            logging.error(e)
-            error_code = e.error_code
-            error = e.error
-            developer_message = e.developer_message
-            http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
-                                        developer_message=developer_message, error_code=error_code)
-            return make_response(json.dumps(response_data.serialize()), http_code)
-
-        resp = make_response('', HTTPStatus.CREATED)
-        resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, code)
+        resp = make_response(json.dumps(response_data.serialize()), HTTPStatus.METHOD_NOT_ALLOWED)
         return resp
 
     def put(self, code: str) -> Response:
-        request_json = request.json
-        country_code = request_json.get(CountryDB._code_field, None)
+        response_data = APIResponse(status=APIResponseStatus.failed.value, code=HTTPStatus.METHOD_NOT_ALLOWED,
+                                    error=HTTPStatus.METHOD_NOT_ALLOWED.phrase,
+                                    error_code=HTTPStatus.METHOD_NOT_ALLOWED)
 
-        if code != country_code:
-            error = VPNCError.COUNTRY_IDENTIFIER_ERROR.phrase
-            error_code = VPNCError.COUNTRY_IDENTIFIER_ERROR
-            developer_message = VPNCError.COUNTRY_IDENTIFIER_ERROR.description
-            http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
-                                        developer_message=developer_message, error_code=error_code)
-            resp = make_response(json.dumps(response_data.serialize()), http_code)
-            return resp
-
-        name = request_json.get(CountryDB._name_field, None)
-
-        country_db = CountryDB(storage_service=self.__db_storage_service, code=code, name=name)
-
-        try:
-            country_db.update()
-        except VPNException as e:
-            logging.error(e)
-            error_code = e.error_code
-            error = e.error
-            developer_message = e.developer_message
-            http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
-                                        developer_message=developer_message, error_code=error_code)
-            return make_response(json.dumps(response_data.serialize()), http_code)
-
-        resp = make_response('', HTTPStatus.OK)
-        resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, code)
+        resp = make_response(json.dumps(response_data.serialize()), HTTPStatus.METHOD_NOT_ALLOWED)
         return resp
 
     def get(self, code: str = None) -> Response:
