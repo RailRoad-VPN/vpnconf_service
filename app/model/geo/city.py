@@ -53,7 +53,13 @@ class CityDB(CityStored):
 
     def find(self):
         logging.info('CityDB find method')
-        select_sql = 'SELECT * FROM public.city'
+        select_sql = '''
+                      SELECT 
+                        id,
+                        name,
+                        to_json(created_date) as created_date 
+                      FROM public.city
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
 
         try:
@@ -80,7 +86,14 @@ class CityDB(CityStored):
 
     def find_by_sid(self):
         logging.info('CityDB find_by_server_suuid method')
-        select_sql = 'SELECT * FROM public.city WHERE id = ?'
+        select_sql = '''
+                      SELECT 
+                        id,
+                        name,
+                        to_json(created_date) as created_date 
+                      FROM public.city
+                      WHERE id = ?
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
         params = (self._sid,)
 
@@ -192,15 +205,3 @@ class CityDB(CityStored):
             name=city_db[self._name_field],
             created_date=city_db[self._created_date_field],
         )
-
-    @property
-    def sid_field(self):
-        return type(self)._sid_field
-
-    @property
-    def name_field(self):
-        return type(self)._name_field
-
-    @property
-    def created_date_field(self):
-        return type(self)._created_date_field

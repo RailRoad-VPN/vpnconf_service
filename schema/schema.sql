@@ -14,8 +14,9 @@ SET default_with_oids = FALSE;
 
 DROP TRIGGER IF EXISTS check_vpnserver_update ON vpnserver CASCADE;
 DROP TRIGGER IF EXISTS check_vpnserver_state_update ON vpnserver CASCADE;
-DROP TRIGGER IF EXISTS check_vpnserver_configuration_update ON vpnserver_configuration  CASCADE; ;
+DROP TRIGGER IF EXISTS check_vpnserver_configuration_update ON vpnserver_configuration  CASCADE;
 
+DROP TABLE IF EXISTS public.vpnserversmeta CASCADE;
 DROP TABLE IF EXISTS public.vpnserver CASCADE;
 DROP TABLE IF EXISTS public.vpnserver_configuration CASCADE;
 DROP TABLE IF EXISTS public.country CASCADE;
@@ -25,12 +26,19 @@ DROP TABLE IF EXISTS public.geo_position CASCADE;
 DROP TABLE IF EXISTS public.vpnserver_status CASCADE;
 DROP TABLE IF EXISTS public.vpn_type CASCADE;
 
+CREATE TABLE public.vpnserversmeta
+(
+    id SERIAL PRIMARY KEY
+  , version INT DEFAULT 1 NOT NULL
+  , state_version INT DEFAULT 1 NOT NULL
+);
+
 CREATE TABLE public.country
 (
     code INT PRIMARY KEY
   , str_code CHAR(3) NOT NULL
   , name VARCHAR(500) NOT NULL
-  , created_date timestamptz NOT NULL DEFAULT now()
+  , created_date TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE public.state
@@ -38,14 +46,14 @@ CREATE TABLE public.state
     code VARCHAR(3) PRIMARY KEY
   , country_code INT REFERENCES public.country(code)
   , name VARCHAR(500) NOT NULL
-  , created_date timestamptz NOT NULL DEFAULT now()
+  , created_date TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE public.city
 (
     id SERIAL PRIMARY KEY
   , name VARCHAR(200) NOT NULL
-  , created_date timestamptz NOT NULL DEFAULT now()
+  , created_date TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE public.geo_position
@@ -63,7 +71,7 @@ CREATE TABLE public.geo_position
   , region_playstation3 INT DEFAULT 0
   , region_playstation4 INT DEFAULT 0
   , region_nintendo INT DEFAULT 0
-  , created_date timestamptz NOT NULL DEFAULT now()
+  , created_date TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE public.vpnserver_status
@@ -71,7 +79,7 @@ CREATE TABLE public.vpnserver_status
     id SERIAL PRIMARY KEY
   , code VARCHAR(50) NOT NULL
   , description VARCHAR(255) NOT NULL
-  , created_date timestamptz NOT NULL DEFAULT now()
+  , created_date TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE public.vpn_type
@@ -79,7 +87,7 @@ CREATE TABLE public.vpn_type
     id SERIAL PRIMARY KEY
   , code VARCHAR(50) NOT NULL
   , description VARCHAR(255) NOT NULL
-  , created_date timestamptz NOT NULL DEFAULT now()
+  , created_date TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE public.vpnserver
@@ -92,7 +100,7 @@ CREATE TABLE public.vpnserver
   , bandwidth BIGINT DEFAULT 0
   , load INT DEFAULT 0
   , geo_position_id INT REFERENCES public.geo_position(id) NOT NULL
-  , created_date timestamptz NOT NULL DEFAULT now()
+  , created_date TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE public.vpnserver_configuration
@@ -101,7 +109,7 @@ CREATE TABLE public.vpnserver_configuration
   , user_uuid UUID NOT NULL
   , server_uuid UUID REFERENCES public.vpnserver(uuid) NOT NULL
   , file_path VARCHAR(1024) NOT NULL
-  , created_date timestamptz NOT NULL DEFAULT now()
+  , created_date TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE OR REPLACE FUNCTION update_vpnserver_version()
@@ -110,6 +118,9 @@ BEGIN
   UPDATE public.vpnserver
   SET "version" = "version" + 1
   WHERE uuid = NEW.uuid;
+
+  UPDATE public.vpnserversmeta
+  SET state_version = state_version + 1;
   RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
@@ -120,6 +131,9 @@ BEGIN
   UPDATE public.vpnserver
   SET state_version = state_version + 1
   WHERE uuid = NEW.uuid;
+
+  UPDATE public.vpnserversmeta
+  SET state_version = state_version + 1;
   RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;

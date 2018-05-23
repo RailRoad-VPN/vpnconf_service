@@ -25,8 +25,8 @@ class VPNServer(object):
     _created_date = None
 
     def __init__(self, suuid: str = None, version: int = None, state_version: int = None, type_id: int = None,
-                 status_id: int = None,
-                 bandwidth: int = None, load: int = None, geo_position_id: int = None, created_date: datetime = None):
+                 status_id: int = None, bandwidth: int = None, load: int = None, geo_position_id: int = None,
+                 created_date: datetime = None):
         self._suuid = suuid
         self._version = version
         self._state_version = state_version
@@ -75,12 +75,31 @@ class VPNServerDB(VPNServerStored):
     _geo_position_id_field = 'geo_position_id'
     _created_date_field = 'created_date'
 
-    def __init__(self, storage_service: StorageService, **kwargs):
+    __limit = None
+    __offset = None
+
+    def __init__(self, storage_service: StorageService, limit: int = None, offset: int = None, **kwargs):
+        self.__limit = limit
+        self.__offset = offset
         super().__init__(storage_service, **kwargs)
 
     def find(self):
         logging.info('VPNServerDB find method')
-        select_sql = 'SELECT * FROM public.vpnserver'
+        select_sql = '''
+                      SELECT 
+                          uuid, 
+                          version, 
+                          state_version, 
+                          type_id, 
+                          status_id, 
+                          bandwidth, 
+                          load, 
+                          geo_position_id, 
+                          to_json(created_date) AS created_date 
+                      FROM public.vpnserver
+                      '''
+        if self.__limit:
+            select_sql += "LIMIT %s\nOFFSET %s" % (self.__limit, self.__offset)
         logging.debug('Select SQL: %s' % select_sql)
 
         try:
@@ -106,7 +125,20 @@ class VPNServerDB(VPNServerStored):
 
     def find_by_suuid(self):
         logging.info('Find VPNServer by uuid')
-        select_sql = 'SELECT * FROM public.vpnserver WHERE uuid = ?'
+        select_sql = '''
+                      SELECT 
+                          uuid, 
+                          version, 
+                          state_version, 
+                          type_id, 
+                          status_id, 
+                          bandwidth, 
+                          load, 
+                          geo_position_id, 
+                          to_json(created_date) AS created_date 
+                      FROM public.vpnserver 
+                      WHERE uuid = ?
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
         params = (self._suuid,)
 
@@ -145,7 +177,20 @@ class VPNServerDB(VPNServerStored):
 
     def find_by_status_id(self):
         logging.info('Find VPNServer by uuid')
-        select_sql = 'SELECT * FROM public.vpnserver WHERE status_id = ?'
+        select_sql = '''
+                      SELECT 
+                          uuid, 
+                          version, 
+                          state_version, 
+                          type_id, 
+                          status_id, 
+                          bandwidth, 
+                          load, 
+                          geo_position_id, 
+                          to_json(created_date) AS created_date 
+                      FROM public.vpnserver 
+                      WHERE status_id = ?
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
         params = (self._status_id,)
 
@@ -178,7 +223,20 @@ class VPNServerDB(VPNServerStored):
 
     def find_by_type_id(self):
         logging.info('Find VPNServer by uuid')
-        select_sql = 'SELECT * FROM public.vpnserver WHERE type_id = ?'
+        select_sql = '''
+                      SELECT 
+                          uuid, 
+                          version, 
+                          state_version, 
+                          type_id, 
+                          status_id, 
+                          bandwidth, 
+                          load, 
+                          geo_position_id, 
+                          to_json(created_date) AS created_date 
+                      FROM public.vpnserver 
+                      WHERE type_id = ?
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
         params = (self._type_id,)
 

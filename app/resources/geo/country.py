@@ -47,7 +47,7 @@ class CountryAPI(ResourceAPI):
         resp = make_response(json.dumps(response_data.serialize()), HTTPStatus.METHOD_NOT_ALLOWED)
         return resp
 
-    def get(self, code: str = None) -> Response:
+    def get(self, code: int = None) -> Response:
         if code is not None:
             country_db = CountryDB(storage_service=self.__db_storage_service, code=code)
 
@@ -100,8 +100,7 @@ class CountryAPI(ResourceAPI):
                 return make_response(json.dumps(response_data.serialize()), http_code)
 
             countries_dict = [country_list[i].to_dict() for i in range(0, len(country_list))]
-            response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
-                                        data=countries_dict)
+            response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=countries_dict)
             resp = make_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
 
         return resp

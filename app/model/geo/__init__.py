@@ -100,7 +100,24 @@ class GeoDB(GeoStored):
 
     def find(self):
         logging.info('GeoDB find method')
-        select_sql = 'SELECT * FROM public.geo_position'
+        select_sql = '''
+                      SELECT 
+                        id,
+                        latitude,
+                        longitude,
+                        country_code,
+                        state_code,
+                        city_id,
+                        region_common,
+                        region_dvd,
+                        region_xbox360,
+                        region_xboxone,
+                        region_playstation3,
+                        region_playstation4,
+                        region_nintendo,
+                        to_json(created_date) AS created_date 
+                      FROM public.geo_position
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
 
         try:
@@ -127,7 +144,25 @@ class GeoDB(GeoStored):
 
     def find_by_sid(self):
         logging.info('GeoDB find_by_id method')
-        select_sql = 'SELECT * FROM public.geo_position WHERE id = ?'
+        select_sql = '''
+                      SELECT 
+                        id,
+                        latitude,
+                        longitude,
+                        country_code,
+                        state_code,
+                        city_id,
+                        region_common,
+                        region_dvd,
+                        region_xbox360,
+                        region_xboxone,
+                        region_playstation3,
+                        region_playstation4,
+                        region_nintendo,
+                        to_json(created_date) AS created_date 
+                      FROM public.geo_position
+                      WHERE id = ?
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
         params = (self._sid,)
 
@@ -228,7 +263,7 @@ class GeoDB(GeoStored):
                         region_xboxone = ?,
                         region_playstation3 = ?,
                         region_playstation4 = ?,
-                        region_nintendo = ?,
+                        region_nintendo = ?
                     WHERE 
                         id = ?
                     '''

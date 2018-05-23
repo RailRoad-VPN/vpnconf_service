@@ -52,7 +52,14 @@ class VPNServerStatusDB(VPNServerStatusStored):
 
     def find(self):
         logging.info('VPNServerStatusDB find method')
-        select_sql = 'SELECT * FROM public.vpnserver_status'
+        select_sql = '''
+                      SELECT 
+                        id,
+                        code,
+                        description, 
+                        to_json(created_date) AS created_date
+                      FROM public.vpnserver_status
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
 
         try:
@@ -79,7 +86,15 @@ class VPNServerStatusDB(VPNServerStatusStored):
 
     def find_by_code(self):
         logging.info('VPNServerStatusDB find_by_sid method')
-        select_sql = 'SELECT * FROM public.vpnserver_status WHERE code = ?'
+        select_sql = '''
+                      SELECT 
+                        id,
+                        code,
+                        description, 
+                        to_json(created_date) AS created_date
+                      FROM public.vpnserver_status
+                      WHERE code = ?
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
         params = (self._code,)
 
@@ -117,7 +132,15 @@ class VPNServerStatusDB(VPNServerStatusStored):
 
     def find_by_sid(self):
         logging.info('VPNServerStatusDB find_by_sid method')
-        select_sql = 'SELECT * FROM public.vpnserver_status WHERE id = ?'
+        select_sql = '''
+                      SELECT 
+                        id,
+                        code,
+                        description, 
+                        to_json(created_date) AS created_date
+                      FROM public.vpnserver_status
+                      WHERE id = ?
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
         params = (self._sid,)
 
@@ -159,15 +182,3 @@ class VPNServerStatusDB(VPNServerStatusStored):
             code=vpnserverstatusdb[self._code_field],
             description=vpnserverstatusdb[self._description_field],
         )
-
-    @property
-    def sid_field(self):
-        return type(self)._sid_field
-
-    @property
-    def code_field(self):
-        return type(self)._code_field
-
-    @property
-    def description_field(self):
-        return type(self)._description_field

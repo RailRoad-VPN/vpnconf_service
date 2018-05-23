@@ -27,8 +27,8 @@ class VPNServerConfiguration(object):
     def to_dict(self):
         return {
             'uuid': self._suuid,
-            'user_suuid': self._user_suuid,
-            'server_suuid': self._server_suuid,
+            'user_uuid': self._user_suuid,
+            'server_uuid': self._server_suuid,
             'file_path': self._file_path,
         }
 
@@ -57,7 +57,15 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
 
     def find(self):
         logging.info('VPNServerConfigurationDB find method')
-        select_sql = 'SELECT * FROM public.vpnserver_configuration'
+        select_sql = '''
+                      SELECT 
+                        uuid,
+                        user_uuid,
+                        server_uuid,
+                        file_path,
+                        to_json(created_date) AS created_date 
+                      FROM public.vpnserver_configuration
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
 
         try:
@@ -85,7 +93,16 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
 
     def find_by_suuid(self):
         logging.info('VPNServerConfigurationDB find_by_server_suuid method')
-        select_sql = 'SELECT * FROM public.vpnserver_configuration WHERE uuid = ?'
+        select_sql = '''
+                      SELECT 
+                        uuid,
+                        user_uuid,
+                        server_uuid,
+                        file_path,
+                        to_json(created_date) AS created_date 
+                      FROM public.vpnserver_configuration
+                      WHERE uuid = ?
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
         params = (self._suuid,)
 
@@ -123,7 +140,16 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
 
     def find_by_server_suuid(self):
         logging.info('VPNServerConfigurationDB find_by_server_suuid method')
-        select_sql = 'SELECT * FROM public.vpnserver_configuration WHERE server_uuid = ?'
+        select_sql = '''
+                      SELECT 
+                        uuid,
+                        user_uuid,
+                        server_uuid,
+                        file_path,
+                        to_json(created_date) AS created_date 
+                      FROM public.vpnserver_configuration
+                      WHERE server_uuid = ?
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
         params = (self._server_suuid,)
 
@@ -246,19 +272,3 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
             server_suuid=vpnserverconfig_db[self._server_suuid_field],
             file_path=vpnserverconfig_db[self._file_path_field],
         )
-
-    @property
-    def suuid_field(self):
-        return type(self)._suuid_field
-
-    @property
-    def user_suuid_field(self):
-        return type(self)._user_suuid_field
-
-    @property
-    def server_suuid_field(self):
-        return type(self)._server_suuid_field
-
-    @property
-    def file_path_field(self):
-        return type(self)._file_path_field

@@ -57,7 +57,14 @@ class StateDB(StateStored):
 
     def find(self):
         logging.info('StateDB find method')
-        select_sql = 'SELECT * FROM public.state'
+        select_sql = '''
+                      SELECT 
+                        code
+                        country_code,,
+                        name,
+                        to_json(created_date) AS created_date 
+                      FROM public.state
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
 
         try:
@@ -84,7 +91,15 @@ class StateDB(StateStored):
 
     def find_by_code(self):
         logging.info('StateDB find_by_code method')
-        select_sql = 'SELECT * FROM public.state WHERE code = ?'
+        select_sql = '''
+                      SELECT 
+                        code
+                        country_code,,
+                        name,
+                        to_json(created_date) AS created_date 
+                      FROM public.state 
+                      WHERE code = ?
+                      '''
         logging.debug('Select SQL: %s' % select_sql)
         params = (self._code,)
 

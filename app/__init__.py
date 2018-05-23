@@ -11,6 +11,7 @@ from app.resources.geo.state import StateAPI
 from app.resources.vpn import VPNTypeAPI
 from app.resources.vpn.server import VPNServerAPI
 from app.resources.vpn.server.configuration import VPNServerConfigurationAPI
+from app.resources.vpn.server.meta import VPNServersMetaAPI
 from app.resources.vpn.server.status import VPNServerStatusAPI
 
 sys.path.insert(0, '../psql_library')
@@ -28,6 +29,11 @@ with app.app_context():
     psql = PostgreSQL(app=app)
 
 db_storage_service = DBStorageService(psql=psql)
+
+# VPN SERVERS META API
+vpnserver_api_url = '%s/%s' % (app.config['API_BASE_URI'], VPNServersMetaAPI.__api_url__)
+vpnserver_api_view_func = VPNServersMetaAPI.as_view('vpnserversmeta_api', db_storage_service, app.config)
+app.add_url_rule(vpnserver_api_url, view_func=vpnserver_api_view_func, methods=['GET', 'POST', 'PUT'])
 
 # VPN SERVERS API
 vpnserver_api_url = '%s/%s' % (app.config['API_BASE_URI'], VPNServerAPI.__api_url__)
