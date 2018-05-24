@@ -30,3 +30,8 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     DEBUG = True
+
+    PSQL_DBNAME = 'rrnvpnc'
+    PSQL_USER = 'railroadman'
+    PSQL_PASSWORD = 'railroadman'
+    PSQL_HOST = '127.0.0.1'
