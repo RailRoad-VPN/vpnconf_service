@@ -136,6 +136,9 @@ class VPNServerAPI(ResourceAPI):
 
     def get(self, suuid: str = None) -> Response:
         super(VPNServerAPI, self).get(req=request)
+
+        vpnserver_db = VPNServerDB(storage_service=self.__db_storage_service, suuid=suuid,
+                                   limit=self.pagination.limit, offset=self.pagination.offset)
         if suuid is not None:
             is_valid = check_uuid(suuid)
             if not is_valid:
@@ -147,8 +150,6 @@ class VPNServerAPI(ResourceAPI):
                                             developer_message=developer_message, error_code=error_code)
                 resp = make_api_response(json.dumps(response_data.serialize()), http_code)
                 return resp
-
-            vpnserver_db = VPNServerDB(storage_service=self.__db_storage_service, suuid=suuid)
 
             try:
                 vpnserver = vpnserver_db.find_by_suuid()
@@ -175,9 +176,6 @@ class VPNServerAPI(ResourceAPI):
                                         data=vpnserver.to_dict())
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
         else:
-            vpnserver_db = VPNServerDB(storage_service=self.__db_storage_service, limit=self.pagination.limit,
-                                       offset=self.pagination.offset)
-
             try:
                 vpnserver_list = vpnserver_db.find()
             except VPNNotFoundException as e:
