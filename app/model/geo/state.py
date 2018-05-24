@@ -60,7 +60,7 @@ class StateDB(StateStored):
         select_sql = '''
                       SELECT 
                         code
-                        country_code,,
+                        country_code,
                         name,
                         to_json(created_date) AS created_date 
                       FROM public.state
@@ -94,7 +94,7 @@ class StateDB(StateStored):
         select_sql = '''
                       SELECT 
                         code
-                        country_code,,
+                        country_code,
                         name,
                         to_json(created_date) AS created_date 
                       FROM public.state 

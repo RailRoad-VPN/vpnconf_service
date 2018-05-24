@@ -13,7 +13,7 @@ sys.path.insert(0, '../psql_library')
 from storage_service import DBStorageService
 
 sys.path.insert(1, '../rest_api_library')
-from utils import JSONDecimalEncoder
+from utils import JSONDecimalEncoder, make_api_response
 from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
 
@@ -63,9 +63,9 @@ class GeoAPI(ResourceAPI):
             http_code = HTTPStatus.BAD_REQUEST
             response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
-            return make_response(json.dumps(response_data.serialize()), http_code)
+            return make_api_response(json.dumps(response_data.serialize()), http_code)
 
-        resp = make_response('', HTTPStatus.CREATED)
+        resp = make_api_response('', HTTPStatus.CREATED)
         resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, sid)
         return resp
 
@@ -83,7 +83,7 @@ class GeoAPI(ResourceAPI):
             http_code = HTTPStatus.BAD_REQUEST
             response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
-            resp = make_response(json.dumps(response_data.serialize()), http_code)
+            resp = make_api_response(json.dumps(response_data.serialize()), http_code)
             return resp
 
         if sid != geo_id:
@@ -93,7 +93,7 @@ class GeoAPI(ResourceAPI):
             http_code = HTTPStatus.BAD_REQUEST
             response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
-            resp = make_response(json.dumps(response_data.serialize()), http_code)
+            resp = make_api_response(json.dumps(response_data.serialize()), http_code)
             return resp
 
         latitude = request_json.get(GeoDB._latitude_field, None)
@@ -124,9 +124,9 @@ class GeoAPI(ResourceAPI):
             http_code = HTTPStatus.BAD_REQUEST
             response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
-            return make_response(json.dumps(response_data.serialize()), http_code)
+            return make_api_response(json.dumps(response_data.serialize()), http_code)
 
-        resp = make_response('', HTTPStatus.OK)
+        resp = make_api_response('', HTTPStatus.OK)
         resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, uuid)
         return resp
 
@@ -141,7 +141,7 @@ class GeoAPI(ResourceAPI):
                 http_code = HTTPStatus.BAD_REQUEST
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                resp = make_response(json.dumps(response_data.serialize()), http_code)
+                resp = make_api_response(json.dumps(response_data.serialize()), http_code)
                 return resp
 
             geo_db = GeoDB(storage_service=self.__db_storage_service, sid=sid)
@@ -156,7 +156,7 @@ class GeoAPI(ResourceAPI):
                 http_code = HTTPStatus.NOT_FOUND
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_response(json.dumps(response_data.serialize()), http_code)
+                return make_api_response(json.dumps(response_data.serialize()), http_code)
             except VPNException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -165,11 +165,11 @@ class GeoAPI(ResourceAPI):
                 http_code = HTTPStatus.BAD_REQUEST
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_response(json.dumps(response_data.serialize()), http_code)
+                return make_api_response(json.dumps(response_data.serialize()), http_code)
 
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
                                         data=geo.to_dict())
-            resp = make_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
+            resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
         else:
             geo_db = GeoDB(storage_service=self.__db_storage_service)
 
@@ -183,7 +183,7 @@ class GeoAPI(ResourceAPI):
                 http_code = HTTPStatus.NOT_FOUND
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_response(json.dumps(response_data.serialize()), http_code)
+                return make_api_response(json.dumps(response_data.serialize()), http_code)
             except VPNException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -192,10 +192,10 @@ class GeoAPI(ResourceAPI):
                 http_code = HTTPStatus.BAD_REQUEST
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_response(json.dumps(response_data.serialize()), http_code)
+                return make_api_response(json.dumps(response_data.serialize()), http_code)
 
             geos_dict = [geo_list[i].to_dict() for i in range(0, len(geo_list))]
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=geos_dict)
-            resp = make_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
+            resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
 
         return resp

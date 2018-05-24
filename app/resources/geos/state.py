@@ -7,21 +7,21 @@ from http import HTTPStatus
 from flask import Response, request, make_response
 
 from app.exception import *
-from app.model.geo.city import CityDB
+from app.model.geo.state import StateDB
 
 sys.path.insert(0, '../psql_library')
 from storage_service import DBStorageService
 
 sys.path.insert(1, '../rest_api_library')
-from utils import JSONDecimalEncoder
+from utils import JSONDecimalEncoder, make_api_response
 from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
 
 
-class CityAPI(ResourceAPI):
+class StateAPI(ResourceAPI):
     __version__ = 1
 
-    __api_url__ = 'geo_positions/cities'
+    __api_url__ = 'geo_positions/states'
 
     _config = None
 
@@ -35,12 +35,12 @@ class CityAPI(ResourceAPI):
     def post(self) -> Response:
         request_json = request.json
 
-        name = request_json.get(CityDB._name_field, None)
+        name = request_json.get(StateDB._name_field, None)
 
-        city_db = CityDB(storage_service=self.__db_storage_service, name=name)
+        state_db = StateDB(storage_service=self.__db_storage_service, name=name)
 
         try:
-            sid = city_db.create()
+            code = state_db.create()
         except VPNException as e:
             logging.error(e)
             error_code = e.error_code
@@ -49,45 +49,32 @@ class CityAPI(ResourceAPI):
             http_code = HTTPStatus.BAD_REQUEST
             response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
-            return make_response(json.dumps(response_data.serialize()), http_code)
+            return make_api_response(json.dumps(response_data.serialize()), http_code)
 
-        resp = make_response('', HTTPStatus.CREATED)
-        resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, sid)
+        resp = make_api_response('', HTTPStatus.CREATED)
+        resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, code)
         return resp
 
-    def put(self, sid: int) -> Response:
+    def put(self, code: str) -> Response:
         request_json = request.json
-        city_sid = request_json.get(CityDB._sid_field, None)
+        state_code = request_json.get(StateDB._code_field, None)
 
-        try:
-            sid = int(sid)
-            city_sid = int(city_sid)
-        except ValueError:
-            error = VPNCError.CITY_IDENTIFIER_ERROR.phrase
-            error_code = VPNCError.CITY_IDENTIFIER_ERROR
-            developer_message = VPNCError.CITY_IDENTIFIER_ERROR.description
+        if code != state_code:
+            error = VPNCError.STATE_IDENTIFIER_ERROR.phrase
+            error_code = VPNCError.STATE_IDENTIFIER_ERROR
+            developer_message = VPNCError.STATE_IDENTIFIER_ERROR.description
             http_code = HTTPStatus.BAD_REQUEST
             response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
-            resp = make_response(json.dumps(response_data.serialize()), http_code)
+            resp = make_api_response(json.dumps(response_data.serialize()), http_code)
             return resp
 
-        if sid != city_sid:
-            error = VPNCError.CITY_IDENTIFIER_ERROR.phrase
-            error_code = VPNCError.CITY_IDENTIFIER_ERROR
-            developer_message = VPNCError.CITY_IDENTIFIER_ERROR.description
-            http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
-                                        developer_message=developer_message, error_code=error_code)
-            resp = make_response(json.dumps(response_data.serialize()), http_code)
-            return resp
+        name = request_json.get(StateDB._name_field, None)
 
-        name = request_json.get(CityDB._name_field, None)
-
-        city_db = CityDB(storage_service=self.__db_storage_service, sid=sid, name=name)
+        state_db = StateDB(storage_service=self.__db_storage_service, code=code, name=name)
 
         try:
-            city_db.update()
+            state_db.update()
         except VPNException as e:
             logging.error(e)
             error_code = e.error_code
@@ -96,30 +83,18 @@ class CityAPI(ResourceAPI):
             http_code = HTTPStatus.BAD_REQUEST
             response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
-            return make_response(json.dumps(response_data.serialize()), http_code)
+            return make_api_response(json.dumps(response_data.serialize()), http_code)
 
-        resp = make_response('', HTTPStatus.OK)
-        resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, uuid)
+        resp = make_api_response('', HTTPStatus.OK)
+        resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, code)
         return resp
 
-    def get(self, sid: int = None) -> Response:
-        if sid is not None:
-            try:
-                sid = int(sid)
-            except ValueError:
-                error = VPNCError.CITY_IDENTIFIER_ERROR.phrase
-                error_code = VPNCError.CITY_IDENTIFIER_ERROR
-                developer_message = VPNCError.CITY_IDENTIFIER_ERROR.description
-                http_code = HTTPStatus.BAD_REQUEST
-                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
-                                            developer_message=developer_message, error_code=error_code)
-                resp = make_response(json.dumps(response_data.serialize()), http_code)
-                return resp
-
-            city_db = CityDB(storage_service=self.__db_storage_service, sid=sid)
+    def get(self, code: str = None) -> Response:
+        if code is not None:
+            state_db = StateDB(storage_service=self.__db_storage_service, code=code)
 
             try:
-                city = city_db.find_by_sid()
+                state = state_db.find_by_code()
             except VPNNotFoundException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -128,7 +103,7 @@ class CityAPI(ResourceAPI):
                 http_code = HTTPStatus.NOT_FOUND
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_response(json.dumps(response_data.serialize()), http_code)
+                return make_api_response(json.dumps(response_data.serialize()), http_code)
             except VPNException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -137,16 +112,16 @@ class CityAPI(ResourceAPI):
                 http_code = HTTPStatus.BAD_REQUEST
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_response(json.dumps(response_data.serialize()), http_code)
+                return make_api_response(json.dumps(response_data.serialize()), http_code)
 
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
-                                        data=city.to_dict())
-            resp = make_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
+                                        data=state.to_dict())
+            resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
         else:
-            city_db = CityDB(storage_service=self.__db_storage_service)
+            state_db = StateDB(storage_service=self.__db_storage_service)
 
             try:
-                city_list = city_db.find()
+                state_list = state_db.find()
             except VPNNotFoundException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -155,7 +130,7 @@ class CityAPI(ResourceAPI):
                 http_code = HTTPStatus.NOT_FOUND
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_response(json.dumps(response_data.serialize()), http_code)
+                return make_api_response(json.dumps(response_data.serialize()), http_code)
             except VPNException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -164,10 +139,10 @@ class CityAPI(ResourceAPI):
                 http_code = HTTPStatus.BAD_REQUEST
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_response(json.dumps(response_data.serialize()), http_code)
+                return make_api_response(json.dumps(response_data.serialize()), http_code)
 
-            cities_dict = [city_list[i].to_dict() for i in range(0, len(city_list))]
-            response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=cities_dict)
-            resp = make_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
+            states_dict = [state_list[i].to_dict() for i in range(0, len(state_list))]
+            response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=states_dict)
+            resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
 
         return resp

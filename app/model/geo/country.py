@@ -185,5 +185,6 @@ class CountryDB(CountryStored):
         return Country(
             code=country_db[self._code_field],
             name=country_db[self._name_field],
+            str_code=country_db[self._str_code_field],
             created_date=country_db[self._created_date_field],
         )

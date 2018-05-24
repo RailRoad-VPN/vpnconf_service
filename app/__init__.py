@@ -4,15 +4,15 @@ from pprint import pprint
 import sys
 from flask import Flask
 
-from app.resources.geo import GeoAPI
-from app.resources.geo.city import CityAPI
-from app.resources.geo.country import CountryAPI
-from app.resources.geo.state import StateAPI
-from app.resources.vpn import VPNTypeAPI
-from app.resources.vpn.server import VPNServerAPI
-from app.resources.vpn.server.configuration import VPNServerConfigurationAPI
-from app.resources.vpn.server.meta import VPNServersMetaAPI
-from app.resources.vpn.server.status import VPNServerStatusAPI
+from app.resources.geos import GeoAPI
+from app.resources.geos.city import CityAPI
+from app.resources.geos.country import CountryAPI
+from app.resources.geos.state import StateAPI
+from app.resources.vpns import VPNTypeAPI
+from app.resources.vpns.servers import VPNServerAPI
+from app.resources.vpns.servers.configuration import VPNServerConfigurationAPI
+from app.resources.vpns.servers.meta import VPNServersMetaAPI
+from app.resources.vpns.servers.status import VPNServerStatusAPI
 
 sys.path.insert(0, '../psql_library')
 from psql_helper import PostgreSQL
