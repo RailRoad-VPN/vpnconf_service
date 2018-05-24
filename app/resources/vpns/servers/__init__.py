@@ -3,7 +3,7 @@ import logging
 import sys
 from http import HTTPStatus
 
-from flask import Response, request, make_response
+from flask import Response, request
 
 from app.exception import *
 from app.model.vpn.server import VPNServerDB
@@ -199,7 +199,8 @@ class VPNServerAPI(ResourceAPI):
 
             vpnservers_dict = [vpnserver_list[i].to_dict() for i in range(0, len(vpnserver_list))]
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
-                                        data=vpnservers_dict)
+                                        data=vpnservers_dict, limit=self.pagination.limit,
+                                        offset=self.pagination.offset)
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
 
         return resp

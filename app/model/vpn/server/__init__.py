@@ -78,10 +78,10 @@ class VPNServerDB(VPNServerStored):
     __limit = None
     __offset = None
 
-    def __init__(self, storage_service: StorageService, limit: int = None, offset: int = None, **kwargs):
+    def __init__(self, limit: int = None, offset: int = None, **kwargs):
         self.__limit = limit
         self.__offset = offset
-        super().__init__(storage_service, **kwargs)
+        super().__init__(**kwargs)
 
     def find(self):
         logging.info('VPNServerDB find method')
