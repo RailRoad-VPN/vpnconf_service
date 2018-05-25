@@ -26,7 +26,7 @@ CREATE TABLE public.vpnserversmeta
 (
     id SERIAL PRIMARY KEY
   , version INT DEFAULT 1 NOT NULL
-  , state_version INT DEFAULT 1 NOT NULL
+  , condition_version INT DEFAULT 1 NOT NULL
 );
 
 CREATE TABLE public.country
@@ -90,7 +90,7 @@ CREATE TABLE public.vpnserver
 (
     uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
   , version INT DEFAULT 1 NOT NULL
-  , state_version INT DEFAULT 1 NOT NULL
+  , condition_version INT DEFAULT 1 NOT NULL
   , type_id INT REFERENCES public.vpn_type(id) NOT NULL
   , status_id INT REFERENCES public.vpnserver_status(id) NOT NULL
   , bandwidth BIGINT DEFAULT 0

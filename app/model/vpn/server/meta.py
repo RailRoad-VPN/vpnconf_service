@@ -14,17 +14,17 @@ class VPNServersMeta(object):
 
     _sid = None
     _version = None
-    _state_version = None
+    _condition_version = None
 
-    def __init__(self, sid: int = None, version: int = None, state_version: int = None):
+    def __init__(self, sid: int = None, version: int = None, condition_version: int = None):
         self._sid = sid
         self._version = version
-        self._state_version = state_version
+        self._condition_version = condition_version
 
     def to_dict(self):
         return {
             'version': self._version,
-            'state_version': self._state_version,
+            'condition_version': self._condition_version,
         }
 
 
@@ -44,7 +44,7 @@ class VPNServersMetaDB(VPNServersMetaStored):
 
     _sid_field = 'id'
     _version_field = 'version'
-    _state_version_field = 'state_version'
+    _condition_version_field = 'condition_version'
 
     def __init__(self, storage_service: StorageService, **kwargs):
         super().__init__(storage_service, **kwargs)
@@ -69,5 +69,5 @@ class VPNServersMetaDB(VPNServersMetaStored):
         return VPNServersMeta(
             sid=vpnserversmeta_db[self._sid_field],
             version=vpnserversmeta_db[self._version_field],
-            state_version=vpnserversmeta_db[self._state_version_field],
+            condition_version=vpnserversmeta_db[self._condition_version_field],
         )

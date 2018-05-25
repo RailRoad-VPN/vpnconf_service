@@ -44,7 +44,7 @@ class VPNServerAPI(ResourceAPI):
             return make_api_response(json.dumps(response_data.serialize()), http_code)
 
         version = request_json.get(VPNServerDB._version_field, None)
-        state_version = request_json.get(VPNServerDB._state_version_field, None)
+        condition_version = request_json.get(VPNServerDB._condition_version_field, None)
         type_id = request_json.get(VPNServerDB._type_id_field, None)
         status_id = request_json.get(VPNServerDB._status_id_field, None)
         bandwidth = request_json.get(VPNServerDB._bandwidth_field, None)
@@ -52,7 +52,7 @@ class VPNServerAPI(ResourceAPI):
         geo_position_id = request_json.get(VPNServerDB._geo_position_id_field, None)
 
         vpnserver_db = VPNServerDB(storage_service=self.__db_storage_service, version=version,
-                                   state_version=state_version, type_id=type_id, status_id=status_id,
+                                   condition_version=condition_version, type_id=type_id, status_id=status_id,
                                    bandwidth=bandwidth, load=load, geo_position_id=geo_position_id)
 
         try:
@@ -108,7 +108,7 @@ class VPNServerAPI(ResourceAPI):
             return resp
 
         version = request_json.get(VPNServerDB._version_field, None)
-        state_version = request_json.get(VPNServerDB._state_version_field, None)
+        condition_version = request_json.get(VPNServerDB._condition_version_field, None)
         type_id = request_json.get(VPNServerDB._type_id_field, None)
         status_id = request_json.get(VPNServerDB._status_id_field, None)
         bandwidth = request_json.get(VPNServerDB._bandwidth_field, None)
@@ -116,7 +116,7 @@ class VPNServerAPI(ResourceAPI):
         geo_position_id = request_json.get(VPNServerDB._geo_position_id_field, None)
 
         vpnserver_db = VPNServerDB(storage_service=self.__db_storage_service, suuid=suuid, version=version,
-                                   state_version=state_version, type_id=type_id, status_id=status_id,
+                                   condition_version=condition_version, type_id=type_id, status_id=status_id,
                                    bandwidth=bandwidth, load=load, geo_position_id=geo_position_id)
 
         try:

@@ -16,7 +16,7 @@ class VPNServer(object):
 
     _suuid = None
     _version = None
-    _state_version = None
+    _condition_version = None
     _type_id = None
     _status_id = None
     _bandwidth = None
@@ -24,12 +24,12 @@ class VPNServer(object):
     _geo_position_id = None
     _created_date = None
 
-    def __init__(self, suuid: str = None, version: int = None, state_version: int = None, type_id: int = None,
+    def __init__(self, suuid: str = None, version: int = None, condition_version: int = None, type_id: int = None,
                  status_id: int = None, bandwidth: int = None, load: int = None, geo_position_id: int = None,
                  created_date: datetime = None):
         self._suuid = suuid
         self._version = version
-        self._state_version = state_version
+        self._condition_version = condition_version
         self._type_id = type_id
         self._status_id = status_id
         self._bandwidth = bandwidth
@@ -41,7 +41,7 @@ class VPNServer(object):
         return {
             'uuid': self._suuid,
             'version': self._version,
-            'state_version': self._state_version,
+            'condition_version': self._condition_version,
             'type_id': self._type_id,
             'status_id': self._status_id,
             'bandwidth': self._bandwidth,
@@ -53,7 +53,7 @@ class VPNServer(object):
         return {
             'uuid': self._suuid,
             'version': self._version,
-            'state_version': self._state_version,
+            'condition_version': self._condition_version,
             'type_id': self._type_id,
             'status_id': self._status_id,
             'bandwidth': self._bandwidth,
@@ -79,7 +79,7 @@ class VPNServerDB(VPNServerStored):
 
     _suuid_field = 'uuid'
     _version_field = 'version'
-    _state_version_field = 'state_version'
+    _condition_version_field = 'condition_version'
     _type_id_field = 'type_id'
     _status_id_field = 'status_id'
     _bandwidth_field = 'bandwidth'
@@ -101,7 +101,7 @@ class VPNServerDB(VPNServerStored):
                       SELECT 
                           uuid, 
                           version, 
-                          state_version, 
+                          condition_version, 
                           type_id, 
                           status_id, 
                           bandwidth, 
@@ -141,7 +141,7 @@ class VPNServerDB(VPNServerStored):
                       SELECT 
                           uuid, 
                           version, 
-                          state_version, 
+                          condition_version, 
                           type_id, 
                           status_id, 
                           bandwidth, 
@@ -193,7 +193,7 @@ class VPNServerDB(VPNServerStored):
                       SELECT 
                           uuid, 
                           version, 
-                          state_version, 
+                          condition_version, 
                           type_id, 
                           status_id, 
                           bandwidth, 
@@ -239,7 +239,7 @@ class VPNServerDB(VPNServerStored):
                       SELECT 
                           uuid, 
                           version, 
-                          state_version, 
+                          condition_version, 
                           type_id, 
                           status_id, 
                           bandwidth, 
@@ -330,7 +330,7 @@ class VPNServerDB(VPNServerStored):
                         load = ?
                     WHERE 
                       uuid = ?
-                    RETURNING version, state_version;
+                    RETURNING version, condition_version;
                     '''
 
         logging.debug('Update SQL: %s' % update_sql)
@@ -361,11 +361,11 @@ class VPNServerDB(VPNServerStored):
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         self._version = updated[self._version_field]
-        self._state_version = updated[self._state_version_field]
+        self._condition_version = updated[self._condition_version_field]
 
     def __map_vpnserverdb_to_vpnserver(self, vpnserver_db):
         return VPNServer(suuid=vpnserver_db[self._suuid_field], version=vpnserver_db[self._version_field],
-                         state_version=vpnserver_db[self._state_version_field],
+                         condition_version=vpnserver_db[self._condition_version_field],
                          type_id=vpnserver_db[self._type_id_field], status_id=vpnserver_db[self._status_id_field],
                          bandwidth=vpnserver_db[self._bandwidth_field], load=vpnserver_db[self._load_field],
                          geo_position_id=vpnserver_db[self._geo_position_id_field],

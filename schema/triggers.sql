@@ -15,7 +15,7 @@ CREATE TRIGGER check_vpnserver_state_update
   FOR EACH ROW
   WHEN ((OLD.load IS DISTINCT FROM NEW.load
         OR OLD.bandwidth IS DISTINCT FROM NEW.bandwidth) AND pg_trigger_depth() = 0)
-  EXECUTE PROCEDURE update_vpnserver_state_version();
+  EXECUTE PROCEDURE update_vpnserver_condition_version();
 
 -- increment version when VPN Server configuration changed
 CREATE TRIGGER check_vpnserver_configuration_update
