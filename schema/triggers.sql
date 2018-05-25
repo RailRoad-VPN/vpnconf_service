@@ -1,3 +1,7 @@
+DROP TRIGGER IF EXISTS check_vpnserver_update ON vpnserver CASCADE;
+DROP TRIGGER IF EXISTS check_vpnserver_state_update ON vpnserver CASCADE;
+DROP TRIGGER IF EXISTS check_vpnserver_configuration_update ON vpnserver_configuration  CASCADE;
+
 -- increment VPN Server version when any field was changed
 CREATE TRIGGER check_vpnserver_update
   AFTER UPDATE ON public.vpnserver
@@ -10,8 +14,7 @@ CREATE TRIGGER check_vpnserver_state_update
   AFTER UPDATE ON public.vpnserver
   FOR EACH ROW
   WHEN ((OLD.load IS DISTINCT FROM NEW.load
-        OR OLD.bandwidth IS DISTINCT FROM NEW.bandwidth
-        OR OLD.geo_position_id IS DISTINCT FROM NEW.geo_position_id) AND pg_trigger_depth() = 0)
+        OR OLD.bandwidth IS DISTINCT FROM NEW.bandwidth) AND pg_trigger_depth() = 0)
   EXECUTE PROCEDURE update_vpnserver_state_version();
 
 -- increment version when VPN Server configuration changed

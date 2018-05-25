@@ -12,10 +12,6 @@ SET default_with_oids = FALSE;
 
 -- CREATE EXTENSION pgcrypto;
 
-DROP TRIGGER IF EXISTS check_vpnserver_update ON vpnserver CASCADE;
-DROP TRIGGER IF EXISTS check_vpnserver_state_update ON vpnserver CASCADE;
-DROP TRIGGER IF EXISTS check_vpnserver_configuration_update ON vpnserver_configuration  CASCADE;
-
 DROP TABLE IF EXISTS public.vpnserversmeta CASCADE;
 DROP TABLE IF EXISTS public.vpnserver CASCADE;
 DROP TABLE IF EXISTS public.vpnserver_configuration CASCADE;
