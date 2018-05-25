@@ -7,7 +7,7 @@ from psycopg2._psycopg import DatabaseError
 from app.exception import VPNException, VPNCError, VPNNotFoundException
 
 sys.path.insert(0, '../psql_library')
-from storage_service import StorageService
+from storage_service import StorageService, StoredObject
 
 
 class Geo(object):
@@ -83,15 +83,20 @@ class Geo(object):
         }
 
 
-class GeoStored(Geo):
+class GeoStored(StoredObject, Geo):
     __version__ = 1
 
-    _storage_service = None
-
-    def __init__(self, storage_service: StorageService, **kwargs) -> None:
-        super().__init__(**kwargs)
-
-        self._storage_service = storage_service
+    def __init__(self, storage_service: StorageService, sid: int = None, latitude: str = None, longitude: str = None,
+                 country_code: int = None, state_code: str = None, city_id: int = None, region_common: int = None,
+                 region_dvd: int = None, region_xbox360: int = None, region_xboxone: int = None,
+                 region_playstation3: int = None, region_playstation4: int = None, region_nintendo: int = None,
+                 created_date: datetime = None, limit: int = None, offset: int = None, **kwargs):
+        StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
+        Geo.__init__(self, sid=sid, latitude=latitude, longitude=longitude, country_code=country_code,
+                     state_code=state_code, city_id=city_id, region_common=region_common, region_dvd=region_dvd,
+                     region_xbox360=region_xbox360, region_xboxone=region_xboxone,
+                     region_playstation3=region_playstation3, region_playstation4=region_playstation4,
+                     region_nintendo=region_nintendo, created_date=created_date)
 
 
 class GeoDB(GeoStored):
@@ -135,6 +140,8 @@ class GeoDB(GeoStored):
                         to_json(created_date) AS created_date 
                       FROM public.geo_position
                       '''
+        if self._limit:
+            select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
         logging.debug('Select SQL: %s' % select_sql)
 
         try:

@@ -4,7 +4,7 @@ import sys
 import uuid
 from http import HTTPStatus
 
-from flask import Response, request, make_response
+from flask import Response, request
 
 from app.exception import *
 from app.model.geo.city import CityDB
@@ -103,6 +103,7 @@ class CityAPI(ResourceAPI):
         return resp
 
     def get(self, sid: int = None) -> Response:
+        super(CityAPI, self).get(req=request)
         if sid is not None:
             try:
                 sid = int(sid)
@@ -140,11 +141,11 @@ class CityAPI(ResourceAPI):
                 return make_api_response(json.dumps(response_data.serialize()), http_code)
 
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
-                                        data=city.to_dict())
+                                        data=city.to_api_dict())
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
         else:
-            city_db = CityDB(storage_service=self.__db_storage_service)
-
+            city_db = CityDB(storage_service=self.__db_storage_service, limit=self.pagination.limit,
+                             offset=self.pagination.offset)
             try:
                 city_list = city_db.find()
             except VPNNotFoundException as e:
@@ -166,8 +167,9 @@ class CityAPI(ResourceAPI):
                                             developer_message=developer_message, error_code=error_code)
                 return make_api_response(json.dumps(response_data.serialize()), http_code)
 
-            cities_dict = [city_list[i].to_dict() for i in range(0, len(city_list))]
-            response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=cities_dict)
+            cities_dict = [city_list[i].to_api_dict() for i in range(0, len(city_list))]
+            response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=cities_dict,
+                                        limit=self.pagination.limit, offset=self.pagination.offset)
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
 
         return resp

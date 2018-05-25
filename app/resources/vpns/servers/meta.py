@@ -3,7 +3,7 @@ import logging
 import sys
 from http import HTTPStatus
 
-from flask import Response, make_response
+from flask import Response, request
 
 from app.exception import *
 from app.model.vpn.server.meta import VPNServersMetaDB
@@ -48,7 +48,10 @@ class VPNServersMetaAPI(ResourceAPI):
         return resp
 
     def get(self) -> Response:
-        vpnserversmeta_db = VPNServersMetaDB(storage_service=self.__db_storage_service)
+        super(VPNServersMetaAPI, self).get(req=request)
+
+        vpnserversmeta_db = VPNServersMetaDB(storage_service=self.__db_storage_service, limit=self.pagination.limit,
+                                             offset=self.pagination.offset)
 
         try:
             vpnserversmeta = vpnserversmeta_db.find()
@@ -72,7 +75,8 @@ class VPNServersMetaAPI(ResourceAPI):
             return make_api_response(json.dumps(response_data.serialize()), http_code)
 
         response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
-                                    data=vpnserversmeta.to_dict())
+                                    data=vpnserversmeta.to_api_dict(), limit=self.pagination.limit,
+                                    offset=self.pagination.offset)
         resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
 
         return resp

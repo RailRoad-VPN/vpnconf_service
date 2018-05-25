@@ -3,7 +3,7 @@ import logging
 import sys
 from http import HTTPStatus
 
-from flask import Response, make_response
+from flask import Response, request
 
 from app.exception import *
 from app.model.geo.country import CountryDB
@@ -48,6 +48,7 @@ class CountryAPI(ResourceAPI):
         return resp
 
     def get(self, code: int = None) -> Response:
+        super(CountryAPI, self).get(req=request)
         if code is not None:
             country_db = CountryDB(storage_service=self.__db_storage_service, code=code)
 
@@ -73,11 +74,11 @@ class CountryAPI(ResourceAPI):
                 return make_api_response(json.dumps(response_data.serialize()), http_code)
 
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
-                                        data=country.to_dict())
+                                        data=country.to_api_dict())
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
         else:
-            country_db = CountryDB(storage_service=self.__db_storage_service)
-
+            country_db = CountryDB(storage_service=self.__db_storage_service, limit=self.pagination.limit,
+                                   offset=self.pagination.offset)
             try:
                 country_list = country_db.find()
             except VPNNotFoundException as e:
@@ -99,8 +100,9 @@ class CountryAPI(ResourceAPI):
                                             developer_message=developer_message, error_code=error_code)
                 return make_api_response(json.dumps(response_data.serialize()), http_code)
 
-            countries_dict = [country_list[i].to_dict() for i in range(0, len(country_list))]
-            response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=countries_dict)
+            countries_dict = [country_list[i].to_api_dict() for i in range(0, len(country_list))]
+            response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=countries_dict,
+                                        limit=self.pagination.limit, offset=self.pagination.offset)
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
 
         return resp

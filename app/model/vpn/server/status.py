@@ -6,7 +6,7 @@ from psycopg2._psycopg import DatabaseError
 from app.exception import *
 
 sys.path.insert(0, '../psql_library')
-from storage_service import StorageService
+from storage_service import StorageService, StoredObject
 
 
 class VPNServerStatus(object):
@@ -28,16 +28,21 @@ class VPNServerStatus(object):
             'description': self._description,
         }
 
+    def to_api_dict(self):
+        return {
+            'id': self._sid,
+            'code': self._code,
+            'description': self._description,
+        }
 
-class VPNServerStatusStored(VPNServerStatus):
+
+class VPNServerStatusStored(VPNServerStatus, StoredObject):
     __version__ = 1
 
-    _storage_service = None
-
-    def __init__(self, storage_service: StorageService, **kwargs) -> None:
-        super().__init__(**kwargs)
-
-        self._storage_service = storage_service
+    def __init__(self, storage_service: StorageService, sid: int = None, code: str = None, description: str = None,
+                 limit: int = None, offset: int = None, **kwargs):
+        StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
+        VPNServerStatus.__init__(self, sid=sid, code=code, description=description)
 
 
 class VPNServerStatusDB(VPNServerStatusStored):
@@ -47,8 +52,8 @@ class VPNServerStatusDB(VPNServerStatusStored):
     _code_field = 'code'
     _description_field = 'description'
 
-    def __init__(self, storage_service: StorageService, **kwargs):
-        super().__init__(storage_service, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def find(self):
         logging.info('VPNServerStatusDB find method')
@@ -60,6 +65,8 @@ class VPNServerStatusDB(VPNServerStatusStored):
                         to_json(created_date) AS created_date
                       FROM public.vpnserver_status
                       '''
+        if self._limit:
+            select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
         logging.debug('Select SQL: %s' % select_sql)
 
         try:

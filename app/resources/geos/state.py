@@ -1,10 +1,9 @@
 import json
 import logging
 import sys
-import uuid
 from http import HTTPStatus
 
-from flask import Response, request, make_response
+from flask import Response, request
 
 from app.exception import *
 from app.model.geo.state import StateDB
@@ -90,6 +89,7 @@ class StateAPI(ResourceAPI):
         return resp
 
     def get(self, code: str = None) -> Response:
+        super(StateAPI, self).get(req=request)
         if code is not None:
             state_db = StateDB(storage_service=self.__db_storage_service, code=code)
 
@@ -115,11 +115,11 @@ class StateAPI(ResourceAPI):
                 return make_api_response(json.dumps(response_data.serialize()), http_code)
 
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
-                                        data=state.to_dict())
+                                        data=state.to_api_dict())
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
         else:
-            state_db = StateDB(storage_service=self.__db_storage_service)
-
+            state_db = StateDB(storage_service=self.__db_storage_service, limit=self.pagination.limit,
+                               offset=self.pagination.offset)
             try:
                 state_list = state_db.find()
             except VPNNotFoundException as e:
@@ -141,8 +141,9 @@ class StateAPI(ResourceAPI):
                                             developer_message=developer_message, error_code=error_code)
                 return make_api_response(json.dumps(response_data.serialize()), http_code)
 
-            states_dict = [state_list[i].to_dict() for i in range(0, len(state_list))]
-            response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=states_dict)
+            states_dict = [state_list[i].to_api_dict() for i in range(0, len(state_list))]
+            response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=states_dict,
+                                        limit=self.pagination.limit, offset=self.pagination.offset)
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
 
         return resp

@@ -7,7 +7,7 @@ from psycopg2._psycopg import DatabaseError
 from app.exception import VPNException, VPNCError, VPNNotFoundException
 
 sys.path.insert(0, '../psql_library')
-from storage_service import StorageService
+from storage_service import StorageService, StoredObject
 
 
 class City(object):
@@ -29,16 +29,20 @@ class City(object):
             'created_date': self._created_date,
         }
 
+    def to_api_dict(self):
+        return {
+            'id': self._sid,
+            'name': self._name,
+        }
 
-class CityStored(City):
+
+class CityStored(StoredObject, City):
     __version__ = 1
 
-    _storage_service = None
-
-    def __init__(self, storage_service: StorageService, **kwargs) -> None:
-        super().__init__(**kwargs)
-
-        self._storage_service = storage_service
+    def __init__(self, storage_service: StorageService, sid: int = None, name: str = None,
+                 created_date: datetime = None, limit: int = None, offset: int = None, **kwargs):
+        StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
+        City.__init__(self, sid=sid, name=name, created_date=created_date)
 
 
 class CityDB(CityStored):
@@ -48,8 +52,8 @@ class CityDB(CityStored):
     _name_field = 'name'
     _created_date_field = 'created_date'
 
-    def __init__(self, storage_service: StorageService, **kwargs):
-        super().__init__(storage_service, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def find(self):
         logging.info('CityDB find method')
@@ -57,9 +61,11 @@ class CityDB(CityStored):
                       SELECT 
                         id,
                         name,
-                        to_json(created_date) as created_date 
+                        to_json(created_date) AS created_date 
                       FROM public.city
                       '''
+        if self._limit:
+            select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
         logging.debug('Select SQL: %s' % select_sql)
 
         try:
@@ -90,7 +96,7 @@ class CityDB(CityStored):
                       SELECT 
                         id,
                         name,
-                        to_json(created_date) as created_date 
+                        to_json(created_date) AS created_date 
                       FROM public.city
                       WHERE id = ?
                       '''

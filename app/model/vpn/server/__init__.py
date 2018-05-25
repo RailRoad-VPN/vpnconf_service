@@ -8,7 +8,7 @@ from psycopg2._psycopg import DatabaseError
 from app.exception import *
 
 sys.path.insert(0, '../psql_library')
-from storage_service import StorageService
+from storage_service import StorageService, StoredObject
 
 
 class VPNServer(object):
@@ -63,15 +63,16 @@ class VPNServer(object):
         }
 
 
-class VPNServerStored(VPNServer):
+class VPNServerStored(StoredObject, VPNServer):
     __version__ = 1
 
-    _storage_service = None
-
-    def __init__(self, storage_service: StorageService, **kwargs) -> None:
-        super().__init__(**kwargs)
-
-        self._storage_service = storage_service
+    def __init__(self, storage_service: StorageService, suuid: str = None, version: int = None,
+                 condition_version: int = None, type_id: int = None, status_id: int = None, bandwidth: int = None,
+                 load: int = None, geo_position_id: int = None, created_date: datetime = None, limit: int = None, offset: int = None, **kwargs):
+        StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
+        VPNServer.__init__(self, suuid=suuid, version=version, condition_version=condition_version, type_id=type_id,
+                           status_id=status_id, bandwidth=bandwidth, load=load, geo_position_id=geo_position_id,
+                           created_date=created_date)
 
 
 class VPNServerDB(VPNServerStored):
@@ -87,12 +88,7 @@ class VPNServerDB(VPNServerStored):
     _geo_position_id_field = 'geo_position_id'
     _created_date_field = 'created_date'
 
-    __limit = None
-    __offset = None
-
-    def __init__(self, limit: int = None, offset: int = None, **kwargs):
-        self.__limit = limit
-        self.__offset = offset
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def find(self):
@@ -110,8 +106,8 @@ class VPNServerDB(VPNServerStored):
                           to_json(created_date) AS created_date 
                       FROM public.vpnserver
                       '''
-        if self.__limit:
-            select_sql += "LIMIT %s\nOFFSET %s" % (self.__limit, self.__offset)
+        if self._limit:
+            select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
         logging.debug('Select SQL: %s' % select_sql)
 
         try:

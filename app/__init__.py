@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 
 # Load the default configuration
-app.config.from_object('config.TestingConfig')
+app.config.from_object('config.DevelopmentConfig')
 
 with app.app_context():
     psql = PostgreSQL(app=app)

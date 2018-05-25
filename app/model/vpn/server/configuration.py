@@ -7,7 +7,7 @@ from psycopg2._psycopg import DatabaseError
 from app.exception import *
 
 sys.path.insert(0, '../psql_library')
-from storage_service import StorageService
+from storage_service import StorageService, StoredObject
 
 
 class VPNServerConfiguration(object):
@@ -32,16 +32,23 @@ class VPNServerConfiguration(object):
             'file_path': self._file_path,
         }
 
+    def to_api_dict(self):
+        return {
+            'uuid': self._suuid,
+            'user_uuid': self._user_suuid,
+            'server_uuid': self._server_suuid,
+            'file_path': self._file_path,
+        }
 
-class VPNServerConfigurationStored(VPNServerConfiguration):
+
+class VPNServerConfigurationStored(StoredObject, VPNServerConfiguration):
     __version__ = 1
 
-    _storage_service = None
-
-    def __init__(self, storage_service: StorageService, **kwargs) -> None:
-        super().__init__(**kwargs)
-
-        self._storage_service = storage_service
+    def __init__(self, storage_service: StorageService, suuid: str = None, user_suuid: str = None,
+                 server_suuid: str = None, file_path: str = None, limit: int = None, offset: int = None, **kwargs):
+        StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
+        VPNServerConfiguration.__init__(self, suuid=suuid, user_suuid=user_suuid, server_suuid=server_suuid,
+                                        file_path=file_path)
 
 
 class VPNServerConfigurationDB(VPNServerConfigurationStored):
@@ -66,6 +73,8 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                         to_json(created_date) AS created_date 
                       FROM public.vpnserver_configuration
                       '''
+        if self._limit:
+            select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
         logging.debug('Select SQL: %s' % select_sql)
 
         try:

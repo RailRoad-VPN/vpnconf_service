@@ -7,7 +7,7 @@ from psycopg2._psycopg import DatabaseError
 from app.exception import VPNException, VPNCError, VPNNotFoundException
 
 sys.path.insert(0, '../psql_library')
-from storage_service import StorageService
+from storage_service import StorageService, StoredObject
 
 
 class State(object):
@@ -32,16 +32,21 @@ class State(object):
             'created_date': self._created_date,
         }
 
+    def to_api_dict(self):
+        return {
+            'code': self._code,
+            'country_code': self._country_code,
+            'name': self._name,
+        }
 
-class StateStored(State):
+
+class StateStored(StoredObject, State):
     __version__ = 1
 
-    _storage_service = None
-
-    def __init__(self, storage_service: StorageService, **kwargs) -> None:
-        super().__init__(**kwargs)
-
-        self._storage_service = storage_service
+    def __init__(self, storage_service: StorageService, code: str = None, country_code: int = None, name: str = None,
+                 created_date: datetime = None, limit: int = None, offset: int = None, **kwargs):
+        StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
+        State.__init__(self, code=code, country_code=country_code, name=name, created_date=created_date)
 
 
 class StateDB(StateStored):
@@ -65,6 +70,8 @@ class StateDB(StateStored):
                         to_json(created_date) AS created_date 
                       FROM public.state
                       '''
+        if self._limit:
+            select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
         logging.debug('Select SQL: %s' % select_sql)
 
         try:

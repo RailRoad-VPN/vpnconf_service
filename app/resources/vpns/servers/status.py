@@ -3,7 +3,7 @@ import logging
 import sys
 from http import HTTPStatus
 
-from flask import Response, make_response
+from flask import Response, request
 
 from app.exception import *
 from app.model.vpn.server.status import VPNServerStatusDB
@@ -48,6 +48,7 @@ class VPNServerStatusAPI(ResourceAPI):
         return resp
 
     def get(self, sid: int = None) -> Response:
+        super(VPNServerStatusAPI, self).get(req=request)
         if sid is not None:
             try:
                 sid = int(sid)
@@ -85,10 +86,11 @@ class VPNServerStatusAPI(ResourceAPI):
                 return make_api_response(json.dumps(response_data.serialize()), http_code)
 
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
-                                        data=vpnserverstatus.to_dict())
+                                        data=vpnserverstatus.to_api_dict())
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
         else:
-            vpnserverstatus_db = VPNServerStatusDB(storage_service=self.__db_storage_service)
+            vpnserverstatus_db = VPNServerStatusDB(storage_service=self.__db_storage_service,
+                                                   limit=self.pagination.limit, offset=self.pagination.offset)
 
             try:
                 vpnservertatus_list = vpnserverstatus_db.find()
@@ -111,9 +113,10 @@ class VPNServerStatusAPI(ResourceAPI):
                                             developer_message=developer_message, error_code=error_code)
                 return make_api_response(json.dumps(response_data.serialize()), http_code)
 
-            vpnserverstatus_dict = [vpnservertatus_list[i].to_dict() for i in range(0, len(vpnservertatus_list))]
+            vpnserverstatus_dict = [vpnservertatus_list[i].to_api_dict() for i in range(0, len(vpnservertatus_list))]
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
-                                        data=vpnserverstatus_dict)
+                                        data=vpnserverstatus_dict, limit=self.pagination.limit,
+                                        offset=self.pagination.offset)
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
 
         return resp

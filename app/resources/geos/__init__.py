@@ -4,7 +4,7 @@ import sys
 import uuid
 from http import HTTPStatus
 
-from flask import Response, request, make_response
+from flask import Response, request
 
 from app.exception import *
 from app.model.geo import GeoDB
@@ -131,6 +131,7 @@ class GeoAPI(ResourceAPI):
         return resp
 
     def get(self, sid: int = None) -> Response:
+        super(GeoAPI, self).get(req=request)
         if sid is not None:
             try:
                 sid = int(sid)
@@ -171,7 +172,8 @@ class GeoAPI(ResourceAPI):
                                         data=geo.to_api_dict())
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
         else:
-            geo_db = GeoDB(storage_service=self.__db_storage_service)
+            geo_db = GeoDB(storage_service=self.__db_storage_service, limit=self.pagination.limit,
+                           offset=self.pagination.offset)
 
             try:
                 geo_list = geo_db.find()
@@ -195,7 +197,8 @@ class GeoAPI(ResourceAPI):
                 return make_api_response(json.dumps(response_data.serialize()), http_code)
 
             geos_dict = [geo_list[i].to_api_dict() for i in range(0, len(geo_list))]
-            response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=geos_dict)
+            response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=geos_dict,
+                                        limit=self.pagination.limit, offset=self.pagination.offset)
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
 
         return resp

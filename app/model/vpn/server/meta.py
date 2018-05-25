@@ -6,7 +6,7 @@ from psycopg2._psycopg import DatabaseError
 from app.exception import *
 
 sys.path.insert(0, '../psql_library')
-from storage_service import StorageService
+from storage_service import StorageService, StoredObject
 
 
 class VPNServersMeta(object):
@@ -23,20 +23,25 @@ class VPNServersMeta(object):
 
     def to_dict(self):
         return {
+            'id': self._sid,
+            'version': self._version,
+            'condition_version': self._condition_version,
+        }
+
+    def to_api_dict(self):
+        return {
             'version': self._version,
             'condition_version': self._condition_version,
         }
 
 
-class VPNServersMetaStored(VPNServersMeta):
+class VPNServersMetaStored(StoredObject, VPNServersMeta):
     __version__ = 1
 
-    _storage_service = None
-
-    def __init__(self, storage_service: StorageService, **kwargs) -> None:
-        super().__init__(**kwargs)
-
-        self._storage_service = storage_service
+    def __init__(self, storage_service: StorageService, sid: int = None, version: int = None,
+                 condition_version: int = None, limit: int = None, offset: int = None, **kwargs):
+        StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
+        VPNServersMeta.__init__(self, sid=sid, version=version, condition_version=condition_version)
 
 
 class VPNServersMetaDB(VPNServersMetaStored):
@@ -52,6 +57,8 @@ class VPNServersMetaDB(VPNServersMetaStored):
     def find(self):
         logging.info('VPNServersMetaDB find method')
         select_sql = 'SELECT * FROM public.vpnserversmeta'
+        if self._limit:
+            select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
         logging.debug('Select SQL: %s' % select_sql)
 
         try:

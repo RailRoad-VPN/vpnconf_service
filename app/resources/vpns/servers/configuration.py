@@ -4,7 +4,7 @@ import sys
 import uuid
 from http import HTTPStatus
 
-from flask import Response, request, make_response
+from flask import Response, request
 
 from app.exception import *
 from app.model.vpn.server.configuration import VPNServerConfigurationDB
@@ -35,9 +35,9 @@ class VPNServerConfigurationAPI(ResourceAPI):
     def post(self) -> Response:
         request_json = request.json
 
-        user_suuid = request_json.get(VPNServerConfigurationDB.user_suuid_field, None)
-        server_suuid = request_json.get(VPNServerConfigurationDB.server_suuid_field, None)
-        file_path = request_json.get(VPNServerConfigurationDB.file_path_field, None)
+        user_suuid = request_json.get(VPNServerConfigurationDB._user_suuid_field, None)
+        server_suuid = request_json.get(VPNServerConfigurationDB._server_suuid_field, None)
+        file_path = request_json.get(VPNServerConfigurationDB._file_path_field, None)
 
         vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service, user_suuid=user_suuid,
                                                       server_suuid=server_suuid, file_path=file_path)
@@ -85,9 +85,9 @@ class VPNServerConfigurationAPI(ResourceAPI):
             resp = make_api_response(json.dumps(response_data.serialize()), http_code)
             return resp
 
-        user_suuid = request_json.get(VPNServerConfigurationDB.user_suuid_field, None)
-        server_suuid = request_json.get(VPNServerConfigurationDB.server_suuid_field, None)
-        file_path = request_json.get(VPNServerConfigurationDB.file_path_field, None)
+        user_suuid = request_json.get(VPNServerConfigurationDB._user_suuid_field, None)
+        server_suuid = request_json.get(VPNServerConfigurationDB._server_suuid_field, None)
+        file_path = request_json.get(VPNServerConfigurationDB._file_path_field, None)
 
         vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service, suuid=suuid,
                                                       user_suuid=user_suuid, server_suuid=server_suuid,
@@ -110,6 +110,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
         return resp
 
     def get(self, server_suuid: str = None) -> Response:
+        super(VPNServerConfigurationAPI, self).get(req=request)
         if server_suuid is not None:
             is_valid = check_uuid(server_suuid)
             if not is_valid:
@@ -128,7 +129,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
             try:
                 vpnserverconfig = vpnserverconfig_db.find_by_server_suuid()
                 response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
-                                            data=vpnserverconfig.to_dict())
+                                            data=vpnserverconfig.to_api_dict())
                 resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
             except VPNNotFoundException as e:
                 logging.error(e)
@@ -150,13 +151,16 @@ class VPNServerConfigurationAPI(ResourceAPI):
                 resp = make_api_response(json.dumps(response_data.serialize()), http_code)
 
         else:
-            vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service)
+            vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service,
+                                                          limit=self.pagination.limit, offset=self.pagination.offset)
 
             try:
                 vpnserverconfig_list = vpnserverconfig_db.find()
-                vpnserverconfigs_dict = [vpnserverconfig_list[i].to_dict() for i in range(0, len(vpnserverconfig_list))]
+                vpnserverconfigs_dict = [vpnserverconfig_list[i].to_api_dict() for i in
+                                         range(0, len(vpnserverconfig_list))]
                 response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
-                                            data=vpnserverconfigs_dict)
+                                            data=vpnserverconfigs_dict, limit=self.pagination.limit,
+                                            offset=self.pagination.offset)
                 resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
             except VPNNotFoundException as e:
                 logging.error(e)
