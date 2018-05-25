@@ -168,7 +168,7 @@ class GeoAPI(ResourceAPI):
                 return make_api_response(json.dumps(response_data.serialize()), http_code)
 
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
-                                        data=geo.to_dict())
+                                        data=geo.to_api_dict())
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
         else:
             geo_db = GeoDB(storage_service=self.__db_storage_service)
@@ -194,7 +194,7 @@ class GeoAPI(ResourceAPI):
                                             developer_message=developer_message, error_code=error_code)
                 return make_api_response(json.dumps(response_data.serialize()), http_code)
 
-            geos_dict = [geo_list[i].to_dict() for i in range(0, len(geo_list))]
+            geos_dict = [geo_list[i].to_api_dict() for i in range(0, len(geo_list))]
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=geos_dict)
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
 

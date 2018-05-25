@@ -173,7 +173,7 @@ class VPNServerAPI(ResourceAPI):
                 return make_api_response(json.dumps(response_data.serialize()), http_code)
 
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
-                                        data=vpnserver.to_dict())
+                                        data=vpnserver.to_api_dict())
             resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
         else:
             try:
@@ -197,7 +197,7 @@ class VPNServerAPI(ResourceAPI):
                                             developer_message=developer_message, error_code=error_code)
                 return make_api_response(json.dumps(response_data.serialize()), http_code)
 
-            vpnservers_dict = [vpnserver_list[i].to_dict() for i in range(0, len(vpnserver_list))]
+            vpnservers_dict = [vpnserver_list[i].to_api_dict() for i in range(0, len(vpnserver_list))]
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
                                         data=vpnservers_dict, limit=self.pagination.limit,
                                         offset=self.pagination.offset)

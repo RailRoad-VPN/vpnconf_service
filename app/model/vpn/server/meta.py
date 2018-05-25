@@ -23,7 +23,6 @@ class VPNServersMeta(object):
 
     def to_dict(self):
         return {
-            'id': self._sid,
             'version': self._version,
             'state_version': self._state_version,
         }

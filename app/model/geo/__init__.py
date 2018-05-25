@@ -65,6 +65,23 @@ class Geo(object):
             'created_date': self._created_date,
         }
 
+    def to_api_dict(self):
+        return {
+            'id': self._sid,
+            'latitude': self._latitude,
+            'longitude': self._longitude,
+            'country_code': self._country_code,
+            'state_code': self._state_code,
+            'city_id': self._city_id,
+            'region_common': self._region_common,
+            'region_dvd': self._region_dvd,
+            'region_xbox360': self._region_xbox360,
+            'region_xboxone': self._region_xboxone,
+            'region_playstation3': self._region_playstation3,
+            'region_playstation4': self._region_playstation4,
+            'region_nintendo': self._region_nintendo,
+        }
+
 
 class GeoStored(Geo):
     __version__ = 1

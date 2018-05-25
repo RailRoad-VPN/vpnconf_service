@@ -37,6 +37,18 @@ class VPNServer(object):
         self._geo_position_id = geo_position_id
         self._created_date = created_date
 
+    def to_api_dict(self):
+        return {
+            'uuid': self._suuid,
+            'version': self._version,
+            'state_version': self._state_version,
+            'type_id': self._type_id,
+            'status_id': self._status_id,
+            'bandwidth': self._bandwidth,
+            'load': self._load,
+            'geo_position_id': self._geo_position_id,
+        }
+
     def to_dict(self):
         return {
             'uuid': self._suuid,
