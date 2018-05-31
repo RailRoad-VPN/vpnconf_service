@@ -38,9 +38,11 @@ class VPNServerConfigurationAPI(ResourceAPI):
         user_suuid = request_json.get(VPNServerConfigurationDB._user_suuid_field, None)
         server_suuid = request_json.get(VPNServerConfigurationDB._server_suuid_field, None)
         file_path = request_json.get(VPNServerConfigurationDB._file_path_field, None)
+        configuration = request_json.get(VPNServerConfigurationDB._configuration_field, None)
 
         vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service, user_suuid=user_suuid,
-                                                      server_suuid=server_suuid, file_path=file_path)
+                                                      server_suuid=server_suuid, file_path=file_path,
+                                                      configuration=configuration)
 
         try:
             suuid = vpnserverconfig_db.create()
@@ -61,7 +63,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
     def put(self, suuid: str) -> Response:
         request_json = request.json
 
-        vpnserverconfig_suuid = request_json.get(VPNServerConfigurationDB.suuid_field, None)
+        vpnserverconfig_suuid = request_json.get(VPNServerConfigurationDB._suuid_field, None)
 
         is_valid_suuid = check_uuid(suuid)
         is_valid_vpnserver_suuid = check_uuid(vpnserverconfig_suuid)
@@ -88,10 +90,11 @@ class VPNServerConfigurationAPI(ResourceAPI):
         user_suuid = request_json.get(VPNServerConfigurationDB._user_suuid_field, None)
         server_suuid = request_json.get(VPNServerConfigurationDB._server_suuid_field, None)
         file_path = request_json.get(VPNServerConfigurationDB._file_path_field, None)
+        configuration = request_json.get(VPNServerConfigurationDB._configuration_field, None)
 
         vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service, suuid=suuid,
                                                       user_suuid=user_suuid, server_suuid=server_suuid,
-                                                      file_path=file_path)
+                                                      file_path=file_path, configuration=configuration)
 
         try:
             vpnserverconfig_db.update()
@@ -109,9 +112,13 @@ class VPNServerConfigurationAPI(ResourceAPI):
         resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, uuid)
         return resp
 
-    def get(self, server_suuid: str = None) -> Response:
+    def get(self, server_suuid: str, user_suuid: str = None) -> Response:
         super(VPNServerConfigurationAPI, self).get(req=request)
-        if server_suuid is not None:
+
+        vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service,
+                                                      server_suuid=server_suuid, user_suuid=user_suuid)
+        if user_suuid is not None:
+            # user configuration
             is_valid = check_uuid(server_suuid)
             if not is_valid:
                 error = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.phrase
@@ -123,14 +130,40 @@ class VPNServerConfigurationAPI(ResourceAPI):
                 resp = make_api_response(json.dumps(response_data.serialize()), http_code)
                 return resp
 
-            vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service,
-                                                          server_suuid=server_suuid)
-
+            try:
+                vpnserverconfig = vpnserverconfig_db.find_user_config()
+                response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
+                                            data=vpnserverconfig.to_api_dict())
+                resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
+                return resp
+            except VPNNotFoundException as e:
+                logging.error(e)
+                error_code = e.error_code
+                error = e.error
+                developer_message = e.developer_message
+                http_code = HTTPStatus.NOT_FOUND
+                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+                                            developer_message=developer_message, error_code=error_code)
+                resp = make_api_response(json.dumps(response_data.serialize()), http_code)
+                return resp
+            except VPNException as e:
+                logging.error(e)
+                error_code = e.error_code
+                error = e.error
+                developer_message = e.developer_message
+                http_code = HTTPStatus.BAD_REQUEST
+                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+                                            developer_message=developer_message, error_code=error_code)
+                resp = make_api_response(json.dumps(response_data.serialize()), http_code)
+                return resp
+        else:
+            # all server configurations
             try:
                 vpnserverconfig = vpnserverconfig_db.find_by_server_suuid()
                 response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
                                             data=vpnserverconfig.to_api_dict())
                 resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
+                return resp
             except VPNNotFoundException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -140,6 +173,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
                 resp = make_api_response(json.dumps(response_data.serialize()), http_code)
+                return resp
             except VPNException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -149,36 +183,4 @@ class VPNServerConfigurationAPI(ResourceAPI):
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
                 resp = make_api_response(json.dumps(response_data.serialize()), http_code)
-
-        else:
-            vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service,
-                                                          limit=self.pagination.limit, offset=self.pagination.offset)
-
-            try:
-                vpnserverconfig_list = vpnserverconfig_db.find()
-                vpnserverconfigs_dict = [vpnserverconfig_list[i].to_api_dict() for i in
-                                         range(0, len(vpnserverconfig_list))]
-                response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
-                                            data=vpnserverconfigs_dict, limit=self.pagination.limit,
-                                            offset=self.pagination.offset)
-                resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
-            except VPNNotFoundException as e:
-                logging.error(e)
-                error_code = e.error_code
-                error = e.error
-                developer_message = e.developer_message
-                http_code = HTTPStatus.NOT_FOUND
-                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
-                                            developer_message=developer_message, error_code=error_code)
-                resp = make_api_response(json.dumps(response_data.serialize()), http_code)
-            except VPNException as e:
-                logging.error(e)
-                error_code = e.error_code
-                error = e.error
-                developer_message = e.developer_message
-                http_code = HTTPStatus.BAD_REQUEST
-                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
-                                            developer_message=developer_message, error_code=error_code)
-                resp = make_api_response(json.dumps(response_data.serialize()), http_code)
-
-        return resp
+                return resp

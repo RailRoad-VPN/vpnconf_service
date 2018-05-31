@@ -10,7 +10,7 @@ from app.resources.geos.country import CountryAPI
 from app.resources.geos.state import StateAPI
 from app.resources.vpns import VPNTypeAPI
 from app.resources.vpns.servers import VPNServerAPI
-from app.resources.vpns.servers.configuration import VPNServerConfigurationAPI
+from app.resources.vpns.servers.configurations import VPNServerConfigurationAPI
 from app.resources.vpns.servers.meta import VPNServersMetaAPI
 from app.resources.vpns.servers.status import VPNServerStatusAPI
 
@@ -50,6 +50,8 @@ app.add_url_rule('%s/<string:suuid>' % vpnserver_api_url, view_func=vpnserver_ap
 vpnserverconfig_api_url = '%s/%s' % (app.config['API_BASE_URI'], VPNServerConfigurationAPI.__api_url__)
 vpnserverconfig_api_view_func = VPNServerConfigurationAPI.as_view('vpnserverconfig_api', db_storage_service, app.config)
 app.add_url_rule(vpnserverconfig_api_url, view_func=vpnserverconfig_api_view_func, methods=['GET', 'POST', 'PUT'])
+app.add_url_rule("%s/user/<string:user_suuid>" % vpnserverconfig_api_url, view_func=vpnserverconfig_api_view_func,
+                 methods=['GET'])
 
 # VPN SERVER STATUSES API
 vpnserverstatus_api_url = '%s/%s' % (app.config['API_BASE_URI'], VPNServerStatusAPI.__api_url__)

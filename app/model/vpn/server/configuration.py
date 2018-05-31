@@ -17,12 +17,17 @@ class VPNServerConfiguration(object):
     _user_suuid = None
     _server_suuid = None
     _file_path = None
+    _configuration = None
+    _version = None
 
-    def __init__(self, suuid: str = None, user_suuid: str = None, server_suuid: str = None, file_path: str = None):
+    def __init__(self, suuid: str = None, user_suuid: str = None, server_suuid: str = None, file_path: str = None,
+                 configuration: str = None, version: int = None):
         self._suuid = suuid
         self._user_suuid = user_suuid
         self._server_suuid = server_suuid
         self._file_path = file_path
+        self._configuration = configuration
+        self._version = version
 
     def to_dict(self):
         return {
@@ -30,6 +35,8 @@ class VPNServerConfiguration(object):
             'user_uuid': self._user_suuid,
             'server_uuid': self._server_suuid,
             'file_path': self._file_path,
+            'configuration': self._configuration,
+            'version': self._version,
         }
 
     def to_api_dict(self):
@@ -37,7 +44,8 @@ class VPNServerConfiguration(object):
             'uuid': self._suuid,
             'user_uuid': self._user_suuid,
             'server_uuid': self._server_suuid,
-            'file_path': self._file_path,
+            'configuration': self._configuration,
+            'version': self._version,
         }
 
 
@@ -45,10 +53,11 @@ class VPNServerConfigurationStored(StoredObject, VPNServerConfiguration):
     __version__ = 1
 
     def __init__(self, storage_service: StorageService, suuid: str = None, user_suuid: str = None,
-                 server_suuid: str = None, file_path: str = None, limit: int = None, offset: int = None, **kwargs):
+                 server_suuid: str = None, file_path: str = None, configuration: str = None, version: int = None,
+                 limit: int = None, offset: int = None, **kwargs):
         StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
         VPNServerConfiguration.__init__(self, suuid=suuid, user_suuid=user_suuid, server_suuid=server_suuid,
-                                        file_path=file_path)
+                                        file_path=file_path, configuration=configuration, version=version)
 
 
 class VPNServerConfigurationDB(VPNServerConfigurationStored):
@@ -58,6 +67,8 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
     _user_suuid_field = 'user_uuid'
     _server_suuid_field = 'server_uuid'
     _file_path_field = 'file_path'
+    _configuration_field = 'configuration'
+    _version_field = 'version'
 
     def __init__(self, storage_service: StorageService, **kwargs):
         super().__init__(storage_service, **kwargs)
@@ -70,6 +81,8 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                         user_uuid,
                         server_uuid,
                         file_path,
+                        configuration,
+                        version,
                         to_json(created_date) AS created_date 
                       FROM public.vpnserver_configuration
                       '''
@@ -108,6 +121,8 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                         user_uuid,
                         server_uuid,
                         file_path,
+                        configuration,
+                        version,
                         to_json(created_date) AS created_date 
                       FROM public.vpnserver_configuration
                       WHERE uuid = ?
@@ -155,6 +170,8 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                         user_uuid,
                         server_uuid,
                         file_path,
+                        configuration,
+                        version,
                         to_json(created_date) AS created_date 
                       FROM public.vpnserver_configuration
                       WHERE server_uuid = ?
@@ -197,21 +214,74 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
 
         return self.__map_vpnserverconfigdb_to_vpnserverconfig(vpnserver_db)
 
+    def find_user_config(self):
+        logging.info('VPNServerConfigurationDB find_user_config method')
+        select_sql = '''
+                      SELECT 
+                        uuid,
+                        user_uuid,
+                        server_uuid,
+                        file_path,
+                        configuration,
+                        version,
+                        to_json(created_date) AS created_date 
+                      FROM public.vpnserver_configuration
+                      WHERE server_uuid = ? AND user_uuid = ?
+                      '''
+        logging.debug('Select SQL: %s' % select_sql)
+        params = (self._server_suuid, self._user_suuid)
+
+        try:
+            logging.debug('Call database service')
+            vpnserver_configuration_list_db = self._storage_service.get(sql=select_sql, data=params)
+        except DatabaseError as e:
+            logging.error(e)
+            try:
+                e = e.args[0]
+            except IndexError:
+                pass
+            error_message = VPNCError.VPNSERVERCONFIG_FIND_USER_CONFIG_ERROR_DB.phrase
+            error_code = VPNCError.VPNSERVERCONFIG_FIND_USER_CONFIG_ERROR_DB.value
+            developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
+                                "Code: %s . %s" % (
+                                    VPNCError.VPNSERVERCONFIG_FIND_BY_SERVER_UUID_ERROR_DB.description,
+                                    e.pgcode, e.pgerror
+                                )
+            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
+
+        if len(vpnserver_configuration_list_db) == 1:
+            vpnserver_db = vpnserver_configuration_list_db[0]
+        elif len(vpnserver_configuration_list_db) == 0:
+            error_message = VPNCError.VPNSERVERCONFIG_FIND_USER_CONFIG_ERROR.phrase
+            error_code = VPNCError.VPNSERVERCONFIG_FIND_USER_CONFIG_ERROR.value
+            developer_message = VPNCError.VPNSERVERCONFIG_FIND_USER_CONFIG_ERROR.description
+            raise VPNNotFoundException(error=error_message, error_code=error_code, developer_message=developer_message)
+        else:
+            error_message = VPNCError.VPNSERVERCONFIG_FIND_USER_CONFIG_ERROR.phrase
+            developer_message = "%s. Find by specified uuid return more than 1 object. This is CAN NOT be! Something " \
+                                "really bad with database." \
+                                % VPNCError.VPNSERVERCONFIG_FIND_USER_CONFIG_ERROR.description
+            error_code = VPNCError.VPNSERVERCONFIG_FIND_USER_CONFIG_ERROR.value
+            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
+
+        return self.__map_vpnserverconfigdb_to_vpnserverconfig(vpnserver_db)
+
     def create(self):
         logging.info('VPNServerConfiguration create method')
         self._suuid = uuid.uuid4()
         logging.info('Create object VPNServerConfiguration with uuid: ' + str(self._suuid))
         insert_sql = '''
                       INSERT INTO public.vpnserver_configuration 
-                        (uuid, server_uuid, user_uuid, file_path) 
+                        (uuid, server_uuid, user_uuid, file_path, configuration) 
                       VALUES 
-                        (?, ?, ?, ?)
+                        (?, ?, ?, ?, ?)
                      '''
         insert_params = (
             self._suuid,
             self._server_suuid,
             self._user_suuid,
             self._file_path,
+            self._configuration,
         )
         logging.debug('Create VPNServerConfiguration SQL : %s' % insert_sql)
 
@@ -244,7 +314,9 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                     SET
                         server_uuid = ?, 
                         user_uuid = ?, 
-                        file_path = ?
+                        file_path = ?,
+                        configuration = ?,
+                        version = version + 1
                     WHERE 
                       uuid = ?
                     '''
@@ -255,6 +327,7 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
             self._server_suuid,
             self._user_suuid,
             self._file_path,
+            self._configuration,
             self._suuid,
         )
 
@@ -280,4 +353,6 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
             suuid=vpnserverconfig_db[self._suuid_field], user_suuid=vpnserverconfig_db[self._user_suuid_field],
             server_suuid=vpnserverconfig_db[self._server_suuid_field],
             file_path=vpnserverconfig_db[self._file_path_field],
+            configuration=vpnserverconfig_db[self._configuration_field],
+            version=vpnserverconfig_db[self._version_field],
         )

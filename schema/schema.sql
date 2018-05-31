@@ -105,6 +105,8 @@ CREATE TABLE public.vpnserver_configuration
   , user_uuid UUID NOT NULL
   , server_uuid UUID REFERENCES public.vpnserver(uuid) NOT NULL
   , file_path VARCHAR(1024) NOT NULL
+  , configuration TEXT NOT NULL
+  , version INT DEFAULT 1 NOT NULL
   , created_date TIMESTAMP NOT NULL DEFAULT now()
 );
 
