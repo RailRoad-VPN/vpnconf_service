@@ -18,7 +18,7 @@ class State(object):
     _name = None
     _created_date = None
 
-    def __init__(self, code: str = None, country_code: int = None, name: str = None, created_date: datetime = None):
+    def __init__(self, code: int = None, country_code: int = None, name: str = None, created_date: datetime = None):
         self._code = code
         self._country_code = country_code
         self._name = name
@@ -43,7 +43,7 @@ class State(object):
 class StateStored(StoredObject, State):
     __version__ = 1
 
-    def __init__(self, storage_service: StorageService, code: str = None, country_code: int = None, name: str = None,
+    def __init__(self, storage_service: StorageService, code: int = None, country_code: int = None, name: str = None,
                  created_date: datetime = None, limit: int = None, offset: int = None, **kwargs):
         StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
         State.__init__(self, code=code, country_code=country_code, name=name, created_date=created_date)
@@ -64,7 +64,7 @@ class StateDB(StateStored):
         logging.info('StateDB find method')
         select_sql = '''
                       SELECT 
-                        code
+                        code,
                         country_code,
                         name,
                         to_json(created_date) AS created_date 
@@ -100,7 +100,7 @@ class StateDB(StateStored):
         logging.info('StateDB find_by_code method')
         select_sql = '''
                       SELECT 
-                        code
+                        code,
                         country_code,
                         name,
                         to_json(created_date) AS created_date 

@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 
 # Load the default configuration
-app.config.from_object('config.TestingConfig')
+app.config.from_object('config.DevelopmentConfig')
 
 with app.app_context():
     psql = PostgreSQL(app=app)
@@ -38,7 +38,11 @@ app.add_url_rule(vpnserver_api_url, view_func=vpnserver_api_view_func, methods=[
 # VPN SERVERS API
 vpnserver_api_url = '%s/%s' % (app.config['API_BASE_URI'], VPNServerAPI.__api_url__)
 vpnserver_api_view_func = VPNServerAPI.as_view('vpnserver_api', db_storage_service, app.config)
-app.add_url_rule(vpnserver_api_url, view_func=vpnserver_api_view_func, methods=['GET', 'POST', 'PUT'])
+app.add_url_rule(vpnserver_api_url, view_func=vpnserver_api_view_func, methods=['GET'])
+app.add_url_rule('%s/type/<int:type_id>' % vpnserver_api_url, view_func=vpnserver_api_view_func,
+                 methods=['GET'])
+app.add_url_rule('%s/status/<int:status_id>' % vpnserver_api_url, view_func=vpnserver_api_view_func,
+                 methods=['GET'])
 app.add_url_rule('%s/<string:suuid>' % vpnserver_api_url, view_func=vpnserver_api_view_func,
                  methods=['GET', 'POST', 'PUT'])
 
