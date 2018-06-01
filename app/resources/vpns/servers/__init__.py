@@ -2,11 +2,13 @@ import json
 import logging
 import sys
 from http import HTTPStatus
+from typing import List
 
 from flask import Response, request
 
 from app.exception import *
 from app.model.vpn.server import VPNServerDB
+from rest import APIResourceURL
 
 sys.path.insert(0, '../psql_library')
 from storage_service import DBStorageService
@@ -20,11 +22,23 @@ from response import APIResponseStatus, APIResponse
 class VPNServerAPI(ResourceAPI):
     __version__ = 1
 
+    __endpoint_name__ = 'VPNServersAPI'
     __api_url__ = 'vpns/servers'
 
     _config = None
 
     __db_storage_service = None
+
+    @staticmethod
+    def get_api_urls(base_url: str) -> List[APIResourceURL]:
+        url = "%s/%s" % (base_url, VPNServerAPI.__api_url__)
+        api_urls = [
+            APIResourceURL(base_url=url, resource_name='', methods=['GET', 'POST']),
+            APIResourceURL(base_url=url, resource_name='<string:suuid>', methods=['GET', 'PUT']),
+            APIResourceURL(base_url=url, resource_name='type/<int:type_id>', methods=['GET']),
+            APIResourceURL(base_url=url, resource_name='status/<int:status_id>', methods=['GET']),
+        ]
+        return api_urls
 
     def __init__(self, db_storage_service: DBStorageService, config: dict) -> None:
         super().__init__()

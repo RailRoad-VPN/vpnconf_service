@@ -1,7 +1,6 @@
 import logging
-from pprint import pprint
-
 import sys
+
 from flask import Flask
 
 from app.resources.geos import GeoAPI
@@ -18,6 +17,9 @@ sys.path.insert(0, '../psql_library')
 from psql_helper import PostgreSQL
 from storage_service import DBStorageService
 
+sys.path.insert(1, '../rest_api_library')
+from api import register_api
+
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
@@ -30,69 +32,19 @@ with app.app_context():
 
 db_storage_service = DBStorageService(psql=psql)
 
-# VPN SERVERS META API
-vpnserver_api_url = '%s/%s' % (app.config['API_BASE_URI'], VPNServersMetaAPI.__api_url__)
-vpnserver_api_view_func = VPNServersMetaAPI.as_view('vpnserversmeta_api', db_storage_service, app.config)
-app.add_url_rule(vpnserver_api_url, view_func=vpnserver_api_view_func, methods=['GET', 'POST', 'PUT'])
+app_config = app.config
+api_base_uri = app_config['API_BASE_URI']
 
-# VPN SERVERS API
-vpnserver_api_url = '%s/%s' % (app.config['API_BASE_URI'], VPNServerAPI.__api_url__)
-vpnserver_api_view_func = VPNServerAPI.as_view('vpnserver_api', db_storage_service, app.config)
-app.add_url_rule(vpnserver_api_url, view_func=vpnserver_api_view_func, methods=['GET'])
-app.add_url_rule('%s/type/<int:type_id>' % vpnserver_api_url, view_func=vpnserver_api_view_func,
-                 methods=['GET'])
-app.add_url_rule('%s/status/<int:status_id>' % vpnserver_api_url, view_func=vpnserver_api_view_func,
-                 methods=['GET'])
-app.add_url_rule('%s/<string:suuid>' % vpnserver_api_url, view_func=vpnserver_api_view_func,
-                 methods=['GET', 'POST', 'PUT'])
+apis = [
+    {'cls': VPNServersMetaAPI, 'args': [db_storage_service, app_config]},
+    {'cls': VPNServerAPI, 'args': [db_storage_service, app_config]},
+    {'cls': VPNServerConfigurationAPI, 'args': [db_storage_service, app_config]},
+    {'cls': VPNServerStatusAPI, 'args': [db_storage_service, app_config]},
+    {'cls': VPNTypeAPI, 'args': [db_storage_service, app_config]},
+    {'cls': GeoAPI, 'args': [db_storage_service, app_config]},
+    {'cls': CityAPI, 'args': [db_storage_service, app_config]},
+    {'cls': CountryAPI, 'args': [db_storage_service, app_config]},
+    {'cls': StateAPI, 'args': [db_storage_service, app_config]},
+]
 
-# VPN SERVER CONFIGURATIONS API
-vpnserverconfig_api_url = '%s/%s' % (app.config['API_BASE_URI'], VPNServerConfigurationAPI.__api_url__)
-vpnserverconfig_api_view_func = VPNServerConfigurationAPI.as_view('vpnserverconfig_api', db_storage_service, app.config)
-app.add_url_rule(vpnserverconfig_api_url, view_func=vpnserverconfig_api_view_func, methods=['GET', 'POST', 'PUT'])
-app.add_url_rule("%s/user/<string:user_suuid>" % vpnserverconfig_api_url, view_func=vpnserverconfig_api_view_func,
-                 methods=['GET'])
-
-# VPN SERVER STATUSES API
-vpnserverstatus_api_url = '%s/%s' % (app.config['API_BASE_URI'], VPNServerStatusAPI.__api_url__)
-vpnserverstatus_api_view_func = VPNServerStatusAPI.as_view('vpnserverstatus_api', db_storage_service, app.config)
-app.add_url_rule(vpnserverstatus_api_url, view_func=vpnserverstatus_api_view_func, methods=['GET', 'POST', 'PUT'])
-app.add_url_rule('%s/<int:sid>' % vpnserverstatus_api_url, view_func=vpnserverstatus_api_view_func,
-                 methods=['GET', 'POST', 'PUT'])
-
-# VPN TYPES API
-vpntype_api_url = '%s/%s' % (app.config['API_BASE_URI'], VPNTypeAPI.__api_url__)
-vpntype_api_view_func = VPNTypeAPI.as_view('vpntype_api', db_storage_service, app.config)
-app.add_url_rule(vpntype_api_url, view_func=vpntype_api_view_func, methods=['GET', 'POST', 'PUT'])
-app.add_url_rule('%s/<int:sid>' % vpntype_api_url, view_func=vpntype_api_view_func, methods=['GET', 'POST', 'PUT'])
-
-# Geo Positions API
-geoposition_api_url = '%s/%s' % (app.config['API_BASE_URI'], GeoAPI.__api_url__)
-geoposition_api_view_func = GeoAPI.as_view('geopos_api', db_storage_service, app.config)
-app.add_url_rule(geoposition_api_url, view_func=geoposition_api_view_func, methods=['GET', 'POST', 'PUT'])
-app.add_url_rule('%s/<int:sid>' % geoposition_api_url, view_func=geoposition_api_view_func,
-                 methods=['GET', 'POST', 'PUT'])
-
-# Geo Position Cities API
-geopositioncity_api_url = '%s/%s' % (app.config['API_BASE_URI'], CityAPI.__api_url__)
-geopositioncity_api_view_func = CityAPI.as_view('geoposcity_api', db_storage_service, app.config)
-app.add_url_rule(geopositioncity_api_url, view_func=geopositioncity_api_view_func, methods=['GET', 'POST', 'PUT'])
-app.add_url_rule('%s/<int:sid>' % geopositioncity_api_url, view_func=geopositioncity_api_view_func,
-                 methods=['GET', 'POST', 'PUT'])
-
-# Geo Position Countries API
-geopositioncountry_api_url = '%s/%s' % (app.config['API_BASE_URI'], CountryAPI.__api_url__)
-geopositioncountry_api_view_func = CountryAPI.as_view('geoposcountry_api', db_storage_service, app.config)
-app.add_url_rule(geopositioncountry_api_url, view_func=geopositioncountry_api_view_func, methods=['GET', 'POST', 'PUT'])
-app.add_url_rule('%s/<string:code>' % geopositioncountry_api_url, view_func=geopositioncountry_api_view_func,
-                 methods=['GET', 'POST', 'PUT'])
-
-# Geo Position States API
-geopositionstate_api_url = '%s/%s' % (app.config['API_BASE_URI'], StateAPI.__api_url__)
-geopositionstate_api_view_func = StateAPI.as_view('geoposstate_api', db_storage_service, app.config)
-app.add_url_rule(geopositionstate_api_url, view_func=geopositionstate_api_view_func, methods=['GET', 'POST', 'PUT'])
-app.add_url_rule('%s/<string:code>' % geopositionstate_api_url, view_func=geopositionstate_api_view_func,
-                 methods=['GET', 'POST', 'PUT'])
-
-
-pprint(app.url_map._rules_by_endpoint)
+register_api(app, api_base_uri, apis)
