@@ -12,6 +12,8 @@ class Config(object):
 
 
 class ProductionConfig(Config):
+    ENV = 'production'
+
     PSQL_DBNAME = 'rrnvpnc'
     PSQL_USER = 'railroadman'
     PSQL_PASSWORD = ''
@@ -19,6 +21,8 @@ class ProductionConfig(Config):
 
 
 class DevelopmentConfig(Config):
+    ENV = 'development'
+
     DEBUG = True
 
     PSQL_DBNAME = 'rrnvpnc'
@@ -28,6 +32,8 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
+    ENV = 'testing'
+
     TESTING = True
     DEBUG = True
 

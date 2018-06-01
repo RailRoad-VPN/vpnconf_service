@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 
 from flask import Flask
@@ -24,8 +25,9 @@ logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 
-# Load the default configuration
-app.config.from_object('config.TestingConfig')
+# Load config based on env variable
+ENVIRONMENT_CONFIG = os.environ.get("ENVIRONMENT_CONFIG", default='DevelopmentConfig')
+app.config.from_object("%s.%s" % ('config', ENVIRONMENT_CONFIG))
 
 with app.app_context():
     psql = PostgreSQL(app=app)
