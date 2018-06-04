@@ -9,7 +9,6 @@ from flask import Response, request
 
 from app.exception import *
 from app.model.geo import GeoDB
-from rest import APIResourceURL
 
 sys.path.insert(0, '../psql_library')
 from storage_service import DBStorageService
@@ -18,6 +17,7 @@ sys.path.insert(1, '../rest_api_library')
 from utils import JSONDecimalEncoder, make_api_response
 from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
+from rest import APIResourceURL
 
 
 class GeoAPI(ResourceAPI):
