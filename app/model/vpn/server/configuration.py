@@ -41,9 +41,9 @@ class VPNServerConfiguration(object):
 
     def to_api_dict(self):
         return {
-            'uuid': self._suuid,
-            'user_uuid': self._user_suuid,
-            'server_uuid': self._server_suuid,
+            'uuid': str(self._suuid),
+            'user_uuid': str(self._user_suuid),
+            'server_uuid': str(self._server_suuid),
             'configuration': self._configuration,
             'version': self._version,
         }

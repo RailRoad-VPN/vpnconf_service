@@ -9,6 +9,18 @@ CREATE TRIGGER check_vpnserver_update
   WHEN (OLD.* IS DISTINCT FROM NEW.* AND pg_trigger_depth() = 0)
   EXECUTE PROCEDURE update_vpnserver_version();
 
+-- increment version when add new VPN Server
+CREATE TRIGGER vpnserver_insert_update_version
+    AFTER INSERT ON public.vpnserver
+    FOR EACH ROW
+    EXECUTE PROCEDURE update_vpnserver_version();
+
+-- increment condition version when add new VPN Server
+CREATE TRIGGER vpnserver_insert_update_condition_version
+    AFTER INSERT ON public.vpnserver
+    FOR EACH ROW
+    EXECUTE PROCEDURE update_vpnserver_condition_version();
+
 -- increment VPN Server state version when vpn server fields (on of) load or bandwidth or geo_pos_id were changed
 CREATE TRIGGER check_vpnserver_state_update
   AFTER UPDATE ON public.vpnserver

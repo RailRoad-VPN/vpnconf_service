@@ -49,7 +49,7 @@ class VPNServersMetaAPI(ResourceAPI):
                                     error=HTTPStatus.METHOD_NOT_ALLOWED.phrase,
                                     error_code=HTTPStatus.METHOD_NOT_ALLOWED)
 
-        resp = make_api_response(json.dumps(response_data.serialize()), HTTPStatus.METHOD_NOT_ALLOWED)
+        resp = make_api_response(response_data, HTTPStatus.METHOD_NOT_ALLOWED)
         return resp
 
     def put(self, sid: int) -> Response:
@@ -57,7 +57,7 @@ class VPNServersMetaAPI(ResourceAPI):
                                     error=HTTPStatus.METHOD_NOT_ALLOWED.phrase,
                                     error_code=HTTPStatus.METHOD_NOT_ALLOWED)
 
-        resp = make_api_response(json.dumps(response_data.serialize()), HTTPStatus.METHOD_NOT_ALLOWED)
+        resp = make_api_response(response_data, HTTPStatus.METHOD_NOT_ALLOWED)
         return resp
 
     def get(self) -> Response:
@@ -76,7 +76,7 @@ class VPNServersMetaAPI(ResourceAPI):
             http_code = HTTPStatus.NOT_FOUND
             response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
-            return make_api_response(json.dumps(response_data.serialize()), http_code)
+            return make_api_response(response_data, http_code)
         except VPNException as e:
             logging.error(e)
             error_code = e.error_code
@@ -85,11 +85,11 @@ class VPNServersMetaAPI(ResourceAPI):
             http_code = HTTPStatus.BAD_REQUEST
             response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
-            return make_api_response(json.dumps(response_data.serialize()), http_code)
+            return make_api_response(response_data, http_code)
 
         response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
                                     data=vpnserversmeta.to_api_dict(), limit=self.pagination.limit,
                                     offset=self.pagination.offset)
-        resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
+        resp = make_api_response(response_data, HTTPStatus.OK)
 
         return resp

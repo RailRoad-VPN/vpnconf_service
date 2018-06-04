@@ -39,7 +39,7 @@ class VPNServer(object):
 
     def to_api_dict(self):
         return {
-            'uuid': self._suuid,
+            'uuid': str(self._suuid),
             'version': self._version,
             'condition_version': self._condition_version,
             'type_id': self._type_id,
@@ -51,7 +51,7 @@ class VPNServer(object):
 
     def to_dict(self):
         return {
-            'uuid': self._suuid,
+            'uuid': str(self._suuid),
             'version': self._version,
             'condition_version': self._condition_version,
             'type_id': self._type_id,

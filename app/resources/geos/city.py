@@ -61,7 +61,7 @@ class CityAPI(ResourceAPI):
             http_code = HTTPStatus.BAD_REQUEST
             response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
-            return make_api_response(json.dumps(response_data.serialize()), http_code)
+            return make_api_response(response_data, http_code)
 
         resp = make_api_response('', HTTPStatus.CREATED)
         resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, sid)
@@ -81,7 +81,7 @@ class CityAPI(ResourceAPI):
             http_code = HTTPStatus.BAD_REQUEST
             response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
-            resp = make_api_response(json.dumps(response_data.serialize()), http_code)
+            resp = make_api_response(response_data, http_code)
             return resp
 
         if sid != city_sid:
@@ -91,7 +91,7 @@ class CityAPI(ResourceAPI):
             http_code = HTTPStatus.BAD_REQUEST
             response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
-            resp = make_api_response(json.dumps(response_data.serialize()), http_code)
+            resp = make_api_response(response_data, http_code)
             return resp
 
         name = request_json.get(CityDB._name_field, None)
@@ -108,7 +108,7 @@ class CityAPI(ResourceAPI):
             http_code = HTTPStatus.BAD_REQUEST
             response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
-            return make_api_response(json.dumps(response_data.serialize()), http_code)
+            return make_api_response(response_data, http_code)
 
         resp = make_api_response('', HTTPStatus.OK)
         resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, uuid)
@@ -126,7 +126,7 @@ class CityAPI(ResourceAPI):
                 http_code = HTTPStatus.BAD_REQUEST
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                resp = make_api_response(json.dumps(response_data.serialize()), http_code)
+                resp = make_api_response(response_data, http_code)
                 return resp
 
             city_db = CityDB(storage_service=self.__db_storage_service, sid=sid)
@@ -141,7 +141,7 @@ class CityAPI(ResourceAPI):
                 http_code = HTTPStatus.NOT_FOUND
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_api_response(json.dumps(response_data.serialize()), http_code)
+                return make_api_response(response_data, http_code)
             except VPNException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -150,11 +150,11 @@ class CityAPI(ResourceAPI):
                 http_code = HTTPStatus.BAD_REQUEST
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_api_response(json.dumps(response_data.serialize()), http_code)
+                return make_api_response(response_data, http_code)
 
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
                                         data=city.to_api_dict())
-            resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
+            resp = make_api_response(response_data, HTTPStatus.OK)
         else:
             city_db = CityDB(storage_service=self.__db_storage_service, limit=self.pagination.limit,
                              offset=self.pagination.offset)
@@ -168,7 +168,7 @@ class CityAPI(ResourceAPI):
                 http_code = HTTPStatus.NOT_FOUND
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_api_response(json.dumps(response_data.serialize()), http_code)
+                return make_api_response(response_data, http_code)
             except VPNException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -177,11 +177,11 @@ class CityAPI(ResourceAPI):
                 http_code = HTTPStatus.BAD_REQUEST
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_api_response(json.dumps(response_data.serialize()), http_code)
+                return make_api_response(response_data, http_code)
 
             cities_dict = [city_list[i].to_api_dict() for i in range(0, len(city_list))]
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=cities_dict,
                                         limit=self.pagination.limit, offset=self.pagination.offset)
-            resp = make_api_response(json.dumps(response_data.serialize(), cls=JSONDecimalEncoder), HTTPStatus.OK)
+            resp = make_api_response(response_data, HTTPStatus.OK)
 
         return resp
