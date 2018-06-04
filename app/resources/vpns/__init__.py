@@ -48,7 +48,7 @@ class VPNTypeAPI(ResourceAPI):
                                     error=HTTPStatus.METHOD_NOT_ALLOWED.phrase,
                                     error_code=HTTPStatus.METHOD_NOT_ALLOWED)
 
-        resp = make_api_response(response_data, HTTPStatus.METHOD_NOT_ALLOWED)
+        resp = make_api_response(data=response_data, http_code=HTTPStatus.METHOD_NOT_ALLOWED)
         return resp
 
     def put(self, sid: int) -> Response:
@@ -56,7 +56,7 @@ class VPNTypeAPI(ResourceAPI):
                                     error=HTTPStatus.METHOD_NOT_ALLOWED.phrase,
                                     error_code=HTTPStatus.METHOD_NOT_ALLOWED)
 
-        resp = make_api_response(response_data, HTTPStatus.METHOD_NOT_ALLOWED)
+        resp = make_api_response(data=response_data, http_code=HTTPStatus.METHOD_NOT_ALLOWED)
         return resp
 
     def get(self, sid: int = None) -> Response:
@@ -71,7 +71,7 @@ class VPNTypeAPI(ResourceAPI):
                 http_code = HTTPStatus.BAD_REQUEST
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                resp = make_api_response(response_data, http_code)
+                resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
 
             vpntype_db = VPNTypeDB(storage_service=self.__db_storage_service, sid=sid)
@@ -86,7 +86,7 @@ class VPNTypeAPI(ResourceAPI):
                 http_code = HTTPStatus.NOT_FOUND
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_api_response(response_data, http_code)
+                return make_api_response(data=response_data, http_code=http_code)
             except VPNException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -95,11 +95,11 @@ class VPNTypeAPI(ResourceAPI):
                 http_code = HTTPStatus.BAD_REQUEST
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_api_response(response_data, http_code)
+                return make_api_response(data=response_data, http_code=http_code)
 
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
                                         data=vpntype.to_api_dict())
-            resp = make_api_response(response_data, HTTPStatus.OK)
+            resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
         else:
             vpntype_db = VPNTypeDB(storage_service=self.__db_storage_service, limit=self.pagination.limit,
                                    offset=self.pagination.offset)
@@ -114,7 +114,7 @@ class VPNTypeAPI(ResourceAPI):
                 http_code = HTTPStatus.NOT_FOUND
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_api_response(response_data, http_code)
+                return make_api_response(data=response_data, http_code=http_code)
             except VPNException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -123,11 +123,11 @@ class VPNTypeAPI(ResourceAPI):
                 http_code = HTTPStatus.BAD_REQUEST
                 response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
-                return make_api_response(response_data, http_code)
+                return make_api_response(data=response_data, http_code=http_code)
 
             vpntype_dict = [vpntype_list[i].to_api_dict() for i in range(0, len(vpntype_list))]
             response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
                                         data=vpntype_dict, limit=self.pagination.limit, offset=self.pagination.offset)
-            resp = make_api_response(response_data, HTTPStatus.OK)
+            resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
 
         return resp
