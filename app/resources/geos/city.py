@@ -75,7 +75,7 @@ class CityAPI(ResourceAPI):
             sid = int(sid)
             city_sid = int(city_sid)
         except ValueError:
-            error = VPNCError.CITY_IDENTIFIER_ERROR.phrase
+            error = VPNCError.CITY_IDENTIFIER_ERROR.message
             error_code = VPNCError.CITY_IDENTIFIER_ERROR
             developer_message = VPNCError.CITY_IDENTIFIER_ERROR.description
             http_code = HTTPStatus.BAD_REQUEST
@@ -85,7 +85,7 @@ class CityAPI(ResourceAPI):
             return resp
 
         if sid != city_sid:
-            error = VPNCError.CITY_IDENTIFIER_ERROR.phrase
+            error = VPNCError.CITY_IDENTIFIER_ERROR.message
             error_code = VPNCError.CITY_IDENTIFIER_ERROR
             developer_message = VPNCError.CITY_IDENTIFIER_ERROR.description
             http_code = HTTPStatus.BAD_REQUEST
@@ -120,7 +120,7 @@ class CityAPI(ResourceAPI):
             try:
                 sid = int(sid)
             except ValueError:
-                error = VPNCError.CITY_IDENTIFIER_ERROR.phrase
+                error = VPNCError.CITY_IDENTIFIER_ERROR.message
                 error_code = VPNCError.CITY_IDENTIFIER_ERROR
                 developer_message = VPNCError.CITY_IDENTIFIER_ERROR.description
                 http_code = HTTPStatus.BAD_REQUEST

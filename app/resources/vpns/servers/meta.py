@@ -46,7 +46,7 @@ class VPNServersMetaAPI(ResourceAPI):
 
     def post(self) -> Response:
         response_data = APIResponse(status=APIResponseStatus.failed.value, code=HTTPStatus.METHOD_NOT_ALLOWED,
-                                    error=HTTPStatus.METHOD_NOT_ALLOWED.phrase,
+                                    error=HTTPStatus.METHOD_NOT_ALLOWED.message,
                                     error_code=HTTPStatus.METHOD_NOT_ALLOWED)
 
         resp = make_api_response(data=response_data, http_code=HTTPStatus.METHOD_NOT_ALLOWED)
@@ -54,7 +54,7 @@ class VPNServersMetaAPI(ResourceAPI):
 
     def put(self, sid: int) -> Response:
         response_data = APIResponse(status=APIResponseStatus.failed.value, code=HTTPStatus.METHOD_NOT_ALLOWED,
-                                    error=HTTPStatus.METHOD_NOT_ALLOWED.phrase,
+                                    error=HTTPStatus.METHOD_NOT_ALLOWED.message,
                                     error_code=HTTPStatus.METHOD_NOT_ALLOWED)
 
         resp = make_api_response(data=response_data, http_code=HTTPStatus.METHOD_NOT_ALLOWED)

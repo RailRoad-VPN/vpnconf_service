@@ -24,7 +24,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
     __version__ = 1
 
     __endpoint_name__ = 'VPNServerConfigurationAPI'
-    __api_url__ = 'vpns/servers/<string:server_suuid>/configurations'
+    __api_url__ = 'vpns/servers/<string:server_uuid>/configurations'
 
     _config = None
 
@@ -35,7 +35,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
         url = "%s/%s" % (base_url, VPNServerConfigurationAPI.__api_url__)
         api_urls = [
             APIResourceURL(base_url=url, resource_name='', methods=['GET', 'POST']),
-            APIResourceURL(base_url=url, resource_name='user/<string:user_suuid>', methods=['GET', 'PUT'])
+            APIResourceURL(base_url=url, resource_name='user/<string:user_uuid>', methods=['GET', 'PUT'])
         ]
         return api_urls
 
@@ -47,13 +47,13 @@ class VPNServerConfigurationAPI(ResourceAPI):
     def post(self) -> Response:
         request_json = request.json
 
-        user_suuid = request_json.get(VPNServerConfigurationDB._user_suuid_field, None)
-        server_suuid = request_json.get(VPNServerConfigurationDB._server_suuid_field, None)
+        user_uuid = request_json.get(VPNServerConfigurationDB._user_uuid_field, None)
+        server_uuid = request_json.get(VPNServerConfigurationDB._server_uuid_field, None)
         file_path = request_json.get(VPNServerConfigurationDB._file_path_field, None)
         configuration = request_json.get(VPNServerConfigurationDB._configuration_field, None)
 
-        vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service, user_suuid=user_suuid,
-                                                      server_suuid=server_suuid, file_path=file_path,
+        vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service, user_uuid=user_uuid,
+                                                      server_uuid=server_uuid, file_path=file_path,
                                                       configuration=configuration)
 
         try:
@@ -78,9 +78,9 @@ class VPNServerConfigurationAPI(ResourceAPI):
         vpnserverconfig_suuid = request_json.get(VPNServerConfigurationDB._suuid_field, None)
 
         is_valid_suuid = check_uuid(suuid)
-        is_valid_vpnserver_suuid = check_uuid(vpnserverconfig_suuid)
-        if not is_valid_suuid or not is_valid_vpnserver_suuid:
-            error = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.phrase
+        is_valid_vpnserver_uuid = check_uuid(vpnserverconfig_suuid)
+        if not is_valid_suuid or not is_valid_vpnserver_uuid:
+            error = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.message
             error_code = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR
             developer_message = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.description
             http_code = HTTPStatus.BAD_REQUEST
@@ -90,7 +90,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
             return resp
 
         if suuid != vpnserverconfig_suuid:
-            error = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.phrase
+            error = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.message
             error_code = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR
             developer_message = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.description
             http_code = HTTPStatus.BAD_REQUEST
@@ -99,13 +99,13 @@ class VPNServerConfigurationAPI(ResourceAPI):
             resp = make_api_response(data=response_data, http_code=http_code)
             return resp
 
-        user_suuid = request_json.get(VPNServerConfigurationDB._user_suuid_field, None)
-        server_suuid = request_json.get(VPNServerConfigurationDB._server_suuid_field, None)
+        user_uuid = request_json.get(VPNServerConfigurationDB._user_uuid_field, None)
+        server_uuid = request_json.get(VPNServerConfigurationDB._server_uuid_field, None)
         file_path = request_json.get(VPNServerConfigurationDB._file_path_field, None)
         configuration = request_json.get(VPNServerConfigurationDB._configuration_field, None)
 
         vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service, suuid=suuid,
-                                                      user_suuid=user_suuid, server_suuid=server_suuid,
+                                                      user_uuid=user_uuid, server_uuid=server_uuid,
                                                       file_path=file_path, configuration=configuration)
 
         try:
@@ -124,16 +124,16 @@ class VPNServerConfigurationAPI(ResourceAPI):
         resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, uuid)
         return resp
 
-    def get(self, server_suuid: str, user_suuid: str = None) -> Response:
+    def get(self, server_uuid: str, user_uuid: str = None) -> Response:
         super(VPNServerConfigurationAPI, self).get(req=request)
 
         vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service,
-                                                      server_suuid=server_suuid, user_suuid=user_suuid)
-        if user_suuid is not None:
+                                                      server_uuid=server_uuid, user_uuid=user_uuid)
+        if user_uuid is not None:
             # user configuration
-            is_valid = check_uuid(server_suuid)
+            is_valid = check_uuid(server_uuid)
             if not is_valid:
-                error = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.phrase
+                error = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.message
                 error_code = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR
                 developer_message = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.description
                 http_code = HTTPStatus.BAD_REQUEST
@@ -171,7 +171,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
         else:
             # all server configurations
             try:
-                vpnserverconfig = vpnserverconfig_db.find_by_server_suuid()
+                vpnserverconfig = vpnserverconfig_db.find_by_server_uuid()
                 response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
                                             data=vpnserverconfig.to_api_dict())
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)

@@ -79,8 +79,8 @@ class CountryDB(CountryStored):
             country_list_db = self._storage_service.get(sql=select_sql)
         except DatabaseError as e:
             logging.error(e)
-            error_message = VPNCError.COUNTRY_FIND_ERROR_DB.phrase
-            error_code = VPNCError.COUNTRY_FIND_ERROR_DB.value
+            error_message = VPNCError.COUNTRY_FIND_ERROR_DB.message
+            error_code = VPNCError.COUNTRY_FIND_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
                                     VPNCError.COUNTRY_FIND_ERROR_DB.description, e.pgcode, e.pgerror)
@@ -119,8 +119,8 @@ class CountryDB(CountryStored):
                 e = e.args[0]
             except IndexError:
                 pass
-            error_message = VPNCError.COUNTRY_FIND_BY_CODE_ERROR_DB.phrase
-            error_code = VPNCError.COUNTRY_FIND_BY_CODE_ERROR_DB.value
+            error_message = VPNCError.COUNTRY_FIND_BY_CODE_ERROR_DB.message
+            error_code = VPNCError.COUNTRY_FIND_BY_CODE_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
                                     VPNCError.COUNTRY_FIND_BY_CODE_ERROR_DB.description, e.pgcode, e.pgerror)
@@ -129,15 +129,15 @@ class CountryDB(CountryStored):
         if len(country_list_db) == 1:
             country_db = country_list_db[0]
         elif len(country_list_db) == 0:
-            error_message = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.phrase
-            error_code = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.value
+            error_message = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.message
+            error_code = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.code
             developer_message = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.description
             raise VPNNotFoundException(error=error_message, error_code=error_code, developer_message=developer_message)
         else:
-            error_message = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.phrase
+            error_message = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.message
             developer_message = "%s. Find by specified uuid return more than 1 object. This is CAN NOT be! Something " \
                                 "really bad with database." % VPNCError.COUNTRY_FIND_BY_CODE_ERROR.description
-            error_code = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.value
+            error_code = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         return self.__map_countrydb_to_country(country_db)
@@ -165,8 +165,8 @@ class CountryDB(CountryStored):
                 e = e.args[0]
             except IndexError:
                 pass
-            error_message = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR_DB.phrase
-            error_code = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR_DB.value
+            error_message = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR_DB.message
+            error_code = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
                                     VPNCError.COUNTRY_FIND_BY_UUID_ERROR_DB.description, e.pgcode, e.pgerror)
@@ -175,15 +175,15 @@ class CountryDB(CountryStored):
         if len(country_list_db) == 1:
             country_db = country_list_db[0]
         elif len(country_list_db) == 0:
-            error_message = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.phrase
-            error_code = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.value
+            error_message = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.message
+            error_code = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.code
             developer_message = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.description
             raise VPNNotFoundException(error=error_message, error_code=error_code, developer_message=developer_message)
         else:
-            error_message = VPNCError.COUNTRY_FIND_BY_UUID_ERROR.phrase
+            error_message = VPNCError.COUNTRY_FIND_BY_UUID_ERROR.message
             developer_message = "%s. Find by specified uuid return more than 1 object. This is CAN NOT be! Something " \
                                 "really bad with database." % VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.description
-            error_code = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.value
+            error_code = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         return self.__map_countrydb_to_country(country_db)

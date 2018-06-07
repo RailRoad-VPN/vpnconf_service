@@ -49,7 +49,7 @@ class VPNServerAPI(ResourceAPI):
         request_json = request.json
 
         if request_json is None:
-            error = VPNCError.REQUEST_NO_JSON.phrase
+            error = VPNCError.REQUEST_NO_JSON.message
             error_code = VPNCError.REQUEST_NO_JSON
             developer_message = VPNCError.REQUEST_NO_JSON.description
             http_code = HTTPStatus.BAD_REQUEST
@@ -90,7 +90,7 @@ class VPNServerAPI(ResourceAPI):
         request_json = request.json
 
         if request_json is None:
-            error = VPNCError.REQUEST_NO_JSON.phrase
+            error = VPNCError.REQUEST_NO_JSON.message
             error_code = VPNCError.REQUEST_NO_JSON
             developer_message = VPNCError.REQUEST_NO_JSON.description
             http_code = HTTPStatus.BAD_REQUEST
@@ -98,12 +98,12 @@ class VPNServerAPI(ResourceAPI):
                                         developer_message=developer_message, error_code=error_code)
             return make_api_response(data=response_data, http_code=http_code)
 
-        vpnserver_suuid = request_json.get(VPNServerDB._suuid_field, None)
+        vpnserver_uuid = request_json.get(VPNServerDB._suuid_field, None)
 
         is_valid_suuid = check_uuid(suuid)
-        is_valid_vpnserver_suuid = check_uuid(vpnserver_suuid)
-        if not is_valid_suuid or not is_valid_vpnserver_suuid:
-            error = VPNCError.VPNSERVER_IDENTIFIER_ERROR.phrase
+        is_valid_vpnserver_uuid = check_uuid(vpnserver_uuid)
+        if not is_valid_suuid or not is_valid_vpnserver_uuid:
+            error = VPNCError.VPNSERVER_IDENTIFIER_ERROR.message
             error_code = VPNCError.VPNSERVER_IDENTIFIER_ERROR
             developer_message = VPNCError.VPNSERVER_IDENTIFIER_ERROR.description
             http_code = HTTPStatus.BAD_REQUEST
@@ -112,8 +112,8 @@ class VPNServerAPI(ResourceAPI):
             resp = make_api_response(data=response_data, http_code=http_code)
             return resp
 
-        if suuid != vpnserver_suuid:
-            error = VPNCError.VPNSERVER_IDENTIFIER_ERROR.phrase
+        if suuid != vpnserver_uuid:
+            error = VPNCError.VPNSERVER_IDENTIFIER_ERROR.message
             error_code = VPNCError.VPNSERVER_IDENTIFIER_ERROR
             developer_message = VPNCError.VPNSERVER_IDENTIFIER_ERROR.description
             http_code = HTTPStatus.BAD_REQUEST
@@ -159,7 +159,7 @@ class VPNServerAPI(ResourceAPI):
         if suuid is not None:
             is_valid = check_uuid(suuid)
             if not is_valid:
-                error = VPNCError.VPNSERVER_IDENTIFIER_ERROR.phrase
+                error = VPNCError.VPNSERVER_IDENTIFIER_ERROR.message
                 error_code = VPNCError.VPNSERVER_IDENTIFIER_ERROR
                 developer_message = VPNCError.VPNSERVER_IDENTIFIER_ERROR.description
                 http_code = HTTPStatus.BAD_REQUEST

@@ -149,8 +149,8 @@ class GeoDB(GeoStored):
             geo_position_list_db = self._storage_service.get(sql=select_sql)
         except DatabaseError as e:
             logging.error(e)
-            error_message = VPNCError.GEO_FIND_ERROR_DB.phrase
-            error_code = VPNCError.GEO_FIND_ERROR_DB.value
+            error_message = VPNCError.GEO_FIND_ERROR_DB.message
+            error_code = VPNCError.GEO_FIND_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
                                     VPNCError.GEO_FIND_ERROR_DB.description, e.pgcode, e.pgerror)
@@ -199,8 +199,8 @@ class GeoDB(GeoStored):
                 e = e.args[0]
             except IndexError:
                 pass
-            error_message = VPNCError.GEO_FIND_BY_ID_ERROR_DB.phrase
-            error_code = VPNCError.GEO_FIND_BY_ID_ERROR_DB.value
+            error_message = VPNCError.GEO_FIND_BY_ID_ERROR_DB.message
+            error_code = VPNCError.GEO_FIND_BY_ID_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
                                     VPNCError.GEO_FIND_BY_ID_ERROR_DB.description, e.pgcode, e.pgerror)
@@ -209,15 +209,15 @@ class GeoDB(GeoStored):
         if len(geo_position_list_db) == 1:
             geo_position_db = geo_position_list_db[0]
         elif len(geo_position_list_db) == 0:
-            error_message = VPNCError.GEO_FIND_BY_ID_ERROR.phrase
-            error_code = VPNCError.GEO_FIND_BY_ID_ERROR.value
+            error_message = VPNCError.GEO_FIND_BY_ID_ERROR.message
+            error_code = VPNCError.GEO_FIND_BY_ID_ERROR.code
             developer_message = VPNCError.GEO_FIND_BY_ID_ERROR.description
             raise VPNNotFoundException(error=error_message, error_code=error_code, developer_message=developer_message)
         else:
-            error_message = VPNCError.GEO_FIND_BY_ID_ERROR.phrase
+            error_message = VPNCError.GEO_FIND_BY_ID_ERROR.message
             developer_message = "%s. Find by specified uuid return more than 1 object. This is CAN NOT be! Something " \
                                 "really bad with database." % VPNCError.GEO_FIND_BY_ID_ERROR.description
-            error_code = VPNCError.GEO_FIND_BY_ID_ERROR.value
+            error_code = VPNCError.GEO_FIND_BY_ID_ERROR.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         return self.__map_geodb_to_geo(geo_position_db)
@@ -259,8 +259,8 @@ class GeoDB(GeoStored):
                 e = e.args[0]
             except IndexError:
                 pass
-            error_message = VPNCError.GEO_CREATE_ERROR_DB.phrase
-            error_code = VPNCError.GEO_CREATE_ERROR_DB.value
+            error_message = VPNCError.GEO_CREATE_ERROR_DB.message
+            error_code = VPNCError.GEO_CREATE_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
                                     VPNCError.GEO_CREATE_ERROR_DB.description, e.pgcode, e.pgerror)
@@ -319,11 +319,11 @@ class GeoDB(GeoStored):
                 e = e.args[0]
             except IndexError:
                 pass
-            error_message = VPNCError.GEO_UPDATE_ERROR_DB.phrase
+            error_message = VPNCError.GEO_UPDATE_ERROR_DB.message
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
                                     VPNCError.GEO_UPDATE_ERROR_DB.description, e.pgcode, e.pgerror)
-            error_code = VPNCError.GEO_UPDATE_ERROR_DB.value
+            error_code = VPNCError.GEO_UPDATE_ERROR_DB.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
     def __map_geodb_to_geo(self, geo_position_db):

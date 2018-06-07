@@ -66,8 +66,8 @@ class VPNServersMetaDB(VPNServersMetaStored):
             vpnserversmeta_db = self._storage_service.get(sql=select_sql)[0]
         except DatabaseError as e:
             logging.error(e)
-            error_message = VPNCError.VPNSERVERSMETA_FIND_ERROR_DB.phrase
-            error_code = VPNCError.VPNSERVERSMETA_FIND_ERROR_DB.value
+            error_message = VPNCError.VPNSERVERSMETA_FIND_ERROR_DB.message
+            error_code = VPNCError.VPNSERVERSMETA_FIND_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
                                     VPNCError.VPNSERVERSMETA_FIND_ERROR_DB.description, e.pgcode, e.pgerror)

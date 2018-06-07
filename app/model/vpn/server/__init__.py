@@ -115,8 +115,8 @@ class VPNServerDB(VPNServerStored):
             vpnserver_list_db = self._storage_service.get(sql=select_sql)
         except DatabaseError as e:
             logging.error(e)
-            error_message = VPNCError.VPNSERVER_FIND_ERROR_DB.phrase
-            error_code = VPNCError.VPNSERVER_FIND_ERROR_DB.value
+            error_message = VPNCError.VPNSERVER_FIND_ERROR_DB.message
+            error_code = VPNCError.VPNSERVER_FIND_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (VPNCError.VPNSERVER_FIND_ERROR_DB.description, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
@@ -159,8 +159,8 @@ class VPNServerDB(VPNServerStored):
                 e = e.args[0]
             except IndexError:
                 pass
-            error_message = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR_DB.phrase
-            error_code = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR_DB.value
+            error_message = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR_DB.message
+            error_code = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
                                     VPNCError.VPNSERVER_FIND_BY_UUID_ERROR_DB.description, e.pgcode, e.pgerror)
@@ -169,16 +169,16 @@ class VPNServerDB(VPNServerStored):
         if len(vpnserver_list_db) == 1:
             vpnserver_db = vpnserver_list_db[0]
         elif len(vpnserver_list_db) == 0:
-            error_message = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR.phrase
-            error_code = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR.value
+            error_message = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR.message
+            error_code = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR.code
             developer_message = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR.description
             raise VPNNotFoundException(error=error_message, error_code=error_code,
                                        developer_message=developer_message)
         else:
-            error_message = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR.phrase
+            error_message = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR.message
             developer_message = "%s. Find by specified uuid return more than 1 object. This is CAN NOT be! Something " \
                                 "really bad with database." % VPNCError.VPNSERVER_FIND_BY_UUID_ERROR.description
-            error_code = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR.value
+            error_code = VPNCError.VPNSERVER_FIND_BY_UUID_ERROR.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         return self.__map_vpnserverdb_to_vpnserver(vpnserver_db)
@@ -211,8 +211,8 @@ class VPNServerDB(VPNServerStored):
                 e = e.args[0]
             except IndexError:
                 pass
-            error_message = VPNCError.VPNSERVER_FIND_BY_STATUS_ID_DB.phrase
-            error_code = VPNCError.VPNSERVER_FIND_BY_STATUS_ID_DB.value
+            error_message = VPNCError.VPNSERVER_FIND_BY_STATUS_ID_DB.message
+            error_code = VPNCError.VPNSERVER_FIND_BY_STATUS_ID_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
                                     VPNCError.VPNSERVER_FIND_BY_STATUS_ID_DB.description, e.pgcode, e.pgerror)
@@ -257,8 +257,8 @@ class VPNServerDB(VPNServerStored):
                 e = e.args[0]
             except IndexError:
                 pass
-            error_message = VPNCError.VPNSERVER_FIND_BY_TYPE_ID_DB.phrase
-            error_code = VPNCError.VPNSERVER_FIND_BY_TYPE_ID_DB.value
+            error_message = VPNCError.VPNSERVER_FIND_BY_TYPE_ID_DB.message
+            error_code = VPNCError.VPNSERVER_FIND_BY_TYPE_ID_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
                                     VPNCError.VPNSERVER_FIND_BY_TYPE_ID_DB.description, e.pgcode, e.pgerror)
@@ -304,8 +304,8 @@ class VPNServerDB(VPNServerStored):
                 e = e.args[0]
             except IndexError:
                 pass
-            error_message = VPNCError.VPNSERVER_CREATE_ERROR_DB.phrase
-            error_code = VPNCError.VPNSERVER_CREATE_ERROR_DB.value
+            error_message = VPNCError.VPNSERVER_CREATE_ERROR_DB.message
+            error_code = VPNCError.VPNSERVER_CREATE_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (VPNCError.VPNSERVER_CREATE_ERROR_DB.description, e.pgcode, e.pgerror)
 
@@ -350,10 +350,10 @@ class VPNServerDB(VPNServerStored):
                 e = e.args[0]
             except IndexError:
                 pass
-            error_message = VPNCError.VPNSERVER_UPDATE_ERROR_DB.phrase
+            error_message = VPNCError.VPNSERVER_UPDATE_ERROR_DB.message
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (VPNCError.VPNSERVER_UPDATE_ERROR_DB.description, e.pgcode, e.pgerror)
-            error_code = VPNCError.VPNSERVER_UPDATE_ERROR_DB.value
+            error_code = VPNCError.VPNSERVER_UPDATE_ERROR_DB.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         self._version = updated[self._version_field]

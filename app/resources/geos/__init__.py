@@ -89,7 +89,7 @@ class GeoAPI(ResourceAPI):
             sid = int(sid)
             geo_id = int(geo_id)
         except ValueError:
-            error = VPNCError.GEO_IDENTIFIER_ERROR.phrase
+            error = VPNCError.GEO_IDENTIFIER_ERROR.message
             error_code = VPNCError.GEO_IDENTIFIER_ERROR
             developer_message = VPNCError.GEO_IDENTIFIER_ERROR.description
             http_code = HTTPStatus.BAD_REQUEST
@@ -99,7 +99,7 @@ class GeoAPI(ResourceAPI):
             return resp
 
         if sid != geo_id:
-            error = VPNCError.GEO_IDENTIFIER_ERROR.phrase
+            error = VPNCError.GEO_IDENTIFIER_ERROR.message
             error_code = VPNCError.GEO_IDENTIFIER_ERROR
             developer_message = VPNCError.GEO_IDENTIFIER_ERROR.description
             http_code = HTTPStatus.BAD_REQUEST
@@ -148,7 +148,7 @@ class GeoAPI(ResourceAPI):
             try:
                 sid = int(sid)
             except ValueError:
-                error = VPNCError.GEO_IDENTIFIER_ERROR.phrase
+                error = VPNCError.GEO_IDENTIFIER_ERROR.message
                 error_code = VPNCError.GEO_IDENTIFIER_ERROR
                 developer_message = VPNCError.GEO_IDENTIFIER_ERROR.description
                 http_code = HTTPStatus.BAD_REQUEST

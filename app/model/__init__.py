@@ -6,7 +6,7 @@ class VPNServerStatusEnum(IntEnum):
         obj = int.__new__(cls, value)
         obj._value_ = value
 
-        obj.phrase = phrase
+        obj.message = phrase
         obj.description = description
         return obj
 
@@ -26,7 +26,7 @@ class VPNTypeEnum(IntEnum):
         obj = int.__new__(cls, value)
         obj._value_ = value
 
-        obj.phrase = phrase
+        obj.message = phrase
         obj.description = description
         return obj
 

@@ -1,4 +1,3 @@
-import json
 import logging
 import sys
 from http import HTTPStatus
@@ -14,7 +13,7 @@ sys.path.insert(0, '../psql_library')
 from storage_service import DBStorageService
 
 sys.path.insert(1, '../rest_api_library')
-from utils import JSONDecimalEncoder, make_api_response
+from utils import make_api_response
 from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
 
@@ -65,7 +64,7 @@ class VPNServerStatusAPI(ResourceAPI):
             try:
                 sid = int(sid)
             except ValueError:
-                error = VPNCError.VPNSERVERSTATUS_IDENTIFIER_ERROR.phrase
+                error = VPNCError.VPNSERVERSTATUS_IDENTIFIER_ERROR.message
                 error_code = VPNCError.VPNSERVERSTATUS_IDENTIFIER_ERROR
                 developer_message = VPNCError.VPNSERVERSTATUS_IDENTIFIER_ERROR.description
                 http_code = HTTPStatus.BAD_REQUEST

@@ -71,7 +71,7 @@ class StateAPI(ResourceAPI):
         state_code = request_json.get(StateDB._code_field, None)
 
         if code != state_code:
-            error = VPNCError.STATE_IDENTIFIER_ERROR.phrase
+            error = VPNCError.STATE_IDENTIFIER_ERROR.message
             error_code = VPNCError.STATE_IDENTIFIER_ERROR
             developer_message = VPNCError.STATE_IDENTIFIER_ERROR.description
             http_code = HTTPStatus.BAD_REQUEST
