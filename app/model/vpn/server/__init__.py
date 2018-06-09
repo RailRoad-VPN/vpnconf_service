@@ -68,7 +68,8 @@ class VPNServerStored(StoredObject, VPNServer):
 
     def __init__(self, storage_service: StorageService, suuid: str = None, version: int = None,
                  condition_version: int = None, type_id: int = None, status_id: int = None, bandwidth: int = None,
-                 load: int = None, geo_position_id: int = None, created_date: datetime = None, limit: int = None, offset: int = None, **kwargs):
+                 load: int = None, geo_position_id: int = None, created_date: datetime = None, limit: int = None,
+                 offset: int = None, **kwargs):
         StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
         VPNServer.__init__(self, suuid=suuid, version=version, condition_version=condition_version, type_id=type_id,
                            status_id=status_id, bandwidth=bandwidth, load=load, geo_position_id=geo_position_id,

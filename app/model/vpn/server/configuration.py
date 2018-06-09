@@ -143,7 +143,8 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
             error_code = VPNCError.VPNSERVERCONFIG_FIND_BY_UUID_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.VPNSERVERCONFIG_FIND_BY_UUID_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+                                    VPNCError.VPNSERVERCONFIG_FIND_BY_UUID_ERROR_DB.developer_message, e.pgcode,
+                                    e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         if len(vpnserver_configuration_list_db) == 1:

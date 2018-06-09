@@ -1,4 +1,3 @@
-import json
 import logging
 import sys
 import uuid
@@ -15,7 +14,7 @@ sys.path.insert(0, '../psql_library')
 from storage_service import DBStorageService
 
 sys.path.insert(1, '../rest_api_library')
-from utils import JSONDecimalEncoder, check_uuid, make_api_response
+from utils import check_uuid, make_api_response
 from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
 
