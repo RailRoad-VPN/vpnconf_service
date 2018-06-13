@@ -70,7 +70,7 @@ class StateAPI(ResourceAPI):
         state_code = request_json.get(StateDB._code_field, None)
 
         if code != state_code:
-            return make_error_request_response(HTTPStatus.BAD_REQUEST, error=VPNCError.STATE_IDENTIFIER_ERROR)
+            return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.STATE_IDENTIFIER_ERROR)
 
         name = request_json.get(StateDB._name_field, None)
 

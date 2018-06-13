@@ -43,10 +43,10 @@ class CountryAPI(ResourceAPI):
         self.__db_storage_service = db_storage_service
 
     def post(self) -> Response:
-        return make_error_request_response(HTTPStatus.METHOD_NOT_ALLOWED, error=VPNCError.METHOD_NOT_ALLOWED)
+        return make_error_request_response(HTTPStatus.METHOD_NOT_ALLOWED, err=VPNCError.METHOD_NOT_ALLOWED)
 
     def put(self, code: str) -> Response:
-        return make_error_request_response(HTTPStatus.METHOD_NOT_ALLOWED, error=VPNCError.METHOD_NOT_ALLOWED)
+        return make_error_request_response(HTTPStatus.METHOD_NOT_ALLOWED, err=VPNCError.METHOD_NOT_ALLOWED)
 
     def get(self, code: int = None) -> Response:
         super(CountryAPI, self).get(req=request)

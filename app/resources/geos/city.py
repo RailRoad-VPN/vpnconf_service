@@ -74,10 +74,10 @@ class CityAPI(ResourceAPI):
             sid = int(sid)
             city_sid = int(city_sid)
         except ValueError:
-            return make_error_request_response(HTTPStatus.BAD_REQUEST, error=VPNCError.CITY_IDENTIFIER_ERROR)
+            return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.CITY_IDENTIFIER_ERROR)
 
         if sid != city_sid:
-            return make_error_request_response(HTTPStatus.BAD_REQUEST, error=VPNCError.CITY_IDENTIFIER_ERROR)
+            return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.CITY_IDENTIFIER_ERROR)
 
         name = request_json.get(CityDB._name_field, None)
 
@@ -105,7 +105,7 @@ class CityAPI(ResourceAPI):
             try:
                 sid = int(sid)
             except ValueError:
-                return make_error_request_response(HTTPStatus.BAD_REQUEST, error=VPNCError.CITY_IDENTIFIER_ERROR)
+                return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.CITY_IDENTIFIER_ERROR)
 
             city_db = CityDB(storage_service=self.__db_storage_service, sid=sid)
 

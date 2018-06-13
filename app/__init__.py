@@ -1,8 +1,9 @@
 import logging
 import os
 import sys
+from http import HTTPStatus
 
-from flask import Flask
+from flask import Flask, request
 
 from app.resources.geos import GeoAPI
 from app.resources.geos.city import CityAPI
@@ -19,6 +20,7 @@ from psql_helper import PostgreSQL
 from storage_service import DBStorageService
 
 sys.path.insert(1, '../rest_api_library')
+from utils import make_error_request_response
 from api import register_api
 
 logging.basicConfig(level=logging.DEBUG)
@@ -53,3 +55,22 @@ apis = [
 ]
 
 register_api(app, api_base_uri, apis)
+
+
+def wants_json_response():
+    return request.accept_mimetypes['application/json'] >= \
+           request.accept_mimetypes['text/html']
+
+
+@app.errorhandler(400)
+def not_found_error(error):
+    return make_error_request_response(HTTPStatus.BAD_REQUEST)
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return make_error_request_response(HTTPStatus.NOT_FOUND)
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    return make_error_request_response(HTTPStatus.INTERNAL_SERVER_ERROR)

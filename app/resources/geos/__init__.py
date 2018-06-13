@@ -47,7 +47,7 @@ class GeoAPI(ResourceAPI):
         request_json = request.json
 
         if request_json is None:
-            return make_error_request_response(HTTPStatus.BAD_REQUEST, error=VPNCError.REQUEST_NO_JSON)
+            return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.REQUEST_NO_JSON)
 
         latitude = request_json.get(GeoDB._latitude_field, None)
         longitude = request_json.get(GeoDB._longitude_field, None)
@@ -100,10 +100,10 @@ class GeoAPI(ResourceAPI):
             sid = int(sid)
             geo_id = int(geo_id)
         except ValueError:
-            return make_error_request_response(HTTPStatus.BAD_REQUEST, error=VPNCError.GEO_IDENTIFIER_ERROR)
+            return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.GEO_IDENTIFIER_ERROR)
 
         if sid != geo_id:
-            return make_error_request_response(HTTPStatus.BAD_REQUEST, error=VPNCError.GEO_IDENTIFIER_ERROR)
+            return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.GEO_IDENTIFIER_ERROR)
 
         latitude = request_json.get(GeoDB._latitude_field, None)
         longitude = request_json.get(GeoDB._longitude_field, None)
@@ -145,7 +145,7 @@ class GeoAPI(ResourceAPI):
             try:
                 sid = int(sid)
             except ValueError:
-                return make_error_request_response(HTTPStatus.BAD_REQUEST, error=VPNCError.GEO_IDENTIFIER_ERROR)
+                return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.GEO_IDENTIFIER_ERROR)
 
             geo_db = GeoDB(storage_service=self.__db_storage_service, sid=sid)
 

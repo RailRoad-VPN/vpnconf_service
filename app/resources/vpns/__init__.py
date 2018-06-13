@@ -43,10 +43,10 @@ class VPNTypeAPI(ResourceAPI):
         self.__db_storage_service = db_storage_service
 
     def post(self) -> Response:
-        return make_error_request_response(HTTPStatus.METHOD_NOT_ALLOWED, error=VPNCError.METHOD_NOT_ALLOWED)
+        return make_error_request_response(HTTPStatus.METHOD_NOT_ALLOWED, err=VPNCError.METHOD_NOT_ALLOWED)
 
     def put(self, sid: int) -> Response:
-        return make_error_request_response(HTTPStatus.METHOD_NOT_ALLOWED, error=VPNCError.METHOD_NOT_ALLOWED)
+        return make_error_request_response(HTTPStatus.METHOD_NOT_ALLOWED, err=VPNCError.METHOD_NOT_ALLOWED)
 
     def get(self, sid: int = None) -> Response:
         super(VPNTypeAPI, self).get(req=request)
@@ -54,7 +54,7 @@ class VPNTypeAPI(ResourceAPI):
             try:
                 sid = int(sid)
             except ValueError:
-                return make_error_request_response(HTTPStatus.BAD_REQUEST, error=VPNCError.VPNTYPE_IDENTIFIER_ERROR)
+                return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.VPNTYPE_IDENTIFIER_ERROR)
 
             vpntype_db = VPNTypeDB(storage_service=self.__db_storage_service, sid=sid)
 
