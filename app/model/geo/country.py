@@ -83,7 +83,7 @@ class CountryDB(CountryStored):
             error_code = VPNCError.COUNTRY_FIND_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.COUNTRY_FIND_ERROR_DB.description, e.pgcode, e.pgerror)
+                                    VPNCError.COUNTRY_FIND_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
         country_list = []
 
@@ -123,7 +123,7 @@ class CountryDB(CountryStored):
             error_code = VPNCError.COUNTRY_FIND_BY_CODE_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.COUNTRY_FIND_BY_CODE_ERROR_DB.description, e.pgcode, e.pgerror)
+                                    VPNCError.COUNTRY_FIND_BY_CODE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         if len(country_list_db) == 1:
@@ -131,12 +131,12 @@ class CountryDB(CountryStored):
         elif len(country_list_db) == 0:
             error_message = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.message
             error_code = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.code
-            developer_message = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.description
+            developer_message = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.developer_message
             raise VPNNotFoundException(error=error_message, error_code=error_code, developer_message=developer_message)
         else:
             error_message = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.message
             developer_message = "%s. Find by specified uuid return more than 1 object. This is CAN NOT be! Something " \
-                                "really bad with database." % VPNCError.COUNTRY_FIND_BY_CODE_ERROR.description
+                                "really bad with database." % VPNCError.COUNTRY_FIND_BY_CODE_ERROR.developer_message
             error_code = VPNCError.COUNTRY_FIND_BY_CODE_ERROR.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
@@ -169,7 +169,7 @@ class CountryDB(CountryStored):
             error_code = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.COUNTRY_FIND_BY_UUID_ERROR_DB.description, e.pgcode, e.pgerror)
+                                    VPNCError.COUNTRY_FIND_BY_UUID_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         if len(country_list_db) == 1:
@@ -177,12 +177,12 @@ class CountryDB(CountryStored):
         elif len(country_list_db) == 0:
             error_message = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.message
             error_code = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.code
-            developer_message = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.description
+            developer_message = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.developer_message
             raise VPNNotFoundException(error=error_message, error_code=error_code, developer_message=developer_message)
         else:
             error_message = VPNCError.COUNTRY_FIND_BY_UUID_ERROR.message
             developer_message = "%s. Find by specified uuid return more than 1 object. This is CAN NOT be! Something " \
-                                "really bad with database." % VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.description
+                                "really bad with database." % VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.developer_message
             error_code = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 

@@ -71,7 +71,7 @@ class VPNTypeDB(VPNTypeStored):
             error_code = VPNCError.VPNTYPE_FIND_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.VPNTYPE_FIND_ERROR_DB.description, e.pgcode, e.pgerror)
+                                    VPNCError.VPNTYPE_FIND_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
         vpnserverconfig_list = []
 
@@ -103,7 +103,7 @@ class VPNTypeDB(VPNTypeStored):
             error_code = VPNCError.VPNTYPE_FIND_BY_ID_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.VPNSERVERSTATUS_FIND_BY_ID_ERROR_DB.description, e.pgcode, e.pgerror)
+                                    VPNCError.VPNSERVERSTATUS_FIND_BY_ID_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         if len(vpntype_list_db) == 1:
@@ -111,12 +111,12 @@ class VPNTypeDB(VPNTypeStored):
         elif len(vpntype_list_db) == 0:
             error_message = VPNCError.VPNTYPE_FIND_BY_ID_ERROR.message
             error_code = VPNCError.VPNTYPE_FIND_BY_ID_ERROR.code
-            developer_message = VPNCError.VPNTYPE_FIND_BY_ID_ERROR.description
+            developer_message = VPNCError.VPNTYPE_FIND_BY_ID_ERROR.developer_message
             raise VPNNotFoundException(error=error_message, error_code=error_code, developer_message=developer_message)
         else:
             error_message = VPNCError.VPNTYPE_FIND_BY_ID_ERROR.message
             developer_message = "%s. Find by specified uuid return more than 1 object. This is CAN NOT be! Something " \
-                                "really bad with database." % VPNCError.VPNTYPE_FIND_BY_ID_ERROR.description
+                                "really bad with database." % VPNCError.VPNTYPE_FIND_BY_ID_ERROR.developer_message
             error_code = VPNCError.VPNTYPE_FIND_BY_ID_ERROR.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 

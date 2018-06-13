@@ -44,7 +44,7 @@ class VPNServersMetaAPI(ResourceAPI):
         self.__db_storage_service = db_storage_service
 
     def post(self) -> Response:
-        response_data = APIResponse(status=APIResponseStatus.failed.value, code=HTTPStatus.METHOD_NOT_ALLOWED,
+        response_data = APIResponse(status=APIResponseStatus.failed.status, code=HTTPStatus.METHOD_NOT_ALLOWED,
                                     error=HTTPStatus.METHOD_NOT_ALLOWED.message,
                                     error_code=HTTPStatus.METHOD_NOT_ALLOWED)
 
@@ -52,7 +52,7 @@ class VPNServersMetaAPI(ResourceAPI):
         return resp
 
     def put(self, sid: int) -> Response:
-        response_data = APIResponse(status=APIResponseStatus.failed.value, code=HTTPStatus.METHOD_NOT_ALLOWED,
+        response_data = APIResponse(status=APIResponseStatus.failed.status, code=HTTPStatus.METHOD_NOT_ALLOWED,
                                     error=HTTPStatus.METHOD_NOT_ALLOWED.message,
                                     error_code=HTTPStatus.METHOD_NOT_ALLOWED)
 
@@ -73,7 +73,7 @@ class VPNServersMetaAPI(ResourceAPI):
             error = e.error
             developer_message = e.developer_message
             http_code = HTTPStatus.NOT_FOUND
-            response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
             return make_api_response(data=response_data, http_code=http_code)
         except VPNException as e:
@@ -82,11 +82,11 @@ class VPNServersMetaAPI(ResourceAPI):
             error = e.error
             developer_message = e.developer_message
             http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
             return make_api_response(data=response_data, http_code=http_code)
 
-        response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
+        response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
                                     data=vpnserversmeta.to_api_dict(), limit=self.pagination.limit,
                                     offset=self.pagination.offset)
         resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)

@@ -77,7 +77,7 @@ class CityDB(CityStored):
             error_code = VPNCError.CITY_FIND_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.CITY_FIND_ERROR_DB.description, e.pgcode, e.pgerror)
+                                    VPNCError.CITY_FIND_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
         city_list = []
 
@@ -116,7 +116,7 @@ class CityDB(CityStored):
             error_code = VPNCError.CITY_FIND_BY_UUID_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.CITY_FIND_BY_UUID_ERROR_DB.description, e.pgcode, e.pgerror)
+                                    VPNCError.CITY_FIND_BY_UUID_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         if len(city_list_db) == 1:
@@ -124,12 +124,12 @@ class CityDB(CityStored):
         elif len(city_list_db) == 0:
             error_message = VPNCError.CITY_FIND_BY_UUID_ERROR.message
             error_code = VPNCError.CITY_FIND_BY_UUID_ERROR.code
-            developer_message = VPNCError.CITY_FIND_BY_UUID_ERROR.description
+            developer_message = VPNCError.CITY_FIND_BY_UUID_ERROR.developer_message
             raise VPNNotFoundException(error=error_message, error_code=error_code, developer_message=developer_message)
         else:
             error_message = VPNCError.CITY_FIND_BY_UUID_ERROR.message
             developer_message = "%s. Find by specified uuid return more than 1 object. This is CAN NOT be! Something " \
-                                "really bad with database." % VPNCError.CITY_FIND_BY_UUID_ERROR.description
+                                "really bad with database." % VPNCError.CITY_FIND_BY_UUID_ERROR.developer_message
             error_code = VPNCError.CITY_FIND_BY_UUID_ERROR.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
@@ -163,7 +163,7 @@ class CityDB(CityStored):
             error_code = VPNCError.CITY_CREATE_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.CITY_CREATE_ERROR_DB.description, e.pgcode, e.pgerror)
+                                    VPNCError.CITY_CREATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
 
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
         logging.debug('CityDB created.')
@@ -201,7 +201,7 @@ class CityDB(CityStored):
             error_message = VPNCError.CITY_UPDATE_ERROR_DB.message
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.CITY_UPDATE_ERROR_DB.description, e.pgcode, e.pgerror)
+                                    VPNCError.CITY_UPDATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             error_code = VPNCError.CITY_UPDATE_ERROR_DB.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 

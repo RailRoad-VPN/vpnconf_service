@@ -14,7 +14,7 @@ sys.path.insert(0, '../psql_library')
 from storage_service import DBStorageService
 
 sys.path.insert(1, '../rest_api_library')
-from utils import make_api_response
+from utils import make_api_response, make_error_request_response
 from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
 
@@ -58,7 +58,7 @@ class CityAPI(ResourceAPI):
             error = e.error
             developer_message = e.developer_message
             http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
             return make_api_response(data=response_data, http_code=http_code)
 
@@ -74,24 +74,10 @@ class CityAPI(ResourceAPI):
             sid = int(sid)
             city_sid = int(city_sid)
         except ValueError:
-            error = VPNCError.CITY_IDENTIFIER_ERROR.message
-            error_code = VPNCError.CITY_IDENTIFIER_ERROR
-            developer_message = VPNCError.CITY_IDENTIFIER_ERROR.description
-            http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
-                                        developer_message=developer_message, error_code=error_code)
-            resp = make_api_response(data=response_data, http_code=http_code)
-            return resp
+            return make_error_request_response(HTTPStatus.BAD_REQUEST, error=VPNCError.CITY_IDENTIFIER_ERROR)
 
         if sid != city_sid:
-            error = VPNCError.CITY_IDENTIFIER_ERROR.message
-            error_code = VPNCError.CITY_IDENTIFIER_ERROR
-            developer_message = VPNCError.CITY_IDENTIFIER_ERROR.description
-            http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
-                                        developer_message=developer_message, error_code=error_code)
-            resp = make_api_response(data=response_data, http_code=http_code)
-            return resp
+            return make_error_request_response(HTTPStatus.BAD_REQUEST, error=VPNCError.CITY_IDENTIFIER_ERROR)
 
         name = request_json.get(CityDB._name_field, None)
 
@@ -105,7 +91,7 @@ class CityAPI(ResourceAPI):
             error = e.error
             developer_message = e.developer_message
             http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
             return make_api_response(data=response_data, http_code=http_code)
 
@@ -119,14 +105,7 @@ class CityAPI(ResourceAPI):
             try:
                 sid = int(sid)
             except ValueError:
-                error = VPNCError.CITY_IDENTIFIER_ERROR.message
-                error_code = VPNCError.CITY_IDENTIFIER_ERROR
-                developer_message = VPNCError.CITY_IDENTIFIER_ERROR.description
-                http_code = HTTPStatus.BAD_REQUEST
-                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
-                                            developer_message=developer_message, error_code=error_code)
-                resp = make_api_response(data=response_data, http_code=http_code)
-                return resp
+                return make_error_request_response(HTTPStatus.BAD_REQUEST, error=VPNCError.CITY_IDENTIFIER_ERROR)
 
             city_db = CityDB(storage_service=self.__db_storage_service, sid=sid)
 
@@ -138,7 +117,7 @@ class CityAPI(ResourceAPI):
                 error = e.error
                 developer_message = e.developer_message
                 http_code = HTTPStatus.NOT_FOUND
-                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
                 return make_api_response(data=response_data, http_code=http_code)
             except VPNException as e:
@@ -147,11 +126,11 @@ class CityAPI(ResourceAPI):
                 error = e.error
                 developer_message = e.developer_message
                 http_code = HTTPStatus.BAD_REQUEST
-                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
                 return make_api_response(data=response_data, http_code=http_code)
 
-            response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
+            response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
                                         data=city.to_api_dict())
             resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
         else:
@@ -165,7 +144,7 @@ class CityAPI(ResourceAPI):
                 error = e.error
                 developer_message = e.developer_message
                 http_code = HTTPStatus.NOT_FOUND
-                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
                 return make_api_response(data=response_data, http_code=http_code)
             except VPNException as e:
@@ -174,12 +153,12 @@ class CityAPI(ResourceAPI):
                 error = e.error
                 developer_message = e.developer_message
                 http_code = HTTPStatus.BAD_REQUEST
-                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
                 return make_api_response(data=response_data, http_code=http_code)
 
             cities_dict = [city_list[i].to_api_dict() for i in range(0, len(city_list))]
-            response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK, data=cities_dict,
+            response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK, data=cities_dict,
                                         limit=self.pagination.limit, offset=self.pagination.offset)
             resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
 

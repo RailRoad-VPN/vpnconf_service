@@ -1,4 +1,7 @@
-from enum import Enum
+import sys
+
+sys.path.insert(0, '../rest_api_library')
+from response import APIErrorEnum
 
 name = 'VPNC-'
 i = 0
@@ -10,17 +13,15 @@ def count():
     return i
 
 
-class VPNCError(Enum):
+class VPNCError(APIErrorEnum):
+    __version__ = 1
+
     def __new__(cls, *args, **kwds):
         value = len(cls.__members__) + 1
         obj = object.__new__(cls)
         obj._value_ = value
         return obj
 
-    def __init__(self, code, message, developer_message):
-        self.code = code
-        self.message = message
-        self.developer_message = developer_message
     UNKNOWN_ERROR_CODE = (name + str(count()), 'UNKNOWN_ERROR_CODE phrase', 'UNKNOWN_ERROR_CODE description')
 
     REQUEST_NO_JSON = (name + str(count()),  'REQUEST_NO_JSON phrase', 'REQUEST_NO_JSON description')

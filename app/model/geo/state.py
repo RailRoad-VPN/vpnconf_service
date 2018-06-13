@@ -83,7 +83,7 @@ class StateDB(StateStored):
             error_code = VPNCError.STATE_FIND_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.STATE_FIND_ERROR_DB.description, e.pgcode, e.pgerror)
+                                    VPNCError.STATE_FIND_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
         state_list = []
 
@@ -123,7 +123,7 @@ class StateDB(StateStored):
             error_code = VPNCError.STATE_FIND_BY_UUID_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.STATE_FIND_BY_UUID_ERROR_DB.description, e.pgcode, e.pgerror)
+                                    VPNCError.STATE_FIND_BY_UUID_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         if len(state_list_db) == 1:
@@ -131,12 +131,12 @@ class StateDB(StateStored):
         elif len(state_list_db) == 0:
             error_message = VPNCError.STATE_FIND_BY_UUID_ERROR.message
             error_code = VPNCError.STATE_FIND_BY_UUID_ERROR.code
-            developer_message = VPNCError.STATE_FIND_BY_UUID_ERROR.description
+            developer_message = VPNCError.STATE_FIND_BY_UUID_ERROR.developer_message
             raise VPNNotFoundException(error=error_message, error_code=error_code, developer_message=developer_message)
         else:
             error_message = VPNCError.STATE_FIND_BY_UUID_ERROR.message
             developer_message = "%s. Find by specified uuid return more than 1 object. This is CAN NOT be! Something " \
-                                "really bad with database." % VPNCError.STATE_FIND_BY_UUID_ERROR.description
+                                "really bad with database." % VPNCError.STATE_FIND_BY_UUID_ERROR.developer_message
             error_code = VPNCError.STATE_FIND_BY_UUID_ERROR.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
@@ -171,7 +171,7 @@ class StateDB(StateStored):
             error_code = VPNCError.STATE_CREATE_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.STATE_CREATE_ERROR_DB.description, e.pgcode, e.pgerror)
+                                    VPNCError.STATE_CREATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
 
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
         logging.debug('StateDB created.')
@@ -211,7 +211,7 @@ class StateDB(StateStored):
             error_message = VPNCError.STATE_UPDATE_ERROR_DB.message
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.STATE_UPDATE_ERROR_DB.description, e.pgcode, e.pgerror)
+                                    VPNCError.STATE_UPDATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             error_code = VPNCError.STATE_UPDATE_ERROR_DB.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 

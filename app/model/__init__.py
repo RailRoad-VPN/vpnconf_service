@@ -7,7 +7,7 @@ class VPNServerStatusEnum(IntEnum):
         obj._value_ = value
 
         obj.message = phrase
-        obj.description = description
+        obj.developer_message = description
         return obj
 
     UNKNOWN = (0, 'unknown', 'Unknown, for reports only')
@@ -27,7 +27,7 @@ class VPNTypeEnum(IntEnum):
         obj._value_ = value
 
         obj.message = phrase
-        obj.description = description
+        obj.developer_message = description
         return obj
 
     UNKNOWN = (0, 'unknown', 'Unknown, for reports only')

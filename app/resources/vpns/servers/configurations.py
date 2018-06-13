@@ -63,7 +63,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
             error = e.error
             developer_message = e.developer_message
             http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
             return make_api_response(data=response_data, http_code=http_code)
 
@@ -81,9 +81,9 @@ class VPNServerConfigurationAPI(ResourceAPI):
         if not is_valid_suuid or not is_valid_vpnserver_uuid:
             error = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.message
             error_code = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR
-            developer_message = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.description
+            developer_message = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.developer_message
             http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
             resp = make_api_response(data=response_data, http_code=http_code)
             return resp
@@ -91,9 +91,9 @@ class VPNServerConfigurationAPI(ResourceAPI):
         if suuid != vpnserverconfig_suuid:
             error = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.message
             error_code = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR
-            developer_message = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.description
+            developer_message = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.developer_message
             http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
             resp = make_api_response(data=response_data, http_code=http_code)
             return resp
@@ -115,7 +115,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
             error = e.error
             developer_message = e.developer_message
             http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                         developer_message=developer_message, error_code=error_code)
             return make_api_response(data=response_data, http_code=http_code)
 
@@ -134,16 +134,16 @@ class VPNServerConfigurationAPI(ResourceAPI):
             if not is_valid:
                 error = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.message
                 error_code = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR
-                developer_message = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.description
+                developer_message = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.developer_message
                 http_code = HTTPStatus.BAD_REQUEST
-                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
 
             try:
                 vpnserverconfig = vpnserverconfig_db.find_user_config()
-                response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
+                response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
                                             data=vpnserverconfig.to_api_dict())
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
                 return resp
@@ -153,7 +153,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
                 error = e.error
                 developer_message = e.developer_message
                 http_code = HTTPStatus.NOT_FOUND
-                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
@@ -163,7 +163,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
                 error = e.error
                 developer_message = e.developer_message
                 http_code = HTTPStatus.BAD_REQUEST
-                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
@@ -171,7 +171,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
             # all server configurations
             try:
                 vpnserverconfig = vpnserverconfig_db.find_by_server_uuid()
-                response_data = APIResponse(status=APIResponseStatus.success.value, code=HTTPStatus.OK,
+                response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
                                             data=vpnserverconfig.to_api_dict())
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
                 return resp
@@ -181,7 +181,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
                 error = e.error
                 developer_message = e.developer_message
                 http_code = HTTPStatus.NOT_FOUND
-                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
@@ -191,7 +191,7 @@ class VPNServerConfigurationAPI(ResourceAPI):
                 error = e.error
                 developer_message = e.developer_message
                 http_code = HTTPStatus.BAD_REQUEST
-                response_data = APIResponse(status=APIResponseStatus.failed.value, code=http_code, error=error,
+                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
                                             developer_message=developer_message, error_code=error_code)
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
