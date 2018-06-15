@@ -1,5 +1,4 @@
 import logging
-import sys
 import uuid
 from http import HTTPStatus
 from typing import List
@@ -61,9 +60,21 @@ class GeoAPI(ResourceAPI):
         region_playstation4 = request_json.get(GeoDB._region_playstation4_field, None)
         region_nintendo = request_json.get(GeoDB._region_nintendo_field, None)
 
-        error_fields = check_required_api_fields(latitude, longitude, country_code, state_code, region_common,
-                                                 region_dvd, region_xbox360, region_xboxone, region_playstation3,
-                                                 region_playstation4, region_nintendo)
+        req_fields = {
+            'latitude': latitude,
+            'longitude': longitude,
+            'country_code': country_code,
+            'state_code': state_code,
+            'region_common': region_common,
+            'region_dvd': region_dvd,
+            'region_xbox360': region_xbox360,
+            'region_xboxone': region_xboxone,
+            'region_playstation3': region_playstation3,
+            'region_playstation4': region_playstation4,
+            'region_nintendo': region_nintendo,
+        }
+
+        error_fields = check_required_api_fields(req_fields)
         if len(error_fields) > 0:
             response_data = APIResponse(status=APIResponseStatus.failed.status, code=HTTPStatus.BAD_REQUEST,
                                         errors=error_fields)
@@ -116,6 +127,27 @@ class GeoAPI(ResourceAPI):
         region_playstation3 = request_json.get(GeoDB._region_playstation3_field, None)
         region_playstation4 = request_json.get(GeoDB._region_playstation4_field, None)
         region_nintendo = request_json.get(GeoDB._region_nintendo_field, None)
+
+        req_fields = {
+            'latitude': latitude,
+            'longitude': longitude,
+            'country_code': country_code,
+            'state_code': state_code,
+            'region_common': region_common,
+            'region_dvd': region_dvd,
+            'region_xbox360': region_xbox360,
+            'region_xboxone': region_xboxone,
+            'region_playstation3': region_playstation3,
+            'region_playstation4': region_playstation4,
+            'region_nintendo': region_nintendo,
+        }
+
+        error_fields = check_required_api_fields(req_fields)
+        if len(error_fields) > 0:
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=HTTPStatus.BAD_REQUEST,
+                                        errors=error_fields)
+            resp = make_api_response(data=response_data, http_code=response_data.code)
+            return resp
 
         geo_db = GeoDB(storage_service=self.__db_storage_service, sid=sid, latitude=latitude, longitude=latitude,
                        country_code=longitude, state_code=country_code, city_id=state_code, region_common=region_common,
