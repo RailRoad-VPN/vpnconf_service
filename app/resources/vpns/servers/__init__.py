@@ -145,8 +145,9 @@ class VPNServerAPI(ResourceAPI):
                                         developer_message=developer_message, error_code=error_code)
             return make_api_response(data=response_data, http_code=http_code)
 
-        response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.NO_CONTENT)
-        resp = make_api_response(data=response_data, http_code=HTTPStatus.NO_CONTENT)
+        # response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.NO_CONTENT)
+        # resp = make_api_response(data=response_data, http_code=HTTPStatus.NO_CONTENT)
+        resp = make_api_response(http_code=HTTPStatus.NO_CONTENT)
         return resp
 
     def get(self, suuid: str = None, type_id: int = None, status_id: int = None) -> Response:
