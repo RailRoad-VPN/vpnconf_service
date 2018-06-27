@@ -1,6 +1,5 @@
 import datetime
 import logging
-import sys
 import uuid
 
 from psycopg2._psycopg import DatabaseError
@@ -21,11 +20,13 @@ class VPNServer(object):
     _status_id = None
     _bandwidth = None
     _load = None
+    _num = None
     _geo_position_id = None
     _created_date = None
 
     def __init__(self, suuid: str = None, version: int = None, condition_version: int = None, type_id: int = None,
-                 status_id: int = None, bandwidth: int = None, load: int = None, geo_position_id: int = None,
+                 status_id: int = None, bandwidth: int = None, load: int = None, num: int = None,
+                 geo_position_id: int = None,
                  created_date: datetime = None):
         self._suuid = suuid
         self._version = version
@@ -34,6 +35,7 @@ class VPNServer(object):
         self._status_id = status_id
         self._bandwidth = bandwidth
         self._load = load
+        self._num = num
         self._geo_position_id = geo_position_id
         self._created_date = created_date
 
@@ -46,6 +48,7 @@ class VPNServer(object):
             'status_id': self._status_id,
             'bandwidth': self._bandwidth,
             'load': self._load,
+            'num': self._num,
             'geo_position_id': self._geo_position_id,
         }
 
@@ -58,6 +61,7 @@ class VPNServer(object):
             'status_id': self._status_id,
             'bandwidth': self._bandwidth,
             'load': self._load,
+            'num': self._num,
             'geo_position_id': self._geo_position_id,
             'created_date': self._created_date,
         }
@@ -68,12 +72,12 @@ class VPNServerStored(StoredObject, VPNServer):
 
     def __init__(self, storage_service: StorageService, suuid: str = None, version: int = None,
                  condition_version: int = None, type_id: int = None, status_id: int = None, bandwidth: int = None,
-                 load: int = None, geo_position_id: int = None, created_date: datetime = None, limit: int = None,
+                 load: int = None, num: int = None, geo_position_id: int = None, created_date: datetime = None, limit: int = None,
                  offset: int = None, **kwargs):
         StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
         VPNServer.__init__(self, suuid=suuid, version=version, condition_version=condition_version, type_id=type_id,
-                           status_id=status_id, bandwidth=bandwidth, load=load, geo_position_id=geo_position_id,
-                           created_date=created_date)
+                           status_id=status_id, bandwidth=bandwidth, load=load, num=num,
+                           geo_position_id=geo_position_id, created_date=created_date)
 
 
 class VPNServerDB(VPNServerStored):
@@ -86,6 +90,7 @@ class VPNServerDB(VPNServerStored):
     _status_id_field = 'status_id'
     _bandwidth_field = 'bandwidth'
     _load_field = 'load'
+    _num_field = 'num'
     _geo_position_id_field = 'geo_position_id'
     _created_date_field = 'created_date'
 
@@ -103,6 +108,7 @@ class VPNServerDB(VPNServerStored):
                           status_id, 
                           bandwidth, 
                           load, 
+                          num, 
                           geo_position_id, 
                           to_json(created_date) AS created_date 
                       FROM public.vpnserver
@@ -119,7 +125,8 @@ class VPNServerDB(VPNServerStored):
             error_message = VPNCError.VPNSERVER_FIND_ERROR_DB.message
             error_code = VPNCError.VPNSERVER_FIND_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
-                                "Code: %s . %s" % (VPNCError.VPNSERVER_FIND_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+                                "Code: %s . %s" % (
+                                VPNCError.VPNSERVER_FIND_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
         vpnserver_list = []
 
@@ -143,6 +150,7 @@ class VPNServerDB(VPNServerStored):
                           status_id, 
                           bandwidth, 
                           load, 
+                          num,
                           geo_position_id, 
                           to_json(created_date) AS created_date 
                       FROM public.vpnserver 
@@ -195,6 +203,7 @@ class VPNServerDB(VPNServerStored):
                           status_id, 
                           bandwidth, 
                           load, 
+                          num,
                           geo_position_id, 
                           to_json(created_date) AS created_date 
                       FROM public.vpnserver 
@@ -241,6 +250,7 @@ class VPNServerDB(VPNServerStored):
                           status_id, 
                           bandwidth, 
                           load, 
+                          num, 
                           geo_position_id, 
                           to_json(created_date) AS created_date 
                       FROM public.vpnserver 
@@ -308,7 +318,8 @@ class VPNServerDB(VPNServerStored):
             error_message = VPNCError.VPNSERVER_CREATE_ERROR_DB.message
             error_code = VPNCError.VPNSERVER_CREATE_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
-                                "Code: %s . %s" % (VPNCError.VPNSERVER_CREATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+                                "Code: %s . %s" % (
+                                VPNCError.VPNSERVER_CREATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
 
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
         logging.debug('VPNServer created.')
@@ -353,7 +364,8 @@ class VPNServerDB(VPNServerStored):
                 pass
             error_message = VPNCError.VPNSERVER_UPDATE_ERROR_DB.message
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
-                                "Code: %s . %s" % (VPNCError.VPNSERVER_UPDATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+                                "Code: %s . %s" % (
+                                VPNCError.VPNSERVER_UPDATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             error_code = VPNCError.VPNSERVER_UPDATE_ERROR_DB.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
@@ -365,5 +377,5 @@ class VPNServerDB(VPNServerStored):
                          condition_version=vpnserver_db[self._condition_version_field],
                          type_id=vpnserver_db[self._type_id_field], status_id=vpnserver_db[self._status_id_field],
                          bandwidth=vpnserver_db[self._bandwidth_field], load=vpnserver_db[self._load_field],
-                         geo_position_id=vpnserver_db[self._geo_position_id_field],
+                         num=vpnserver_db[self._num_field], geo_position_id=vpnserver_db[self._geo_position_id_field],
                          created_date=vpnserver_db[self._created_date_field])

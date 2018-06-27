@@ -89,6 +89,7 @@ CREATE TABLE public.vpn_type
 CREATE TABLE public.vpnserver
 (
     uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
+  , num SERIAL NOT NULL
   , version INT DEFAULT 1 NOT NULL
   , condition_version INT DEFAULT 1 NOT NULL
   , type_id INT REFERENCES public.vpn_type(id) NOT NULL
