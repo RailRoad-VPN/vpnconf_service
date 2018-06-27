@@ -1,5 +1,4 @@
 import logging
-import sys
 from http import HTTPStatus
 from typing import List
 
@@ -16,6 +15,8 @@ sys.path.insert(1, '../rest_api_library')
 from utils import check_uuid, make_api_response
 from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
+
+logger = logging.getLogger(__name__)
 
 
 class VPNServerAPI(ResourceAPI):
@@ -134,6 +135,7 @@ class VPNServerAPI(ResourceAPI):
                                    bandwidth=bandwidth, load=load, geo_position_id=geo_position_id)
 
         try:
+            logger.debug('do update VPN server')
             vpnserver_db.update()
         except VPNException as e:
             logging.error(e)
@@ -148,6 +150,7 @@ class VPNServerAPI(ResourceAPI):
         # response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.NO_CONTENT)
         # resp = make_api_response(data=response_data, http_code=HTTPStatus.NO_CONTENT)
         resp = make_api_response(http_code=HTTPStatus.NO_CONTENT)
+        logger.debug('make api response: %s' % resp.json)
         return resp
 
     def get(self, suuid: str = None, type_id: int = None, status_id: int = None) -> Response:
