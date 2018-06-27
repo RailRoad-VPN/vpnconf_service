@@ -112,6 +112,7 @@ class VPNServerDB(VPNServerStored):
                           geo_position_id, 
                           to_json(created_date) AS created_date 
                       FROM public.vpnserver
+                      ORDER BY num
                       '''
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
@@ -208,6 +209,7 @@ class VPNServerDB(VPNServerStored):
                           to_json(created_date) AS created_date 
                       FROM public.vpnserver 
                       WHERE status_id = ?
+                      ORDER BY num
                       '''
         logging.debug('Select SQL: %s' % select_sql)
         params = (self._status_id,)
@@ -255,6 +257,7 @@ class VPNServerDB(VPNServerStored):
                           to_json(created_date) AS created_date 
                       FROM public.vpnserver 
                       WHERE type_id = ?
+                      ORDER BY num
                       '''
         logging.debug('Select SQL: %s' % select_sql)
         params = (self._type_id,)
