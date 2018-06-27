@@ -1,2 +1,12 @@
 .DS_Store
 .idea
+/app/resources/vpns/servers/__pycache__
+/app/resources/vpns/__pycache__
+/app/resources/geos/__pycache__
+/app/resources/__pycache__
+/app/model/vpn/server/__pycache__
+/app/model/vpn/__pycache__
+/app/model/geo/__pycache__
+/app/model/__pycache__
+/app/__pycache__
+/__pycache__
