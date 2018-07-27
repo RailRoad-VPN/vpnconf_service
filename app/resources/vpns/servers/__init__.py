@@ -148,9 +148,8 @@ class VPNServerAPI(ResourceAPI):
                                         developer_message=developer_message, error_code=error_code)
             return make_api_response(data=response_data, http_code=http_code)
 
-        # response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.NO_CONTENT)
-        # resp = make_api_response(data=response_data, http_code=HTTPStatus.NO_CONTENT)
-        resp = make_api_response(http_code=HTTPStatus.NO_CONTENT)
+        response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK)
+        resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
         logger.debug('make api response: %s' % resp.__str__())
         return resp
 
