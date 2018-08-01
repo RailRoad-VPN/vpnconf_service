@@ -87,8 +87,8 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                       FROM public.vpnserver_configuration
                       '''
         if self._limit:
-            select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        logging.debug('Select SQL: %s' % select_sql)
+            select_sql += f"\nLIMIT {self._limit}\nOFFSET {self._offset}"
+        logging.debug(f"Select SQL: {select_sql}")
 
         try:
             logging.debug('Call database service')
@@ -127,7 +127,7 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                       FROM public.vpnserver_configuration
                       WHERE uuid = ?
                       '''
-        logging.debug('Select SQL: %s' % select_sql)
+        logging.debug(f"Select SQL: {select_sql}")
         params = (self._suuid,)
 
         try:
@@ -177,7 +177,7 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                       FROM public.vpnserver_configuration
                       WHERE server_uuid = ?
                       '''
-        logging.debug('Select SQL: %s' % select_sql)
+        logging.debug(f"Select SQL: {select_sql}")
         params = (self._server_uuid,)
 
         try:
@@ -229,7 +229,7 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                       FROM public.vpnserver_configuration
                       WHERE server_uuid = ? AND user_uuid = ?
                       '''
-        logging.debug('Select SQL: %s' % select_sql)
+        logging.debug(f"Select SQL: {select_sql}")
         params = (self._server_uuid, self._user_uuid)
 
         try:

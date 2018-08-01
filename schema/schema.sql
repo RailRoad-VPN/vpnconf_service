@@ -104,10 +104,22 @@ CREATE TABLE public.vpnserver_configuration
 (
     uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
   , user_uuid UUID NOT NULL
-  , server_uuid UUID REFERENCES public.vpnserver(uuid) NOT NULL
+  , server_uuid UUID REFERENCES public.vpnserver(uuid) UNIQUE NOT NULL
   , file_path VARCHAR(1024) NOT NULL
   , configuration TEXT NOT NULL
   , version INT DEFAULT 1 NOT NULL
   , created_date TIMESTAMP NOT NULL DEFAULT now()
+);
+
+CREATE TABLE public.vpnserver_connection
+(
+    uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
+  , server_uuid UUID REFERENCES public.vpnserver(uuid) NOT NULL
+  , user_email VARCHAR(256)
+  , real_address VARCHAR(16)
+  , virtual_address VARCHAR(16)
+  , received_bytes BIGINT
+  , sent_bytes BIGINT
+  , connected_date TIMESTAMP
 );
 

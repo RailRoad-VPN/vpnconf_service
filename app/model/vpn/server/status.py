@@ -67,7 +67,7 @@ class VPNServerStatusDB(VPNServerStatusStored):
                       '''
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        logging.debug('Select SQL: %s' % select_sql)
+        logging.debug(f"Select SQL: {select_sql}")
 
         try:
             logging.debug('Call database service')
@@ -102,7 +102,7 @@ class VPNServerStatusDB(VPNServerStatusStored):
                       FROM public.vpnserver_status
                       WHERE code = ?
                       '''
-        logging.debug('Select SQL: %s' % select_sql)
+        logging.debug(f"Select SQL: {select_sql}")
         params = (self._code,)
 
         try:
@@ -148,7 +148,7 @@ class VPNServerStatusDB(VPNServerStatusStored):
                       FROM public.vpnserver_status
                       WHERE id = ?
                       '''
-        logging.debug('Select SQL: %s' % select_sql)
+        logging.debug(f"Select SQL: {select_sql}")
         params = (self._sid,)
 
         try:

@@ -59,7 +59,7 @@ class VPNServersMetaDB(VPNServersMetaStored):
         select_sql = 'SELECT * FROM public.vpnserversmeta'
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        logging.debug('Select SQL: %s' % select_sql)
+        logging.debug(f"Select SQL: {select_sql}")
 
         try:
             logging.debug('Call database service')

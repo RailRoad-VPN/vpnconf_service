@@ -72,7 +72,7 @@ class CountryDB(CountryStored):
                     '''
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        logging.debug('Select SQL: %s' % select_sql)
+        logging.debug(f"Select SQL: {select_sql}")
 
         try:
             logging.debug('Call database service')
@@ -107,7 +107,7 @@ class CountryDB(CountryStored):
                     FROM public.country
                     WHERE code = ?
                     '''
-        logging.debug('Select SQL: %s' % select_sql)
+        logging.debug(f"Select SQL: {select_sql}")
         params = (self._code,)
 
         try:
@@ -153,7 +153,7 @@ class CountryDB(CountryStored):
                     FROM public.country
                     WHERE str_code = ?
                     '''
-        logging.debug('Select SQL: %s' % select_sql)
+        logging.debug(f"Select SQL: {select_sql}")
         params = (self._str_code,)
 
         try:

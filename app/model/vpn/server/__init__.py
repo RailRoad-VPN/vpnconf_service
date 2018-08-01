@@ -116,7 +116,7 @@ class VPNServerDB(VPNServerStored):
                       '''
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        logging.debug('Select SQL: %s' % select_sql)
+        logging.debug(f"Select SQL: {select_sql}")
 
         try:
             logging.debug('Call database service')
@@ -157,7 +157,7 @@ class VPNServerDB(VPNServerStored):
                       FROM public.vpnserver 
                       WHERE uuid = ?
                       '''
-        logging.debug('Select SQL: %s' % select_sql)
+        logging.debug(f"Select SQL: {select_sql}")
         params = (self._suuid,)
 
         try:
@@ -211,7 +211,7 @@ class VPNServerDB(VPNServerStored):
                       WHERE status_id = ?
                       ORDER BY num
                       '''
-        logging.debug('Select SQL: %s' % select_sql)
+        logging.debug(f"Select SQL: {select_sql}")
         params = (self._status_id,)
 
         try:
@@ -259,7 +259,7 @@ class VPNServerDB(VPNServerStored):
                       WHERE type_id = ?
                       ORDER BY num
                       '''
-        logging.debug('Select SQL: %s' % select_sql)
+        logging.debug(f"Select SQL: {select_sql}")
         params = (self._type_id,)
 
         try:
