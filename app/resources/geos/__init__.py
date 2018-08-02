@@ -99,7 +99,8 @@ class GeoAPI(ResourceAPI):
                                         developer_message=developer_message, error_code=error_code)
             return make_api_response(data=response_data, http_code=http_code)
 
-        resp = make_api_response(http_code=HTTPStatus.CREATED)
+        response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.CREATED)
+        resp = make_api_response(data=response_data, http_code=HTTPStatus.CREATED)
         resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, sid)
         return resp
 
