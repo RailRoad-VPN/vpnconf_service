@@ -14,10 +14,10 @@ INSERT INTO public.geo_position(id, latitude, longitude, country_code, state_cod
 --
 
 -- openvpn server
-INSERT INTO public.vpnserver (uuid, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id, created_date) VALUES ('c872e7f0-76d6-4a4e-826e-c56a7c05958a', 1, 1, 1, 1, 0, 0, 1, '2018-05-22 13:18:14.041628');
+INSERT INTO public.vpnserver (uuid, ip, hostname, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id, created_date) VALUES ('c872e7f0-76d6-4a4e-826e-c56a7c05958a', '192.168.0.1', 'rroad.net', 1, 1, 1, 1, 0, 0, 1, '2018-05-22 13:18:14.041628');
 
 -- ikev2 server
-INSERT INTO public.vpnserver (uuid, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id, created_date) VALUES ('699bba8d-7a50-4838-8c6e-ceed49d0f820', 1, 1, 1, 1, 0, 0, 1, '2018-06-04 17:17:34.824795');
+INSERT INTO public.vpnserver (uuid, ip, hostname, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id, created_date) VALUES ('699bba8d-7a50-4838-8c6e-ceed49d0f820', '192.168.0.1', 'rroad.net', 1, 1, 1, 1, 0, 0, 1, '2018-06-04 17:17:34.824795');
 
 INSERT INTO public.configuration_platform (id, code, description) VALUES (1, 'iOS', 'Apple iPhone and iPad mobile OS');
 INSERT INTO public.configuration_platform (id, code, description) VALUES (2, 'Android', 'All Android devices OS');
@@ -33,3 +33,6 @@ INSERT INTO public.vpnserver_configuration(uuid, user_uuid, server_uuid, configu
 
 -- ipsec ikev2
 INSERT INTO public.vpnserver_configuration(uuid, user_uuid, server_uuid, configuration, platform_id, file_path) VALUES ('9a84de20-3bee-4329-9b8c-96eb3600c690', 'cf402144-0c02-4b97-98f2-73f7b56160cf', '699bba8d-7a50-4838-8c6e-ceed49d0f820', '', 1, '/file/path');
+
+-- connections
+INSERT INTO public.vpnserver_connection (uuid, server_uuid, user_uuid, ip_device, virtual_ip, bytes_i, bytes_o, last_ref, connected_since, created_date) VALUES ('44cc1367-53ac-48ab-a9b0-5d6787cf8ebe', 'c872e7f0-76d6-4a4e-826e-c56a7c05958a', 'cf402144-0c02-4b97-98f2-73f7b56160cf', '192.168.0.1', '10.0.0.2', 900, 800, '2018-08-10 01:25:50.110000', '2018-08-10 01:25:52.559000', '2018-08-10 01:25:55.979705');

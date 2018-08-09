@@ -128,11 +128,12 @@ CREATE TABLE public.vpnserver_connection
 (
     uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
   , server_uuid UUID REFERENCES public.vpnserver(uuid) NOT NULL
-  , user_email VARCHAR(256)
+  , user_uuid UUID NOT NULL
   , ip_device INET
   , virtual_ip INET
   , bytes_i BIGINT
   , bytes_o BIGINT
   , last_ref TIMESTAMP
   , connected_since TIMESTAMP
+  , created_date TIMESTAMP NOT NULL DEFAULT now()
 );

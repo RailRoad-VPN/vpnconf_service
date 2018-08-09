@@ -81,7 +81,7 @@ class CountryDB(CountryStored):
             logging.error(e)
             error_message = VPNCError.COUNTRY_FIND_ERROR_DB.message
             error_code = VPNCError.COUNTRY_FIND_ERROR_DB.code
-            developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
+            developer_message = "%s. DatabaseError.. " \
                                 "Code: %s . %s" % (
                                     VPNCError.COUNTRY_FIND_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
@@ -121,7 +121,7 @@ class CountryDB(CountryStored):
                 pass
             error_message = VPNCError.COUNTRY_FIND_BY_CODE_ERROR_DB.message
             error_code = VPNCError.COUNTRY_FIND_BY_CODE_ERROR_DB.code
-            developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
+            developer_message = "%s. DatabaseError.. " \
                                 "Code: %s . %s" % (
                                     VPNCError.COUNTRY_FIND_BY_CODE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
@@ -167,7 +167,7 @@ class CountryDB(CountryStored):
                 pass
             error_message = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR_DB.message
             error_code = VPNCError.COUNTRY_FIND_BY_STRCODE_ERROR_DB.code
-            developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
+            developer_message = "%s. DatabaseError.. " \
                                 "Code: %s . %s" % (
                                     VPNCError.COUNTRY_FIND_BY_UUID_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)

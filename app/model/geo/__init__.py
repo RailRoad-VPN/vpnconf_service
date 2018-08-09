@@ -151,7 +151,7 @@ class GeoDB(GeoStored):
             logging.error(e)
             error_message = VPNCError.GEO_FIND_ERROR_DB.message
             error_code = VPNCError.GEO_FIND_ERROR_DB.code
-            developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
+            developer_message = "%s. DatabaseError.. " \
                                 "Code: %s . %s" % (
                                     VPNCError.GEO_FIND_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
@@ -201,7 +201,7 @@ class GeoDB(GeoStored):
                 pass
             error_message = VPNCError.GEO_FIND_BY_ID_ERROR_DB.message
             error_code = VPNCError.GEO_FIND_BY_ID_ERROR_DB.code
-            developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
+            developer_message = "%s. DatabaseError.. " \
                                 "Code: %s . %s" % (
                                     VPNCError.GEO_FIND_BY_ID_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
@@ -261,7 +261,7 @@ class GeoDB(GeoStored):
                 pass
             error_message = VPNCError.GEO_CREATE_ERROR_DB.message
             error_code = VPNCError.GEO_CREATE_ERROR_DB.code
-            developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
+            developer_message = "%s. DatabaseError.. " \
                                 "Code: %s . %s" % (
                                     VPNCError.GEO_CREATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
 
@@ -320,7 +320,7 @@ class GeoDB(GeoStored):
             except IndexError:
                 pass
             error_message = VPNCError.GEO_UPDATE_ERROR_DB.message
-            developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
+            developer_message = "%s. DatabaseError.. " \
                                 "Code: %s . %s" % (
                                     VPNCError.GEO_UPDATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             error_code = VPNCError.GEO_UPDATE_ERROR_DB.code

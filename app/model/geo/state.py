@@ -81,7 +81,7 @@ class StateDB(StateStored):
             logging.error(e)
             error_message = VPNCError.STATE_FIND_ERROR_DB.message
             error_code = VPNCError.STATE_FIND_ERROR_DB.code
-            developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
+            developer_message = "%s. DatabaseError.. " \
                                 "Code: %s . %s" % (
                                     VPNCError.STATE_FIND_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
@@ -121,7 +121,7 @@ class StateDB(StateStored):
                 pass
             error_message = VPNCError.STATE_FIND_BY_UUID_ERROR_DB.message
             error_code = VPNCError.STATE_FIND_BY_UUID_ERROR_DB.code
-            developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
+            developer_message = "%s. DatabaseError.. " \
                                 "Code: %s . %s" % (
                                     VPNCError.STATE_FIND_BY_UUID_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
@@ -169,7 +169,7 @@ class StateDB(StateStored):
                 pass
             error_message = VPNCError.STATE_CREATE_ERROR_DB.message
             error_code = VPNCError.STATE_CREATE_ERROR_DB.code
-            developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
+            developer_message = "%s. DatabaseError.. " \
                                 "Code: %s . %s" % (
                                     VPNCError.STATE_CREATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
 
@@ -209,7 +209,7 @@ class StateDB(StateStored):
             except IndexError:
                 pass
             error_message = VPNCError.STATE_UPDATE_ERROR_DB.message
-            developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
+            developer_message = "%s. DatabaseError.. " \
                                 "Code: %s . %s" % (
                                     VPNCError.STATE_UPDATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             error_code = VPNCError.STATE_UPDATE_ERROR_DB.code

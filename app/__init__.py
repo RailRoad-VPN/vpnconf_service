@@ -12,6 +12,7 @@ from app.resources.geos.state import StateAPI
 from app.resources.vpns import VPNTypeAPI
 from app.resources.vpns.servers import VPNServerAPI
 from app.resources.vpns.servers.configurations import VPNServerConfigurationAPI
+from app.resources.vpns.servers.connections import VPNServerConnectionAPI
 from app.resources.vpns.servers.meta import VPNServersMetaAPI
 from app.resources.vpns.servers.status import VPNServerStatusAPI
 
@@ -46,6 +47,7 @@ apis = [
     {'cls': VPNServersMetaAPI, 'args': [db_storage_service, app_config]},
     {'cls': VPNServerAPI, 'args': [db_storage_service, app_config]},
     {'cls': VPNServerConfigurationAPI, 'args': [db_storage_service, app_config]},
+    {'cls': VPNServerConnectionAPI, 'args': [db_storage_service, app_config]},
     {'cls': VPNServerStatusAPI, 'args': [db_storage_service, app_config]},
     {'cls': VPNTypeAPI, 'args': [db_storage_service, app_config]},
     {'cls': GeoAPI, 'args': [db_storage_service, app_config]},
