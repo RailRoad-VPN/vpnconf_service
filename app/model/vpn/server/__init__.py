@@ -14,6 +14,8 @@ class VPNServer(object):
     __version__ = 1
 
     _suuid = None
+    _ip = None
+    _hostname = None
     _version = None
     _condition_version = None
     _type_id = None
@@ -24,11 +26,14 @@ class VPNServer(object):
     _geo_position_id = None
     _created_date = None
 
-    def __init__(self, suuid: str = None, version: int = None, condition_version: int = None, type_id: int = None,
+    def __init__(self, suuid: str = None, ip: str = None, hostname: str = None, version: int = None,
+                 condition_version: int = None, type_id: int = None,
                  status_id: int = None, bandwidth: int = None, load: int = None, num: int = None,
                  geo_position_id: int = None,
                  created_date: datetime = None):
         self._suuid = suuid
+        self._ip = ip
+        self._hostname = hostname
         self._version = version
         self._condition_version = condition_version
         self._type_id = type_id
@@ -42,6 +47,8 @@ class VPNServer(object):
     def to_api_dict(self):
         return {
             'uuid': str(self._suuid),
+            'ip': self._ip,
+            'hostname': self._hostname,
             'version': self._version,
             'condition_version': self._condition_version,
             'type_id': self._type_id,
@@ -55,6 +62,8 @@ class VPNServer(object):
     def to_dict(self):
         return {
             'uuid': str(self._suuid),
+            'ip': self._ip,
+            'hostname': self._hostname,
             'version': self._version,
             'condition_version': self._condition_version,
             'type_id': self._type_id,
@@ -70,13 +79,13 @@ class VPNServer(object):
 class VPNServerStored(StoredObject, VPNServer):
     __version__ = 1
 
-    def __init__(self, storage_service: StorageService, suuid: str = None, version: int = None,
-                 condition_version: int = None, type_id: int = None, status_id: int = None, bandwidth: int = None,
-                 load: int = None, num: int = None, geo_position_id: int = None, created_date: datetime = None, limit: int = None,
-                 offset: int = None, **kwargs):
+    def __init__(self, storage_service: StorageService, suuid: str = None, ip: str = None, hostname: str = None,
+                 version: int = None, condition_version: int = None, type_id: int = None, status_id: int = None,
+                 bandwidth: int = None, load: int = None, num: int = None, geo_position_id: int = None,
+                 created_date: datetime = None, limit: int = None, offset: int = None, **kwargs):
         StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
         VPNServer.__init__(self, suuid=suuid, version=version, condition_version=condition_version, type_id=type_id,
-                           status_id=status_id, bandwidth=bandwidth, load=load, num=num,
+                           status_id=status_id, bandwidth=bandwidth, load=load, num=num, ip=ip, hostname=hostname,
                            geo_position_id=geo_position_id, created_date=created_date)
 
 
@@ -84,6 +93,8 @@ class VPNServerDB(VPNServerStored):
     __version__ = 1
 
     _suuid_field = 'uuid'
+    _ip_field = 'ip'
+    _hostname_field = 'hostname'
     _version_field = 'version'
     _condition_version_field = 'condition_version'
     _type_id_field = 'type_id'
@@ -102,6 +113,8 @@ class VPNServerDB(VPNServerStored):
         select_sql = '''
                       SELECT 
                           uuid, 
+                          ip,
+                          hostname,
                           version, 
                           condition_version, 
                           type_id, 
@@ -127,7 +140,7 @@ class VPNServerDB(VPNServerStored):
             error_code = VPNCError.VPNSERVER_FIND_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                VPNCError.VPNSERVER_FIND_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+                                    VPNCError.VPNSERVER_FIND_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
         vpnserver_list = []
 
@@ -145,6 +158,8 @@ class VPNServerDB(VPNServerStored):
         select_sql = '''
                       SELECT 
                           uuid, 
+                          ip,
+                          hostname,
                           version, 
                           condition_version, 
                           type_id, 
@@ -198,6 +213,8 @@ class VPNServerDB(VPNServerStored):
         select_sql = '''
                       SELECT 
                           uuid, 
+                          ip,
+                          hostname,
                           version, 
                           condition_version, 
                           type_id, 
@@ -246,6 +263,8 @@ class VPNServerDB(VPNServerStored):
         select_sql = '''
                       SELECT 
                           uuid, 
+                          ip,
+                          hostname,
                           version, 
                           condition_version, 
                           type_id, 
@@ -294,12 +313,14 @@ class VPNServerDB(VPNServerStored):
         logging.info('Create object VPNServer with uuid: ' + str(self._suuid))
         insert_sql = '''
                       INSERT INTO public.vpnserver 
-                        (uuid, type_id, status_id, bandwidth, geo_position_id, load) 
+                        (uuid, ip, hostname, type_id, status_id, bandwidth, geo_position_id, load) 
                       VALUES 
-                        (?, ?, ?, ?, ?, ?)
+                        (?, ?, ?, ?, ?, ?, ?, ?)
                      '''
         insert_params = (
             self._suuid,
+            self._ip,
+            self._hostname,
             self._type_id,
             self._status_id,
             self._bandwidth,
@@ -322,7 +343,7 @@ class VPNServerDB(VPNServerStored):
             error_code = VPNCError.VPNSERVER_CREATE_ERROR_DB.code
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                VPNCError.VPNSERVER_CREATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+                                    VPNCError.VPNSERVER_CREATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
 
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
         logging.debug('VPNServer created.')
@@ -334,7 +355,9 @@ class VPNServerDB(VPNServerStored):
 
         update_sql = '''
                     UPDATE public.vpnserver 
-                    SET type_id = ?,
+                    SET ip = ?,
+                        hostname = ?,
+                        type_id = ?,
                         status_id = ?,
                         bandwidth = ?,
                         geo_position_id = ?,
@@ -347,6 +370,8 @@ class VPNServerDB(VPNServerStored):
         logging.debug('Update SQL: %s' % update_sql)
 
         update_params = (
+            self._ip,
+            self._hostname,
             self._type_id,
             self._status_id,
             self._bandwidth,
@@ -368,7 +393,7 @@ class VPNServerDB(VPNServerStored):
             error_message = VPNCError.VPNSERVER_UPDATE_ERROR_DB.message
             developer_message = "%s. DatabaseError. Something wrong with database or SQL is broken. " \
                                 "Code: %s . %s" % (
-                                VPNCError.VPNSERVER_UPDATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+                                    VPNCError.VPNSERVER_UPDATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             error_code = VPNCError.VPNSERVER_UPDATE_ERROR_DB.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
@@ -378,6 +403,7 @@ class VPNServerDB(VPNServerStored):
     def __map_vpnserverdb_to_vpnserver(self, vpnserver_db):
         return VPNServer(suuid=vpnserver_db[self._suuid_field], version=vpnserver_db[self._version_field],
                          condition_version=vpnserver_db[self._condition_version_field],
+                         ip=vpnserver_db[self._ip_field], hostname=vpnserver_db[self._hostname_field],
                          type_id=vpnserver_db[self._type_id_field], status_id=vpnserver_db[self._status_id_field],
                          bandwidth=vpnserver_db[self._bandwidth_field], load=vpnserver_db[self._load_field],
                          num=vpnserver_db[self._num_field], geo_position_id=vpnserver_db[self._geo_position_id_field],

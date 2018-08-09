@@ -6,16 +6,16 @@ from flask import Response, request
 
 from app.exception import *
 from app.model.vpn.server import VPNServerDB
-from rest import APIResourceURL
 
 sys.path.insert(0, '../psql_library')
 from storage_service import DBStorageService
 
 sys.path.insert(1, '../rest_api_library')
 from utils import check_uuid
-from response import make_api_response
+from response import make_api_response, make_error_request_response, check_required_api_fields
 from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
+from rest import APIResourceURL
 
 logger = logging.getLogger(__name__)
 
@@ -50,14 +50,10 @@ class VPNServerAPI(ResourceAPI):
         request_json = request.json
 
         if request_json is None:
-            error = VPNCError.REQUEST_NO_JSON.message
-            error_code = VPNCError.REQUEST_NO_JSON.code
-            developer_message = VPNCError.REQUEST_NO_JSON.developer_message
-            http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
-                                        developer_message=developer_message, error_code=error_code)
-            return make_api_response(data=response_data, http_code=http_code)
+            return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.REQUEST_NO_JSON)
 
+        ip = request_json.get(VPNServerDB._ip_field, None)
+        hostname = request_json.get(VPNServerDB._hostname_field, None)
         version = request_json.get(VPNServerDB._version_field, None)
         condition_version = request_json.get(VPNServerDB._condition_version_field, None)
         type_id = request_json.get(VPNServerDB._type_id_field, None)
@@ -66,9 +62,26 @@ class VPNServerAPI(ResourceAPI):
         load = request_json.get(VPNServerDB._load_field, None)
         geo_position_id = request_json.get(VPNServerDB._geo_position_id_field, None)
 
+        req_fields = {
+            'ip': ip,
+            'hostname': hostname,
+            'type_id': type_id,
+            'status_id': status_id,
+            'bandwidth': bandwidth,
+            'load': load,
+            'geo_position_id': geo_position_id,
+        }
+
+        error_fields = check_required_api_fields(fields=req_fields)
+        if len(error_fields) > 0:
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=HTTPStatus.BAD_REQUEST,
+                                        errors=error_fields)
+            resp = make_api_response(data=response_data, http_code=response_data.code)
+            return resp
+
         vpnserver_db = VPNServerDB(storage_service=self.__db_storage_service, version=version,
-                                   condition_version=condition_version, type_id=type_id, status_id=status_id,
-                                   bandwidth=bandwidth, load=load, geo_position_id=geo_position_id)
+                                   ip=ip, hostname=hostname, condition_version=condition_version, type_id=type_id,
+                                   status_id=status_id, bandwidth=bandwidth, load=load, geo_position_id=geo_position_id)
 
         try:
             suuid = vpnserver_db.create()
@@ -91,38 +104,18 @@ class VPNServerAPI(ResourceAPI):
         request_json = request.json
 
         if request_json is None:
-            error = VPNCError.REQUEST_NO_JSON.message
-            error_code = VPNCError.REQUEST_NO_JSON.code
-            developer_message = VPNCError.REQUEST_NO_JSON.developer_message
-            http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
-                                        developer_message=developer_message, error_code=error_code)
-            return make_api_response(data=response_data, http_code=http_code)
+            return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST, err=VPNCError.REQUEST_NO_JSON)
 
         vpnserver_uuid = request_json.get(VPNServerDB._suuid_field, None)
 
         is_valid_suuid = check_uuid(suuid)
         is_valid_vpnserver_uuid = check_uuid(vpnserver_uuid)
-        if not is_valid_suuid or not is_valid_vpnserver_uuid:
-            error = VPNCError.VPNSERVER_IDENTIFIER_ERROR.message
-            error_code = VPNCError.VPNSERVER_IDENTIFIER_ERROR.code
-            developer_message = VPNCError.VPNSERVER_IDENTIFIER_ERROR.developer_message
-            http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
-                                        developer_message=developer_message, error_code=error_code)
-            resp = make_api_response(data=response_data, http_code=http_code)
-            return resp
+        if not is_valid_suuid or not is_valid_vpnserver_uuid or suuid != vpnserver_uuid:
+            return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
+                                               err=VPNCError.VPNSERVER_IDENTIFIER_ERROR)
 
-        if suuid != vpnserver_uuid:
-            error = VPNCError.VPNSERVER_IDENTIFIER_ERROR.message
-            error_code = VPNCError.VPNSERVER_IDENTIFIER_ERROR.code
-            developer_message = VPNCError.VPNSERVER_IDENTIFIER_ERROR.developer_message
-            http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
-                                        developer_message=developer_message, error_code=error_code)
-            resp = make_api_response(data=response_data, http_code=http_code)
-            return resp
-
+        ip = request_json.get(VPNServerDB._ip_field, None)
+        hostname = request_json.get(VPNServerDB._hostname_field, None)
         version = request_json.get(VPNServerDB._version_field, None)
         condition_version = request_json.get(VPNServerDB._condition_version_field, None)
         type_id = request_json.get(VPNServerDB._type_id_field, None)
@@ -130,6 +123,25 @@ class VPNServerAPI(ResourceAPI):
         bandwidth = request_json.get(VPNServerDB._bandwidth_field, None)
         load = request_json.get(VPNServerDB._load_field, None)
         geo_position_id = request_json.get(VPNServerDB._geo_position_id_field, None)
+
+        req_fields = {
+            'ip': ip,
+            'hostname': hostname,
+            'version': version,
+            'condition_version': condition_version,
+            'type_id': type_id,
+            'status_id': status_id,
+            'bandwidth': bandwidth,
+            'load': load,
+            'geo_position_id': geo_position_id,
+        }
+
+        error_fields = check_required_api_fields(fields=req_fields)
+        if len(error_fields) > 0:
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=HTTPStatus.BAD_REQUEST,
+                                        errors=error_fields)
+            resp = make_api_response(data=response_data, http_code=response_data.code)
+            return resp
 
         vpnserver_db = VPNServerDB(storage_service=self.__db_storage_service, suuid=suuid, version=version,
                                    condition_version=condition_version, type_id=type_id, status_id=status_id,
@@ -150,7 +162,6 @@ class VPNServerAPI(ResourceAPI):
 
         response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK)
         resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
-        logger.debug('make api response: %s' % resp.__str__())
         return resp
 
     def get(self, suuid: str = None, type_id: int = None, status_id: int = None) -> Response:

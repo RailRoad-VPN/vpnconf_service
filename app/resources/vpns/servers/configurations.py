@@ -1,5 +1,4 @@
 import logging
-import sys
 import uuid
 from http import HTTPStatus
 from typing import List
@@ -8,16 +7,16 @@ from flask import Response, request
 
 from app.exception import *
 from app.model.vpn.server.configuration import VPNServerConfigurationDB
-from rest import APIResourceURL
 
 sys.path.insert(0, '../psql_library')
 from storage_service import DBStorageService
 
 sys.path.insert(1, '../rest_api_library')
 from utils import check_uuid
-from response import make_api_response
+from response import make_api_response, make_error_request_response, check_required_api_fields
 from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
+from rest import APIResourceURL
 
 
 class VPNServerConfigurationAPI(ResourceAPI):
@@ -49,11 +48,13 @@ class VPNServerConfigurationAPI(ResourceAPI):
 
         user_uuid = request_json.get(VPNServerConfigurationDB._user_uuid_field, None)
         server_uuid = request_json.get(VPNServerConfigurationDB._server_uuid_field, None)
+        platform_id = request_json.get(VPNServerConfigurationDB._platform_id_field, None)
         file_path = request_json.get(VPNServerConfigurationDB._file_path_field, None)
         configuration = request_json.get(VPNServerConfigurationDB._configuration_field, None)
 
         vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service, user_uuid=user_uuid,
                                                       server_uuid=server_uuid, file_path=file_path,
+                                                      platform_id=platform_id,
                                                       configuration=configuration)
 
         try:
@@ -80,34 +81,35 @@ class VPNServerConfigurationAPI(ResourceAPI):
 
         is_valid_suuid = check_uuid(suuid)
         is_valid_vpnserver_uuid = check_uuid(vpnserverconfig_suuid)
-        if not is_valid_suuid or not is_valid_vpnserver_uuid:
-            error = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.message
-            error_code = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR
-            developer_message = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.developer_message
-            http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
-                                        developer_message=developer_message, error_code=error_code)
-            resp = make_api_response(data=response_data, http_code=http_code)
-            return resp
-
-        if suuid != vpnserverconfig_suuid:
-            error = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.message
-            error_code = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR
-            developer_message = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.developer_message
-            http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
-                                        developer_message=developer_message, error_code=error_code)
-            resp = make_api_response(data=response_data, http_code=http_code)
-            return resp
+        if not is_valid_suuid or not is_valid_vpnserver_uuid or suuid != vpnserverconfig_suuid:
+            return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
+                                               err=VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR)
 
         user_uuid = request_json.get(VPNServerConfigurationDB._user_uuid_field, None)
         server_uuid = request_json.get(VPNServerConfigurationDB._server_uuid_field, None)
+        platform_id = request_json.get(VPNServerConfigurationDB._platform_id_field, None)
         file_path = request_json.get(VPNServerConfigurationDB._file_path_field, None)
         configuration = request_json.get(VPNServerConfigurationDB._configuration_field, None)
 
+        req_fields = {
+            'user_uuid': user_uuid,
+            'server_uuid': server_uuid,
+            'platform_id': platform_id,
+            'file_path': file_path,
+            'configuration': configuration,
+        }
+
+        error_fields = check_required_api_fields(fields=req_fields)
+        if len(error_fields) > 0:
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=HTTPStatus.BAD_REQUEST,
+                                        errors=error_fields)
+            resp = make_api_response(data=response_data, http_code=response_data.code)
+            return resp
+
         vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service, suuid=suuid,
                                                       user_uuid=user_uuid, server_uuid=server_uuid,
-                                                      file_path=file_path, configuration=configuration)
+                                                      platform_id=platform_id, file_path=file_path,
+                                                      configuration=configuration)
 
         try:
             vpnserverconfig_db.update()
@@ -134,14 +136,8 @@ class VPNServerConfigurationAPI(ResourceAPI):
             # user configuration
             is_valid = check_uuid(server_uuid)
             if not is_valid:
-                error = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.message
-                error_code = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR
-                developer_message = VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR.developer_message
-                http_code = HTTPStatus.BAD_REQUEST
-                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
-                                            developer_message=developer_message, error_code=error_code)
-                resp = make_api_response(data=response_data, http_code=http_code)
-                return resp
+                return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
+                                                   err=VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR)
 
             try:
                 vpnserverconfig = vpnserverconfig_db.find_user_config()

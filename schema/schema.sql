@@ -20,7 +20,9 @@ DROP TABLE IF EXISTS public.state CASCADE;
 DROP TABLE IF EXISTS public.city CASCADE;
 DROP TABLE IF EXISTS public.geo_position CASCADE;
 DROP TABLE IF EXISTS public.vpnserver_status CASCADE;
+DROP TABLE IF EXISTS public.configuration_platform CASCADE;
 DROP TABLE IF EXISTS public.vpn_type CASCADE;
+DROP TABLE IF EXISTS public.vpnserver_connection CASCADE;
 
 CREATE TABLE public.vpnserversmeta
 (
@@ -89,6 +91,8 @@ CREATE TABLE public.vpn_type
 CREATE TABLE public.vpnserver
 (
     uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
+  , ip INET NOT NULL
+  , hostname VARCHAR(200)
   , num SERIAL NOT NULL
   , version INT DEFAULT 1 NOT NULL
   , condition_version INT DEFAULT 1 NOT NULL
@@ -100,6 +104,14 @@ CREATE TABLE public.vpnserver
   , created_date TIMESTAMP NOT NULL DEFAULT now()
 );
 
+CREATE TABLE public.configuration_platform
+(
+    id SERIAL PRIMARY KEY
+  , code VARCHAR(50) NOT NULL
+  , description VARCHAR(255) NOT NULL
+  , created_date TIMESTAMP NOT NULL DEFAULT now()
+);
+
 CREATE TABLE public.vpnserver_configuration
 (
     uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
@@ -108,6 +120,7 @@ CREATE TABLE public.vpnserver_configuration
   , file_path VARCHAR(1024) NOT NULL
   , configuration TEXT NOT NULL
   , version INT DEFAULT 1 NOT NULL
+  , platform_id INT REFERENCES public.configuration_platform(id) NOT NULL
   , created_date TIMESTAMP NOT NULL DEFAULT now()
 );
 
@@ -116,10 +129,10 @@ CREATE TABLE public.vpnserver_connection
     uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
   , server_uuid UUID REFERENCES public.vpnserver(uuid) NOT NULL
   , user_email VARCHAR(256)
-  , real_address VARCHAR(16)
-  , virtual_address VARCHAR(16)
-  , received_bytes BIGINT
-  , sent_bytes BIGINT
-  , connected_date TIMESTAMP
+  , ip_device INET
+  , virtual_ip INET
+  , bytes_i BIGINT
+  , bytes_o BIGINT
+  , last_ref TIMESTAMP
+  , connected_since TIMESTAMP
 );
-
