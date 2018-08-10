@@ -14,7 +14,13 @@ INSERT INTO public.vpn_type(id, code, description) VALUES (0, 'unknown', 'Unknow
 INSERT INTO public.vpn_type(id, code, description) VALUES (1, 'openvpn', 'Standard OpenVPN server');
 INSERT INTO public.vpn_type(id, code, description) VALUES (2, 'ikev2', 'IPSec w IKEv2');
 
+-- vpn device platforms
+INSERT INTO public.vpn_device_platform (id, code, description) VALUES (1, 'iOS', 'Apple iPhone and iPad mobile OS');
+INSERT INTO public.vpn_device_platform (id, code, description) VALUES (2, 'Android', 'All Android devices OS');
+INSERT INTO public.vpn_device_platform (id, code, description) VALUES (3, 'Windows', 'Windows OS');
+INSERT INTO public.vpn_device_platform (id, code, description) VALUES (4, 'macOS', 'Apple Mac OS');
 
+-- geos counries
 INSERT INTO public.country(name, code, str_code) VALUES ('Afghanistan', 004, 'AFG');
 INSERT INTO public.country(name, code, str_code) VALUES ('ALA	Aland Islands', 248, 'ALA');
 INSERT INTO public.country(name, code, str_code) VALUES ('Albania', 008, 'ALB');
@@ -262,3 +268,11 @@ INSERT INTO public.country(name, code, str_code) VALUES ('Western Sahara', 850, 
 INSERT INTO public.country(name, code, str_code) VALUES ('Yemen', 876, 'YEM');
 INSERT INTO public.country(name, code, str_code) VALUES ('Zambia', 732, 'ZMB');
 INSERT INTO public.country(name, code, str_code) VALUES ('Zimbabwe', 887, 'ZWE');
+
+-- cities
+INSERT INTO public.city(id, name, created_date) VALUES (1, 'New York', '2018-05-23 12:26:01.601516');
+INSERT INTO public.city(id, name, created_date) VALUES (2, 'Moscow', '2018-05-23 12:26:26.319747');
+
+-- states
+INSERT INTO public.state (code, country_code, name, created_date) VALUES ('1', 826, 'SY', '2018-05-31 16:58:48.984279');
+INSERT INTO public.state (code, country_code, name, created_date) VALUES ('2', 643, 'NY', '2018-05-31 16:58:55.672343');

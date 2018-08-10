@@ -71,6 +71,11 @@ class VPNCError(APIErrorEnum):
     VPNTYPE_FIND_BY_ID_ERROR = (name + str(count()),  'VPNTYPE_FIND_BY_ID_ERROR phrase', 'VPNTYPE_FIND_BY_ID_ERROR description')
     VPNTYPE_IDENTIFIER_ERROR = (name + str(count()),  'VPNTYPE_IDENTIFIER_ERROR phrase', 'VPNTYPE_IDENTIFIER_ERROR description')
 
+    VPN_DEVICE_PLATFORM_FIND_ERROR_DB = (name + str(count()),  'VPN_DEVICE_PLATFORM_FIND_ERROR_DB phrase', 'VPN_DEVICE_PLATFORM_FIND_ERROR_DB description')
+    VPN_DEVICE_PLATFORM_FIND_BY_ID_ERROR_DB = (name + str(count()),  'VPN_DEVICE_PLATFORM_FIND_BY_ID_ERROR_DB phrase', 'VPN_DEVICE_PLATFORM_FIND_BY_ID_ERROR_DB description')
+    VPN_DEVICE_PLATFORM_FIND_BY_ID_ERROR = (name + str(count()),  'VPN_DEVICE_PLATFORM_FIND_BY_ID_ERROR phrase', 'VPN_DEVICE_PLATFORM_FIND_BY_ID_ERROR description')
+    VPN_DEVICE_PLATFORM_IDENTIFIER_ERROR = (name + str(count()),  'VPN_DEVICE_PLATFORM_IDENTIFIER_ERROR phrase', 'VPN_DEVICE_PLATFORM_IDENTIFIER_ERROR description')
+
     CITY_FIND_ERROR_DB = (name + str(count()),  'CITY_FIND_ERROR_DB phrase', 'CITY_FIND_ERROR_DB description')
     CITY_FIND_BY_UUID_ERROR_DB = (name + str(count()),  'CITY_FIND_BY_UUID_ERROR_DB phrase', 'CITY_FIND_BY_UUID_ERROR_DB description')
     CITY_FIND_BY_UUID_ERROR = (name + str(count()),  'CITY_FIND_BY_UUID_ERROR phrase', 'CITY_FIND_BY_UUID_ERROR description')

@@ -16,6 +16,7 @@ class VPNServerConnection(object):
     suuid = None
     server_uuid = None
     user_uuid = None
+    user_device_uuid = None
     ip_device = None
     virtual_ip = None
     bytes_i = None
@@ -24,12 +25,13 @@ class VPNServerConnection(object):
     connected_since = None
     created_date = None
 
-    def __init__(self, suuid: str = None, server_uuid: str = None, user_uuid: str = None, ip_device: str = None,
-                 virtual_ip: str = None, bytes_i: float = None, bytes_o: float = None, last_ref: str = None,
-                 connected_since: datetime = None, created_date: datetime = None):
+    def __init__(self, suuid: str = None, server_uuid: str = None, user_uuid: str = None, user_device_uuid: str = None,
+                 ip_device: str = None, virtual_ip: str = None, bytes_i: float = None, bytes_o: float = None,
+                 last_ref: str = None, connected_since: datetime = None, created_date: datetime = None):
         self._suuid = suuid
         self._server_uuid = server_uuid
         self._user_uuid = user_uuid
+        self._user_device_uuid = user_device_uuid
         self._ip_device = ip_device
         self._virtual_ip = virtual_ip
         self._bytes_i = bytes_i
@@ -43,6 +45,7 @@ class VPNServerConnection(object):
             'uuid': self._suuid,
             'server_uuid': self._server_uuid,
             'user_uuid': self._user_uuid,
+            'user_device_uuid': self._user_device_uuid,
             'ip_device': self._ip_device,
             'virtual_ip': self._virtual_ip,
             'bytes_i': self._bytes_i,
@@ -57,6 +60,7 @@ class VPNServerConnection(object):
             'uuid': str(self._suuid),
             'server_uuid': str(self._server_uuid),
             'user_uuid': str(self._user_uuid),
+            'user_device_uuid': self._user_device_uuid,
             'ip_device': self._ip_device,
             'virtual_ip': self._virtual_ip,
             'bytes_i': self._bytes_i,
@@ -86,6 +90,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
     _suuid_field = 'uuid'
     _server_uuid_field = 'server_uuid'
     _user_uuid_field = 'user_uuid'
+    _user_device_uuid_field = 'user_device_uuid'
     _ip_device_field = 'ip_device'
     _virtual_ip_field = 'virtual_ip'
     _bytes_i_field = 'bytes_i'
@@ -104,6 +109,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                         uuid,
                         server_uuid,
                         user_uuid,
+                        user_device_uuid,
                         ip_device,
                         virtual_ip,
                         bytes_i,
@@ -147,6 +153,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                         uuid,
                         server_uuid,
                         user_uuid,
+                        user_device_uuid,
                         ip_device,
                         virtual_ip,
                         bytes_i,
@@ -200,6 +207,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                         uuid,
                         server_uuid,
                         user_uuid,
+                        user_device_uuid,
                         ip_device,
                         virtual_ip,
                         bytes_i,
@@ -246,6 +254,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                         uuid,
                         server_uuid,
                         user_uuid,
+                        user_device_uuid,
                         ip_device,
                         virtual_ip,
                         bytes_i,
@@ -277,22 +286,13 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                                 )
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
-        if len(vpnserver_connection_list_db) == 1:
-            vpnserver_db = vpnserver_connection_list_db[0]
-        elif len(vpnserver_connection_list_db) == 0:
-            error_message = VPNCError.VPNSERVERCONN_FIND_USER_CONN_ERROR.message
-            error_code = VPNCError.VPNSERVERCONN_FIND_USER_CONN_ERROR.code
-            developer_message = VPNCError.VPNSERVERCONN_FIND_USER_CONN_ERROR.developer_message
-            raise VPNNotFoundException(error=error_message, error_code=error_code, developer_message=developer_message)
-        else:
-            error_message = VPNCError.VPNSERVERCONN_FIND_USER_CONN_ERROR.message
-            developer_message = "%s. Find by specified uuid return more than 1 object. This is CAN NOT be! Something " \
-                                "really bad with database." \
-                                % VPNCError.VPNSERVERCONN_FIND_USER_CONN_ERROR.developer_message
-            error_code = VPNCError.VPNSERVERCONN_FIND_USER_CONN_ERROR.code
-            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
+        vpnserverconn_list = []
 
-        return self.__map_vpnserverconndb_to_vpnserverconn(vpnserver_db)
+        for vpnserverconn_db in vpnserver_connection_list_db:
+            vpnserverconn = self.__map_vpnserverconndb_to_vpnserverconn(vpnserverconn_db)
+            vpnserverconn_list.append(vpnserverconn)
+
+        return vpnserverconn_list
 
     def create(self):
         logging.info('VPNServerConnection create method')
@@ -300,15 +300,16 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         logging.info('Create object VPNServerConnection with uuid: ' + str(self._suuid))
         insert_sql = '''
                       INSERT INTO public.vpnserver_connection 
-                        (uuid, server_uuid, user_uuid, ip_device, virtual_ip, bytes_i, bytes_o, last_ref, 
+                        (uuid, server_uuid, user_uuid, user_device_uuid, ip_device, virtual_ip, bytes_i, bytes_o, last_ref, 
                         connected_since, created_date) 
                       VALUES 
-                        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                      '''
         insert_params = (
             self._suuid,
             self._server_uuid,
             self._user_uuid,
+            self._user_device_uuid,
             self._ip_device,
             self._virtual_ip,
             self._bytes_i,
@@ -348,6 +349,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                     SET
                         server_uuid = ?,
                         user_uuid = ?,
+                        user_device_uuid = ?,
                         ip_device = ?,
                         virtual_ip = ?,
                         bytes_i = ?,
@@ -363,6 +365,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         update_params = (
             self._server_uuid,
             self._user_uuid,
+            self._user_device_uuid,
             self._ip_device,
             self._virtual_ip,
             self._bytes_i,
@@ -394,6 +397,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
             suuid=vpnserverconn_db[self._suuid_field],
             user_uuid=vpnserverconn_db[self._user_uuid_field],
             server_uuid=vpnserverconn_db[self._server_uuid_field],
+            user_device_uuid=vpnserverconn_db[self._user_device_uuid_field],
             ip_device=vpnserverconn_db[self._ip_device_field],
             virtual_ip=vpnserverconn_db[self._virtual_ip_field],
             bytes_i=vpnserverconn_db[self._bytes_i_field],

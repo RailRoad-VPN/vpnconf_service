@@ -1,5 +1,4 @@
 import logging
-import uuid
 from http import HTTPStatus
 from typing import List
 
@@ -48,6 +47,7 @@ class VPNServerConnectionAPI(ResourceAPI):
 
         server_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
         user_uuid = request_json.get(VPNServerConnectionDB._user_uuid_field, None)
+        user_device_uuid = request_json.get(VPNServerConnectionDB._user_device_uuid_field, None)
         ip_device = request_json.get(VPNServerConnectionDB._ip_device_field, None)
         virtual_ip = request_json.get(VPNServerConnectionDB._virtual_ip_field, None)
         bytes_i = request_json.get(VPNServerConnectionDB._bytes_i_field, None)
@@ -58,6 +58,7 @@ class VPNServerConnectionAPI(ResourceAPI):
         req_fields = {
             'server_uuid': server_uuid,
             'user_uuid': user_uuid,
+            'user_device_uuid': user_device_uuid,
         }
 
         error_fields = check_required_api_fields(fields=req_fields)
@@ -104,6 +105,7 @@ class VPNServerConnectionAPI(ResourceAPI):
         suuid = request_json.get(VPNServerConnectionDB._suuid_field, None)
         server_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
         user_uuid = request_json.get(VPNServerConnectionDB._user_uuid_field, None)
+        user_device_uuid = request_json.get(VPNServerConnectionDB._user_device_uuid_field, None)
         ip_device = request_json.get(VPNServerConnectionDB._ip_device_field, None)
         virtual_ip = request_json.get(VPNServerConnectionDB._virtual_ip_field, None)
         bytes_i = request_json.get(VPNServerConnectionDB._bytes_i_field, None)
@@ -112,9 +114,9 @@ class VPNServerConnectionAPI(ResourceAPI):
         connected_since = request_json.get(VPNServerConnectionDB._connected_since_field, None)
 
         req_fields = {
-            'uuid': suuid,
             'server_uuid': server_uuid,
             'user_uuid': user_uuid,
+            'user_device_uuid': user_device_uuid,
         }
 
         error_fields = check_required_api_fields(fields=req_fields)
@@ -141,7 +143,8 @@ class VPNServerConnectionAPI(ResourceAPI):
                                         developer_message=developer_message, error_code=error_code)
             return make_api_response(data=response_data, http_code=http_code)
 
-        resp = make_api_response(http_code=HTTPStatus.OK)
+        response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK)
+        resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
         return resp
 
     def get(self, server_uuid: str, conn_uuid: str = None) -> Response:
@@ -164,9 +167,11 @@ class VPNServerConnectionAPI(ResourceAPI):
                                                    err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
 
             try:
-                vpnserverconn = vpnserverconn_db.find_by_server_and_user()
+                vpnserverconn_list = vpnserverconn_db.find_by_server_and_user()
+                vpnserverconn_list_dict = [vpnserverconn_list[i].to_api_dict() for i in
+                                           range(0, len(vpnserverconn_list))]
                 response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
-                                            data=vpnserverconn.to_api_dict())
+                                            data=vpnserverconn_list_dict)
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
                 return resp
             except VPNNotFoundException as e:
@@ -226,7 +231,8 @@ class VPNServerConnectionAPI(ResourceAPI):
             # all server connections
             try:
                 vpnserverconn_list = vpnserverconn_db.find_by_server_uuid()
-                vpnserverconn_list_dict = [vpnserverconn_list[i].to_api_dict() for i in range(0, len(vpnserverconn_list))]
+                vpnserverconn_list_dict = [vpnserverconn_list[i].to_api_dict() for i in
+                                           range(0, len(vpnserverconn_list))]
                 response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
                                             data=vpnserverconn_list_dict)
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
@@ -251,4 +257,3 @@ class VPNServerConnectionAPI(ResourceAPI):
                                             developer_message=developer_message, error_code=error_code)
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
-

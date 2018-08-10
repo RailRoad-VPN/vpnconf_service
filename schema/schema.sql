@@ -20,7 +20,8 @@ DROP TABLE IF EXISTS public.state CASCADE;
 DROP TABLE IF EXISTS public.city CASCADE;
 DROP TABLE IF EXISTS public.geo_position CASCADE;
 DROP TABLE IF EXISTS public.vpnserver_status CASCADE;
-DROP TABLE IF EXISTS public.configuration_platform CASCADE;
+DROP TABLE IF EXISTS public.vpn_device_platform CASCADE;
+DROP TABLE IF EXISTS public.vpnserver_config_templates CASCADE;
 DROP TABLE IF EXISTS public.vpn_type CASCADE;
 DROP TABLE IF EXISTS public.vpnserver_connection CASCADE;
 
@@ -104,23 +105,31 @@ CREATE TABLE public.vpnserver
   , created_date TIMESTAMP NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.configuration_platform
+CREATE TABLE public.vpn_device_platform
 (
     id SERIAL PRIMARY KEY
   , code VARCHAR(50) NOT NULL
   , description VARCHAR(255) NOT NULL
-  , created_date TIMESTAMP NOT NULL DEFAULT now()
+);
+
+-- Имя придумал Карен
+CREATE TABLE public.vpnserver_config_templates
+(
+    uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
+  , vpn_device_platform_id INT REFERENCES public.vpn_device_platform(id) NOT NULL
+  , vpn_type_id INT REFERENCES public.vpn_type(id) NOT NULL
+  , template_str TEXT
 );
 
 CREATE TABLE public.vpnserver_configuration
 (
     uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
   , user_uuid UUID NOT NULL
-  , server_uuid UUID REFERENCES public.vpnserver(uuid) UNIQUE NOT NULL
-  , file_path VARCHAR(1024) NOT NULL
+  , server_uuid UUID REFERENCES public.vpnserver(uuid) NOT NULL
   , configuration TEXT NOT NULL
   , version INT DEFAULT 1 NOT NULL
-  , platform_id INT REFERENCES public.configuration_platform(id) NOT NULL
+  , vpn_device_platform_id INT REFERENCES public.vpn_device_platform(id) NOT NULL
+  , vpn_type_id INT REFERENCES public.vpn_type(id) NOT NULL
   , created_date TIMESTAMP NOT NULL DEFAULT now()
 );
 
@@ -129,6 +138,7 @@ CREATE TABLE public.vpnserver_connection
     uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
   , server_uuid UUID REFERENCES public.vpnserver(uuid) NOT NULL
   , user_uuid UUID NOT NULL
+  , user_device_uuid VARCHAR(500)
   , ip_device INET
   , virtual_ip INET
   , bytes_i BIGINT

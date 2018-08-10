@@ -9,12 +9,14 @@ from app.resources.geos import GeoAPI
 from app.resources.geos.city import CityAPI
 from app.resources.geos.country import CountryAPI
 from app.resources.geos.state import StateAPI
-from app.resources.vpns import VPNTypeAPI
+from app.resources.vpns.device_platforms import VPNDevicePlatformsAPI
 from app.resources.vpns.servers import VPNServerAPI
+from app.resources.vpns.servers.config_templates import VPNConfigTemplatesAPI
 from app.resources.vpns.servers.configurations import VPNServerConfigurationAPI
 from app.resources.vpns.servers.connections import VPNServerConnectionAPI
 from app.resources.vpns.servers.meta import VPNServersMetaAPI
 from app.resources.vpns.servers.status import VPNServerStatusAPI
+from app.resources.vpns.type import VPNTypeAPI
 
 sys.path.insert(0, '../psql_library')
 from psql_helper import PostgreSQL
@@ -50,6 +52,8 @@ apis = [
     {'cls': VPNServerConnectionAPI, 'args': [db_storage_service, app_config]},
     {'cls': VPNServerStatusAPI, 'args': [db_storage_service, app_config]},
     {'cls': VPNTypeAPI, 'args': [db_storage_service, app_config]},
+    {'cls': VPNDevicePlatformsAPI, 'args': [db_storage_service, app_config]},
+    {'cls': VPNConfigTemplatesAPI, 'args': [db_storage_service, app_config]},
     {'cls': GeoAPI, 'args': [db_storage_service, app_config]},
     {'cls': CityAPI, 'args': [db_storage_service, app_config]},
     {'cls': CountryAPI, 'args': [db_storage_service, app_config]},
@@ -67,6 +71,7 @@ def wants_json_response():
 @app.errorhandler(400)
 def not_found_error(error):
     return make_error_request_response(HTTPStatus.BAD_REQUEST)
+
 
 @app.errorhandler(404)
 def not_found_error(error):
