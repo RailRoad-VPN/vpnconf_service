@@ -18,7 +18,8 @@ class VPNServerConfigurationTemplate(object):
     _vpn_type_id = None
     _template_str = None
 
-    def __init__(self, suuid: str = None, vpn_device_platform_id: int = None, vpn_type_id: str = None, template_str: str = None):
+    def __init__(self, suuid: str = None, vpn_device_platform_id: int = None, vpn_type_id: str = None,
+                 template_str: str = None):
         self._suuid = suuid
         self._vpn_device_platform_id = vpn_device_platform_id
         self._vpn_type_id = vpn_type_id
@@ -79,6 +80,111 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
         try:
             logging.debug('Call database service')
             vpnserverconfig_list_db = self._storage_service.get(sql=select_sql)
+        except DatabaseError as e:
+            logging.error(e)
+            error_message = VPNCError.VPNSERVER_CONFIG_TEMPLATES_FIND_ERROR_DB.message
+            error_code = VPNCError.VPNSERVER_CONFIG_TEMPLATES_FIND_ERROR_DB.code
+            developer_message = "%s. DatabaseError.. " \
+                                "Code: %s . %s" % (
+                                    VPNCError.VPNSERVER_CONFIG_TEMPLATES_FIND_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
+
+        vpnserverconfig_list = []
+
+        for vpnserverconfig_db in vpnserverconfig_list_db:
+            vpnserverconfig = self.__map_vpnserverconfigtempldb_to_vpnserverconfigtempl(vpnserverconfig_db)
+            vpnserverconfig_list.append(vpnserverconfig)
+
+        return vpnserverconfig_list
+
+    def find_by_type_and_platform(self):
+        logging.info('VPNServerConfigurationTemplatesDB find_by_type_and_platform method')
+        select_sql = '''
+                      SELECT 
+                        uuid,
+                        vpn_device_platform_id,
+                        vpn_type_id,
+                        template_str
+                      FROM public.vpnserver_config_templates
+                      '''
+        if self._limit:
+            select_sql += f"\nLIMIT {self._limit}\nOFFSET {self._offset}"
+        logging.debug(f"Select SQL: {select_sql}")
+
+        try:
+            logging.debug('Call database service')
+            vpnserverconfig_list_db = self._storage_service.get(sql=select_sql)
+        except DatabaseError as e:
+            logging.error(e)
+            error_message = VPNCError.VPNSERVER_CONFIG_TEMPLATES_FIND_ERROR_DB.message
+            error_code = VPNCError.VPNSERVER_CONFIG_TEMPLATES_FIND_ERROR_DB.code
+            developer_message = "%s. DatabaseError.. " \
+                                "Code: %s . %s" % (
+                                    VPNCError.VPNSERVER_CONFIG_TEMPLATES_FIND_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
+
+        vpnserverconfig_list = []
+
+        for vpnserverconfig_db in vpnserverconfig_list_db:
+            vpnserverconfig = self.__map_vpnserverconfigtempldb_to_vpnserverconfigtempl(vpnserverconfig_db)
+            vpnserverconfig_list.append(vpnserverconfig)
+
+        return vpnserverconfig_list
+
+    def find_by_type(self):
+        logging.info('VPNServerConfigurationTemplatesDB find_by_type method')
+        select_sql = '''
+                      SELECT 
+                        uuid,
+                        vpn_device_platform_id,
+                        vpn_type_id,
+                        template_str
+                      FROM public.vpnserver_config_templates
+                      '''
+        params = (self._vpn_type_id,)
+        if self._limit:
+            select_sql += f"\nLIMIT {self._limit}\nOFFSET {self._offset}"
+        logging.debug(f"Select SQL: {select_sql}")
+
+        try:
+            logging.debug('Call database service')
+            vpnserverconfig_list_db = self._storage_service.get(sql=select_sql, data=params)
+        except DatabaseError as e:
+            logging.error(e)
+            error_message = VPNCError.VPNSERVER_CONFIG_TEMPLATES_FIND_ERROR_DB.message
+            error_code = VPNCError.VPNSERVER_CONFIG_TEMPLATES_FIND_ERROR_DB.code
+            developer_message = "%s. DatabaseError.. " \
+                                "Code: %s . %s" % (
+                                    VPNCError.VPNSERVER_CONFIG_TEMPLATES_FIND_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
+
+        vpnserverconfig_list = []
+
+        for vpnserverconfig_db in vpnserverconfig_list_db:
+            vpnserverconfig = self.__map_vpnserverconfigtempldb_to_vpnserverconfigtempl(vpnserverconfig_db)
+            vpnserverconfig_list.append(vpnserverconfig)
+
+        return vpnserverconfig_list
+
+    def find_by_platform(self):
+        logging.info('VPNServerConfigurationTemplatesDB find_by_patform method')
+        select_sql = '''
+                      SELECT 
+                        uuid,
+                        vpn_device_platform_id,
+                        vpn_type_id,
+                        template_str
+                      FROM public.vpnserver_config_templates
+                      WHERE vpn_device_platform_id = ?
+                      '''
+        params = (self._vpn_device_platform_id,)
+        if self._limit:
+            select_sql += f"\nLIMIT {self._limit}\nOFFSET {self._offset}"
+        logging.debug(f"Select SQL: {select_sql}")
+
+        try:
+            logging.debug('Call database service')
+            vpnserverconfig_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)
             error_message = VPNCError.VPNSERVER_CONFIG_TEMPLATES_FIND_ERROR_DB.message
