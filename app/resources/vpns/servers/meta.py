@@ -21,7 +21,7 @@ from response import APIResponseStatus, APIResponse
 class VPNServersMetaAPI(ResourceAPI):
     __version__ = 1
 
-    __endpoint_name__ = 'VPNServersMetaAPI'
+    __endpoint_name__ = __qualname__
     __api_url__ = 'vpns/servers/meta'
 
     methods = ['GET', 'POST', 'PUT']

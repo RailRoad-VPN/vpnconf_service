@@ -18,10 +18,10 @@ from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
 
 
-class StateAPI(ResourceAPI):
+class GeosStatesAPI(ResourceAPI):
     __version__ = 1
 
-    __endpoint_name__ = 'StateAPI'
+    __endpoint_name__ = __qualname__
     __api_url__ = 'geo_positions/states'
 
     _config = None
@@ -30,7 +30,7 @@ class StateAPI(ResourceAPI):
 
     @staticmethod
     def get_api_urls(base_url: str) -> List[APIResourceURL]:
-        url = "%s/%s" % (base_url, StateAPI.__api_url__)
+        url = "%s/%s" % (base_url, GeosStatesAPI.__api_url__)
         api_urls = [
             APIResourceURL(base_url=url, resource_name='', methods=['GET', 'POST']),
             APIResourceURL(base_url=url, resource_name='<string:code>', methods=['GET', 'PUT']),
@@ -94,7 +94,7 @@ class StateAPI(ResourceAPI):
         return resp
 
     def get(self, code: str = None) -> Response:
-        super(StateAPI, self).get(req=request)
+        super(GeosStatesAPI, self).get(req=request)
         if code is not None:
             state_db = StateDB(storage_service=self.__db_storage_service, code=code)
 

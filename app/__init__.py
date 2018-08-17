@@ -5,18 +5,18 @@ from http import HTTPStatus
 
 from flask import Flask, request
 
-from app.resources.geos import GeoAPI
-from app.resources.geos.city import CityAPI
-from app.resources.geos.country import CountryAPI
-from app.resources.geos.state import StateAPI
-from app.resources.vpns.device_platforms import VPNDevicePlatformsAPI
-from app.resources.vpns.servers import VPNServerAPI
-from app.resources.vpns.servers.config_templates import VPNConfigTemplatesAPI
-from app.resources.vpns.servers.configurations import VPNServerConfigurationAPI
-from app.resources.vpns.servers.connections import VPNServerConnectionAPI
+from app.resources.geos import GeosAPI
+from app.resources.geos.cities import GeosCitiesAPI
+from app.resources.geos.countries import GeosCountriesAPI
+from app.resources.geos.states import GeosStatesAPI
+from app.resources.vpns.device_platforms import VPNSDevicePlatformsAPI
+from app.resources.vpns.servers import VPNSServersAPI
+from app.resources.vpns.servers.config_templates import VPNSConfigTemplatesAPI
+from app.resources.vpns.servers.configurations import VPNSServersConfigurationsAPI
+from app.resources.vpns.servers.connections import VPNSServersConnectionsAPI
 from app.resources.vpns.servers.meta import VPNServersMetaAPI
-from app.resources.vpns.servers.status import VPNServerStatusAPI
-from app.resources.vpns.type import VPNTypeAPI
+from app.resources.vpns.servers.statuses import VPNSServersStatusesAPI
+from app.resources.vpns.types import VPNSTypesAPI
 
 sys.path.insert(0, '../psql_library')
 from psql_helper import PostgreSQL
@@ -47,17 +47,17 @@ api_base_uri = app_config['API_BASE_URI']
 
 apis = [
     {'cls': VPNServersMetaAPI, 'args': [db_storage_service, app_config]},
-    {'cls': VPNServerAPI, 'args': [db_storage_service, app_config]},
-    {'cls': VPNServerConfigurationAPI, 'args': [db_storage_service, app_config]},
-    {'cls': VPNServerConnectionAPI, 'args': [db_storage_service, app_config]},
-    {'cls': VPNServerStatusAPI, 'args': [db_storage_service, app_config]},
-    {'cls': VPNTypeAPI, 'args': [db_storage_service, app_config]},
-    {'cls': VPNDevicePlatformsAPI, 'args': [db_storage_service, app_config]},
-    {'cls': VPNConfigTemplatesAPI, 'args': [db_storage_service, app_config]},
-    {'cls': GeoAPI, 'args': [db_storage_service, app_config]},
-    {'cls': CityAPI, 'args': [db_storage_service, app_config]},
-    {'cls': CountryAPI, 'args': [db_storage_service, app_config]},
-    {'cls': StateAPI, 'args': [db_storage_service, app_config]},
+    {'cls': VPNSServersAPI, 'args': [db_storage_service, app_config]},
+    {'cls': VPNSServersConfigurationsAPI, 'args': [db_storage_service, app_config]},
+    {'cls': VPNSServersConnectionsAPI, 'args': [db_storage_service, app_config]},
+    {'cls': VPNSServersStatusesAPI, 'args': [db_storage_service, app_config]},
+    {'cls': VPNSTypesAPI, 'args': [db_storage_service, app_config]},
+    {'cls': VPNSDevicePlatformsAPI, 'args': [db_storage_service, app_config]},
+    {'cls': VPNSConfigTemplatesAPI, 'args': [db_storage_service, app_config]},
+    {'cls': GeosAPI, 'args': [db_storage_service, app_config]},
+    {'cls': GeosCitiesAPI, 'args': [db_storage_service, app_config]},
+    {'cls': GeosCountriesAPI, 'args': [db_storage_service, app_config]},
+    {'cls': GeosStatesAPI, 'args': [db_storage_service, app_config]},
 ]
 
 register_api(app, api_base_uri, apis)

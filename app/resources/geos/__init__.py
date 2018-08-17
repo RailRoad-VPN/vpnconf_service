@@ -18,10 +18,10 @@ from response import APIResponseStatus, APIResponse
 from rest import APIResourceURL
 
 
-class GeoAPI(ResourceAPI):
+class GeosAPI(ResourceAPI):
     __version__ = 1
 
-    __endpoint_name__ = 'GeoAPI'
+    __endpoint_name__ = __qualname__
     __api_url__ = 'geo_positions'
 
     _config = None
@@ -30,7 +30,7 @@ class GeoAPI(ResourceAPI):
 
     @staticmethod
     def get_api_urls(base_url: str) -> List[APIResourceURL]:
-        url = "%s/%s" % (base_url, GeoAPI.__api_url__)
+        url = "%s/%s" % (base_url, GeosAPI.__api_url__)
         api_urls = [
             APIResourceURL(base_url=url, resource_name='', methods=['GET', 'POST']),
             APIResourceURL(base_url=url, resource_name='<int:sid>', methods=['GET', 'PUT']),
@@ -173,7 +173,7 @@ class GeoAPI(ResourceAPI):
         return resp
 
     def get(self, sid: int = None) -> Response:
-        super(GeoAPI, self).get(req=request)
+        super(GeosAPI, self).get(req=request)
         if sid is not None:
             try:
                 sid = int(sid)

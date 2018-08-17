@@ -20,10 +20,10 @@ from rest import APIResourceURL
 logger = logging.getLogger(__name__)
 
 
-class VPNServerAPI(ResourceAPI):
+class VPNSServersAPI(ResourceAPI):
     __version__ = 1
 
-    __endpoint_name__ = 'VPNServersAPI'
+    __endpoint_name__ = __qualname__
     __api_url__ = 'vpns/servers'
 
     _config = None
@@ -32,7 +32,7 @@ class VPNServerAPI(ResourceAPI):
 
     @staticmethod
     def get_api_urls(base_url: str) -> List[APIResourceURL]:
-        url = "%s/%s" % (base_url, VPNServerAPI.__api_url__)
+        url = "%s/%s" % (base_url, VPNSServersAPI.__api_url__)
         api_urls = [
             APIResourceURL(base_url=url, resource_name='', methods=['GET', 'POST']),
             APIResourceURL(base_url=url, resource_name='<string:suuid>', methods=['GET', 'PUT']),
@@ -165,7 +165,7 @@ class VPNServerAPI(ResourceAPI):
         return resp
 
     def get(self, suuid: str = None, type_id: int = None, status_id: int = None) -> Response:
-        super(VPNServerAPI, self).get(req=request)
+        super(VPNSServersAPI, self).get(req=request)
 
         vpnserver_db = VPNServerDB(storage_service=self.__db_storage_service, suuid=suuid, type_id=type_id,
                                    status_id=status_id,

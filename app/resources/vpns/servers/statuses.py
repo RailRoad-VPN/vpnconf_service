@@ -1,29 +1,28 @@
 import logging
 import sys
-import uuid
 from http import HTTPStatus
 from typing import List
 
 from flask import Response, request
 
 from app.exception import *
-from app.model.geo.city import CityDB
+from app.model.vpn.server.status import VPNServerStatusDB
 from rest import APIResourceURL
 
 sys.path.insert(0, '../psql_library')
 from storage_service import DBStorageService
 
 sys.path.insert(1, '../rest_api_library')
-from response import make_api_response, make_error_request_response
+from response import make_api_response
 from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
 
 
-class CityAPI(ResourceAPI):
+class VPNSServersStatusesAPI(ResourceAPI):
     __version__ = 1
 
-    __endpoint_name__ = 'CityAPI'
-    __api_url__ = 'geo_positions/cities'
+    __endpoint_name__ = __qualname__
+    __api_url__ = 'vpns/servers/statuses'
 
     _config = None
 
@@ -31,7 +30,7 @@ class CityAPI(ResourceAPI):
 
     @staticmethod
     def get_api_urls(base_url: str) -> List[APIResourceURL]:
-        url = "%s/%s" % (base_url, CityAPI.__api_url__)
+        url = "%s/%s" % (base_url, VPNSServersStatusesAPI.__api_url__)
         api_urls = [
             APIResourceURL(base_url=url, resource_name='', methods=['GET', 'POST']),
             APIResourceURL(base_url=url, resource_name='<int:sid>', methods=['GET', 'PUT']),
@@ -44,74 +43,40 @@ class CityAPI(ResourceAPI):
         self.__db_storage_service = db_storage_service
 
     def post(self) -> Response:
-        request_json = request.json
+        response_data = APIResponse(status=APIResponseStatus.failed.status, code=HTTPStatus.METHOD_NOT_ALLOWED,
+                                    error=HTTPStatus.METHOD_NOT_ALLOWED.phrase,
+                                    error_code=HTTPStatus.METHOD_NOT_ALLOWED)
 
-        name = request_json.get(CityDB._name_field, None)
-
-        city_db = CityDB(storage_service=self.__db_storage_service, name=name)
-
-        try:
-            sid = city_db.create()
-        except VPNException as e:
-            logging.error(e)
-            error_code = e.error_code
-            error = e.error
-            developer_message = e.developer_message
-            http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
-                                        developer_message=developer_message, error_code=error_code)
-            return make_api_response(data=response_data, http_code=http_code)
-
-        response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.CREATED)
-        resp = make_api_response(data=response_data, http_code=HTTPStatus.CREATED)
-        resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, sid)
+        resp = make_api_response(data=response_data, http_code=HTTPStatus.METHOD_NOT_ALLOWED)
         return resp
 
     def put(self, sid: int) -> Response:
-        request_json = request.json
-        city_sid = request_json.get(CityDB._sid_field, None)
+        response_data = APIResponse(status=APIResponseStatus.failed.status, code=HTTPStatus.METHOD_NOT_ALLOWED,
+                                    error=HTTPStatus.METHOD_NOT_ALLOWED.phrase,
+                                    error_code=HTTPStatus.METHOD_NOT_ALLOWED)
 
-        try:
-            sid = int(sid)
-            city_sid = int(city_sid)
-        except ValueError:
-            return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.CITY_IDENTIFIER_ERROR)
-
-        if sid != city_sid:
-            return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.CITY_IDENTIFIER_ERROR)
-
-        name = request_json.get(CityDB._name_field, None)
-
-        city_db = CityDB(storage_service=self.__db_storage_service, sid=sid, name=name)
-
-        try:
-            city_db.update()
-        except VPNException as e:
-            logging.error(e)
-            error_code = e.error_code
-            error = e.error
-            developer_message = e.developer_message
-            http_code = HTTPStatus.BAD_REQUEST
-            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
-                                        developer_message=developer_message, error_code=error_code)
-            return make_api_response(data=response_data, http_code=http_code)
-
-        resp = make_api_response(http_code=HTTPStatus.OK)
-        resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], self.__api_url__, uuid)
+        resp = make_api_response(data=response_data, http_code=HTTPStatus.METHOD_NOT_ALLOWED)
         return resp
 
     def get(self, sid: int = None) -> Response:
-        super(CityAPI, self).get(req=request)
+        super(VPNSServersStatusesAPI, self).get(req=request)
         if sid is not None:
             try:
                 sid = int(sid)
             except ValueError:
-                return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.CITY_IDENTIFIER_ERROR)
+                error = VPNCError.VPNSERVERSTATUS_IDENTIFIER_ERROR.message
+                error_code = VPNCError.VPNSERVERSTATUS_IDENTIFIER_ERROR
+                developer_message = VPNCError.VPNSERVERSTATUS_IDENTIFIER_ERROR.developer_message
+                http_code = HTTPStatus.BAD_REQUEST
+                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
+                                            developer_message=developer_message, error_code=error_code)
+                resp = make_api_response(data=response_data, http_code=http_code)
+                return resp
 
-            city_db = CityDB(storage_service=self.__db_storage_service, sid=sid)
+            vpnserverstatus_db = VPNServerStatusDB(storage_service=self.__db_storage_service, sid=sid)
 
             try:
-                city = city_db.find_by_sid()
+                vpnserverstatus = vpnserverstatus_db.find_by_sid()
             except VPNNotFoundException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -132,13 +97,14 @@ class CityAPI(ResourceAPI):
                 return make_api_response(data=response_data, http_code=http_code)
 
             response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
-                                        data=city.to_api_dict())
+                                        data=vpnserverstatus.to_api_dict())
             resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
         else:
-            city_db = CityDB(storage_service=self.__db_storage_service, limit=self.pagination.limit,
-                             offset=self.pagination.offset)
+            vpnserverstatus_db = VPNServerStatusDB(storage_service=self.__db_storage_service,
+                                                   limit=self.pagination.limit, offset=self.pagination.offset)
+
             try:
-                city_list = city_db.find()
+                vpnservertatus_list = vpnserverstatus_db.find()
             except VPNNotFoundException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -158,9 +124,10 @@ class CityAPI(ResourceAPI):
                                             developer_message=developer_message, error_code=error_code)
                 return make_api_response(data=response_data, http_code=http_code)
 
-            cities_dict = [city_list[i].to_api_dict() for i in range(0, len(city_list))]
-            response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK, data=cities_dict,
-                                        limit=self.pagination.limit, offset=self.pagination.offset)
+            vpnserverstatus_dict = [vpnservertatus_list[i].to_api_dict() for i in range(0, len(vpnservertatus_list))]
+            response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
+                                        data=vpnserverstatus_dict, limit=self.pagination.limit,
+                                        offset=self.pagination.offset)
             resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
 
         return resp

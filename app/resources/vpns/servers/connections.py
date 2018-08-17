@@ -18,10 +18,10 @@ from response import APIResponseStatus, APIResponse
 from rest import APIResourceURL
 
 
-class VPNServerConnectionAPI(ResourceAPI):
+class VPNSServersConnectionsAPI(ResourceAPI):
     __version__ = 1
 
-    __endpoint_name__ = 'VPNServerConnectionAPI'
+    __endpoint_name__ = __qualname__
     __api_url__ = 'vpns/servers/<string:server_uuid>/connections'
 
     _config = None
@@ -30,7 +30,7 @@ class VPNServerConnectionAPI(ResourceAPI):
 
     @staticmethod
     def get_api_urls(base_url: str) -> List[APIResourceURL]:
-        url = "%s/%s" % (base_url, VPNServerConnectionAPI.__api_url__)
+        url = "%s/%s" % (base_url, VPNSServersConnectionsAPI.__api_url__)
         api_urls = [
             APIResourceURL(base_url=url, resource_name='', methods=['GET', 'POST']),
             APIResourceURL(base_url=url, resource_name='<string:conn_uuid>', methods=['GET', 'PUT'])
@@ -148,7 +148,7 @@ class VPNServerConnectionAPI(ResourceAPI):
         return resp
 
     def get(self, server_uuid: str, conn_uuid: str = None) -> Response:
-        super(VPNServerConnectionAPI, self).get(req=request)
+        super(VPNSServersConnectionsAPI, self).get(req=request)
 
         user_uuid = request.args.get('user_uuid', None)
 

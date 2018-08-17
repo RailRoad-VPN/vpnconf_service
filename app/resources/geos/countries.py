@@ -6,7 +6,7 @@ from typing import List
 from flask import Response, request
 
 from app.exception import *
-from app.model.vpn.type import VPNTypeDB
+from app.model.geo.country import CountryDB
 from rest import APIResourceURL
 
 sys.path.insert(0, '../psql_library')
@@ -18,11 +18,11 @@ from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
 
 
-class VPNTypeAPI(ResourceAPI):
+class GeosCountriesAPI(ResourceAPI):
     __version__ = 1
 
-    __endpoint_name__ = 'VPNTypeAPI'
-    __api_url__ = 'vpns/types'
+    __endpoint_name__ = __qualname__
+    __api_url__ = 'geo_positions/countries'
 
     _config = None
 
@@ -30,10 +30,10 @@ class VPNTypeAPI(ResourceAPI):
 
     @staticmethod
     def get_api_urls(base_url: str) -> List[APIResourceURL]:
-        url = "%s/%s" % (base_url, VPNTypeAPI.__api_url__)
+        url = "%s/%s" % (base_url, GeosCountriesAPI.__api_url__)
         api_urls = [
             APIResourceURL(base_url=url, resource_name='', methods=['GET', 'POST']),
-            APIResourceURL(base_url=url, resource_name='<int:sid>', methods=['GET', 'PUT']),
+            APIResourceURL(base_url=url, resource_name='<string:code>', methods=['GET', 'PUT']),
         ]
         return api_urls
 
@@ -45,21 +45,16 @@ class VPNTypeAPI(ResourceAPI):
     def post(self) -> Response:
         return make_error_request_response(HTTPStatus.METHOD_NOT_ALLOWED, err=VPNCError.METHOD_NOT_ALLOWED)
 
-    def put(self, sid: int) -> Response:
+    def put(self, code: str) -> Response:
         return make_error_request_response(HTTPStatus.METHOD_NOT_ALLOWED, err=VPNCError.METHOD_NOT_ALLOWED)
 
-    def get(self, sid: int = None) -> Response:
-        super(VPNTypeAPI, self).get(req=request)
-        if sid is not None:
-            try:
-                sid = int(sid)
-            except ValueError:
-                return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.VPNTYPE_IDENTIFIER_ERROR)
-
-            vpntype_db = VPNTypeDB(storage_service=self.__db_storage_service, sid=sid)
+    def get(self, code: int = None) -> Response:
+        super(GeosCountriesAPI, self).get(req=request)
+        if code is not None:
+            country_db = CountryDB(storage_service=self.__db_storage_service, code=code)
 
             try:
-                vpntype = vpntype_db.find_by_sid()
+                country = country_db.find_by_code()
             except VPNNotFoundException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -80,14 +75,13 @@ class VPNTypeAPI(ResourceAPI):
                 return make_api_response(data=response_data, http_code=http_code)
 
             response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
-                                        data=vpntype.to_api_dict())
+                                        data=country.to_api_dict())
             resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
         else:
-            vpntype_db = VPNTypeDB(storage_service=self.__db_storage_service, limit=self.pagination.limit,
+            country_db = CountryDB(storage_service=self.__db_storage_service, limit=self.pagination.limit,
                                    offset=self.pagination.offset)
-
             try:
-                vpntype_list = vpntype_db.find()
+                country_list = country_db.find()
             except VPNNotFoundException as e:
                 logging.error(e)
                 error_code = e.error_code
@@ -107,9 +101,9 @@ class VPNTypeAPI(ResourceAPI):
                                             developer_message=developer_message, error_code=error_code)
                 return make_api_response(data=response_data, http_code=http_code)
 
-            vpntype_dict = [vpntype_list[i].to_api_dict() for i in range(0, len(vpntype_list))]
-            response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
-                                        data=vpntype_dict, limit=self.pagination.limit, offset=self.pagination.offset)
+            countries_dict = [country_list[i].to_api_dict() for i in range(0, len(country_list))]
+            response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK, data=countries_dict,
+                                        limit=self.pagination.limit, offset=self.pagination.offset)
             resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
 
         return resp

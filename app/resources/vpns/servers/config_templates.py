@@ -17,10 +17,10 @@ from response import APIResponseStatus, APIResponse
 from rest import APIResourceURL
 
 
-class VPNConfigTemplatesAPI(ResourceAPI):
+class VPNSConfigTemplatesAPI(ResourceAPI):
     __version__ = 1
 
-    __endpoint_name__ = 'VPNConfigTemplatesAPI'
+    __endpoint_name__ = __qualname__
     __api_url__ = 'vpns/config_templates'
 
     _config = None
@@ -29,7 +29,7 @@ class VPNConfigTemplatesAPI(ResourceAPI):
 
     @staticmethod
     def get_api_urls(base_url: str) -> List[APIResourceURL]:
-        url = "%s/%s" % (base_url, VPNConfigTemplatesAPI.__api_url__)
+        url = "%s/%s" % (base_url, VPNSConfigTemplatesAPI.__api_url__)
         api_urls = [
             APIResourceURL(base_url=url, resource_name='', methods=['GET', 'POST']),
             APIResourceURL(base_url=url, resource_name='<string:conf_template_uuid>', methods=['GET'])
@@ -50,7 +50,7 @@ class VPNConfigTemplatesAPI(ResourceAPI):
         return resp
 
     def get(self, conf_template_uuid: str = None) -> Response:
-        super(VPNConfigTemplatesAPI, self).get(req=request)
+        super(VPNSConfigTemplatesAPI, self).get(req=request)
 
         type_id = request.args.get('type_id', None)
         platform_id = request.args.get('platform_id', None)
