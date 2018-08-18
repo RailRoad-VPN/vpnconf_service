@@ -17,26 +17,26 @@ class VPNServerConnection(object):
     server_uuid = None
     user_uuid = None
     user_device_uuid = None
-    ip_device = None
+    device_ip = None
     virtual_ip = None
     bytes_i = None
     bytes_o = None
-    last_ref = None
+    is_connected = None
     connected_since = None
     created_date = None
 
     def __init__(self, suuid: str = None, server_uuid: str = None, user_uuid: str = None, user_device_uuid: str = None,
-                 ip_device: str = None, virtual_ip: str = None, bytes_i: float = None, bytes_o: float = None,
-                 last_ref: str = None, connected_since: datetime = None, created_date: datetime = None):
+                 device_ip: str = None, virtual_ip: str = None, bytes_i: float = None, bytes_o: float = None,
+                 is_connected: str = None, connected_since: datetime = None, created_date: datetime = None):
         self._suuid = suuid
         self._server_uuid = server_uuid
         self._user_uuid = user_uuid
         self._user_device_uuid = user_device_uuid
-        self._ip_device = ip_device
+        self._device_ip = device_ip
         self._virtual_ip = virtual_ip
         self._bytes_i = bytes_i
         self._bytes_o = bytes_o
-        self._last_ref = last_ref
+        self._is_connected = is_connected
         self._connected_since = connected_since
         self._created_date = created_date
 
@@ -46,11 +46,11 @@ class VPNServerConnection(object):
             'server_uuid': self._server_uuid,
             'user_uuid': self._user_uuid,
             'user_device_uuid': self._user_device_uuid,
-            'ip_device': self._ip_device,
+            'device_ip': self._device_ip,
             'virtual_ip': self._virtual_ip,
             'bytes_i': self._bytes_i,
             'bytes_o': self._bytes_o,
-            'last_ref': self._last_ref,
+            'is_connected': self._is_connected,
             'connected_since': self._connected_since,
             'created_date': self._created_date,
         }
@@ -61,11 +61,11 @@ class VPNServerConnection(object):
             'server_uuid': str(self._server_uuid),
             'user_uuid': str(self._user_uuid),
             'user_device_uuid': self._user_device_uuid,
-            'ip_device': self._ip_device,
+            'device_ip': self._device_ip,
             'virtual_ip': self._virtual_ip,
             'bytes_i': self._bytes_i,
             'bytes_o': self._bytes_o,
-            'last_ref': self._last_ref,
+            'is_connected': self._is_connected,
             'connected_since': self._connected_since,
             'created_date': self._created_date,
         }
@@ -75,13 +75,14 @@ class VPNServerConnectionStored(StoredObject, VPNServerConnection):
     __version__ = 1
 
     def __init__(self, storage_service: StorageService, suuid: str = None, server_uuid: str = None,
-                 user_uuid: str = None, ip_device: str = None, virtual_ip: str = None, bytes_i: float = None,
-                 bytes_o: float = None, last_ref: str = None, connected_since: datetime = None,
+                 user_uuid: str = None, device_ip: str = None, virtual_ip: str = None, bytes_i: float = None,
+                 bytes_o: float = None, is_connected: str = None, connected_since: datetime = None,
                  created_date: datetime = None, limit: int = None, offset: int = None, **kwargs):
         StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
         VPNServerConnection.__init__(self, suuid=suuid, server_uuid=server_uuid, user_uuid=user_uuid,
-                                     ip_device=ip_device, virtual_ip=virtual_ip, bytes_i=bytes_i, bytes_o=bytes_o,
-                                     last_ref=last_ref, connected_since=connected_since, created_date=created_date)
+                                     device_ip=device_ip, virtual_ip=virtual_ip, bytes_i=bytes_i, bytes_o=bytes_o,
+                                     is_connected=is_connected, connected_since=connected_since,
+                                     created_date=created_date)
 
 
 class VPNServerConnectionDB(VPNServerConnectionStored):
@@ -91,11 +92,11 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
     _server_uuid_field = 'server_uuid'
     _user_uuid_field = 'user_uuid'
     _user_device_uuid_field = 'user_device_uuid'
-    _ip_device_field = 'ip_device'
+    _device_ip_field = 'device_ip'
     _virtual_ip_field = 'virtual_ip'
     _bytes_i_field = 'bytes_i'
     _bytes_o_field = 'bytes_o'
-    _last_ref_field = 'last_ref'
+    _is_connected_field = 'is_connected'
     _connected_since_field = 'connected_since'
     _created_date_field = 'created_date'
 
@@ -110,11 +111,11 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                         server_uuid,
                         user_uuid,
                         user_device_uuid,
-                        ip_device,
+                        device_ip,
                         virtual_ip,
                         bytes_i,
                         bytes_o,
-                        last_ref,
+                        is_connected,
                         to_json(connected_since) AS connected_since,
                         to_json(created_date) AS created_date 
                       FROM public.vpnserver_connection
@@ -154,11 +155,11 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                         server_uuid,
                         user_uuid,
                         user_device_uuid,
-                        ip_device,
+                        device_ip,
                         virtual_ip,
                         bytes_i,
                         bytes_o,
-                        last_ref,
+                        is_connected,
                         to_json(connected_since) AS connected_since,
                         to_json(created_date) AS created_date 
                       FROM public.vpnserver_connection
@@ -208,11 +209,11 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                         server_uuid,
                         user_uuid,
                         user_device_uuid,
-                        ip_device,
+                        device_ip,
                         virtual_ip,
                         bytes_i,
                         bytes_o,
-                        last_ref,
+                        is_connected,
                         to_json(connected_since) AS connected_since,
                         to_json(created_date) AS created_date 
                       FROM public.vpnserver_connection
@@ -255,11 +256,11 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                         server_uuid,
                         user_uuid,
                         user_device_uuid,
-                        ip_device,
+                        device_ip,
                         virtual_ip,
                         bytes_i,
                         bytes_o,
-                        last_ref,
+                        is_connected,
                         to_json(connected_since) AS connected_since,
                         to_json(created_date) AS created_date 
                       FROM public.vpnserver_connection
@@ -300,7 +301,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         logging.info('Create object VPNServerConnection with uuid: ' + str(self._suuid))
         insert_sql = '''
                       INSERT INTO public.vpnserver_connection 
-                        (uuid, server_uuid, user_uuid, user_device_uuid, ip_device, virtual_ip, bytes_i, bytes_o, last_ref, 
+                        (uuid, server_uuid, user_uuid, user_device_uuid, device_ip, virtual_ip, bytes_i, bytes_o, is_connected, 
                         connected_since, created_date) 
                       VALUES 
                         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -310,11 +311,11 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
             self._server_uuid,
             self._user_uuid,
             self._user_device_uuid,
-            self._ip_device,
+            self._device_ip,
             self._virtual_ip,
             self._bytes_i,
             self._bytes_o,
-            self._last_ref,
+            self._is_connected,
             self._connected_since,
             self._created_date,
         )
@@ -350,11 +351,11 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                         server_uuid = ?,
                         user_uuid = ?,
                         user_device_uuid = ?,
-                        ip_device = ?,
+                        device_ip = ?,
                         virtual_ip = ?,
                         bytes_i = ?,
                         bytes_o = ?,
-                        last_ref = ?,
+                        is_connected = ?,
                         connected_since = ?
                     WHERE 
                       uuid = ?
@@ -366,11 +367,11 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
             self._server_uuid,
             self._user_uuid,
             self._user_device_uuid,
-            self._ip_device,
+            self._device_ip,
             self._virtual_ip,
             self._bytes_i,
             self._bytes_o,
-            self._last_ref,
+            self._is_connected,
             self._connected_since,
             self._suuid,
         )
@@ -398,11 +399,11 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
             user_uuid=vpnserverconn_db[self._user_uuid_field],
             server_uuid=vpnserverconn_db[self._server_uuid_field],
             user_device_uuid=vpnserverconn_db[self._user_device_uuid_field],
-            ip_device=vpnserverconn_db[self._ip_device_field],
+            device_ip=vpnserverconn_db[self._device_ip_field],
             virtual_ip=vpnserverconn_db[self._virtual_ip_field],
             bytes_i=vpnserverconn_db[self._bytes_i_field],
             bytes_o=vpnserverconn_db[self._bytes_o_field],
-            last_ref=vpnserverconn_db[self._last_ref_field],
+            is_connected=vpnserverconn_db[self._is_connected_field],
             connected_since=vpnserverconn_db[self._connected_since_field],
             created_date=vpnserverconn_db[self._created_date_field],
         )

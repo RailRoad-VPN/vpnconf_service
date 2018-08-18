@@ -139,11 +139,11 @@ CREATE TABLE public.vpnserver_connection
   , server_uuid UUID REFERENCES public.vpnserver(uuid) NOT NULL
   , user_uuid UUID NOT NULL
   , user_device_uuid VARCHAR(500)
-  , ip_device INET
+  , device_ip INET
   , virtual_ip INET
   , bytes_i BIGINT
   , bytes_o BIGINT
-  , last_ref TIMESTAMP
   , connected_since TIMESTAMP
+  , is_connected BOOLEAN
   , created_date TIMESTAMP NOT NULL DEFAULT now()
 );
