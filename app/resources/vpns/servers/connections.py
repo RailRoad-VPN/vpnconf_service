@@ -150,7 +150,14 @@ class VPNSServersConnectionsAPI(ResourceAPI):
     def get(self, server_uuid: str, conn_uuid: str = None) -> Response:
         super(VPNSServersConnectionsAPI, self).get(req=request)
 
+        is_valid = check_uuid(server_uuid)
+        if not is_valid:
+            return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
+                                               err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
+
         user_uuid = request.args.get('user_uuid', None)
+        user_device_uuid = request.args.get('user_device_uuid', None)
+        is_connected = request.args.get('is_connected', None)
 
         is_valid = check_uuid(suuid=server_uuid)
         if not is_valid:
@@ -159,9 +166,44 @@ class VPNSServersConnectionsAPI(ResourceAPI):
 
         vpnserverconn_db = VPNServerConnectionDB(storage_service=self.__db_storage_service, suuid=conn_uuid,
                                                  server_uuid=server_uuid, user_uuid=user_uuid)
+
+        if user_device_uuid is not None and is_connected is not None:
+            is_valid = check_uuid(user_device_uuid)
+            if not is_valid:
+                return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
+                                                   err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
+
+            # we have to find lastest connected connection with specified user_device
+            try:
+                vpnserverconn = vpnserverconn_db.find_by_server_and_user_device()
+                response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
+                                            data=vpnserverconn.to_api_dict())
+                resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
+                return resp
+            except VPNNotFoundException as e:
+                logging.error(e)
+                error_code = e.error_code
+                error = e.error
+                developer_message = e.developer_message
+                http_code = HTTPStatus.NOT_FOUND
+                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
+                                            developer_message=developer_message, error_code=error_code)
+                resp = make_api_response(data=response_data, http_code=http_code)
+                return resp
+            except VPNException as e:
+                logging.error(e)
+                error_code = e.error_code
+                error = e.error
+                developer_message = e.developer_message
+                http_code = HTTPStatus.BAD_REQUEST
+                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
+                                            developer_message=developer_message, error_code=error_code)
+                resp = make_api_response(data=response_data, http_code=http_code)
+                return resp
+
         if user_uuid is not None:
-            # user connection
-            is_valid = check_uuid(server_uuid)
+            # user connections
+            is_valid = check_uuid(user_uuid)
             if not is_valid:
                 return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
                                                    err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)

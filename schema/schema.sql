@@ -138,7 +138,7 @@ CREATE TABLE public.vpnserver_connection
     uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
   , server_uuid UUID REFERENCES public.vpnserver(uuid) NOT NULL
   , user_uuid UUID NOT NULL
-  , user_device_uuid VARCHAR(500)
+  , user_device_uuid UUID
   , device_ip INET
   , virtual_ip INET
   , bytes_i BIGINT
