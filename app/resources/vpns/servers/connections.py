@@ -157,6 +157,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
 
         user_uuid = request.args.get('user_uuid', None)
         user_device_uuid = request.args.get('user_device_uuid', None)
+        virtual_ip = request.args.get('virtual_ip', None)
         is_connected = request.args.get('is_connected', None)
 
         is_valid = check_uuid(suuid=server_uuid)
@@ -176,6 +177,35 @@ class VPNSServersConnectionsAPI(ResourceAPI):
             # we have to find lastest connected connection with specified user_device
             try:
                 vpnserverconn = vpnserverconn_db.find_by_server_and_user_device()
+                response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
+                                            data=vpnserverconn.to_api_dict())
+                resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
+                return resp
+            except VPNNotFoundException as e:
+                logging.error(e)
+                error_code = e.error_code
+                error = e.error
+                developer_message = e.developer_message
+                http_code = HTTPStatus.NOT_FOUND
+                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
+                                            developer_message=developer_message, error_code=error_code)
+                resp = make_api_response(data=response_data, http_code=http_code)
+                return resp
+            except VPNException as e:
+                logging.error(e)
+                error_code = e.error_code
+                error = e.error
+                developer_message = e.developer_message
+                http_code = HTTPStatus.BAD_REQUEST
+                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
+                                            developer_message=developer_message, error_code=error_code)
+                resp = make_api_response(data=response_data, http_code=http_code)
+                return resp
+
+        if virtual_ip is not None and is_connected is not None:
+            # we have to find lastest connected connection with specified virtual_ip
+            try:
+                vpnserverconn = vpnserverconn_db.find_by_server_and_virtual_ip()
                 response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
                                             data=vpnserverconn.to_api_dict())
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
