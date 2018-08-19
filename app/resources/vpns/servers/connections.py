@@ -48,17 +48,15 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         server_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
         user_uuid = request_json.get(VPNServerConnectionDB._user_uuid_field, None)
         user_device_uuid = request_json.get(VPNServerConnectionDB._user_device_uuid_field, None)
-        ip_device = request_json.get(VPNServerConnectionDB._ip_device_field, None)
+        ip_device = request_json.get(VPNServerConnectionDB._device_ip_field, None)
         virtual_ip = request_json.get(VPNServerConnectionDB._virtual_ip_field, None)
         bytes_i = request_json.get(VPNServerConnectionDB._bytes_i_field, None)
         bytes_o = request_json.get(VPNServerConnectionDB._bytes_o_field, None)
-        last_ref = request_json.get(VPNServerConnectionDB._last_ref_field, None)
         connected_since = request_json.get(VPNServerConnectionDB._connected_since_field, None)
 
         req_fields = {
             'server_uuid': server_uuid,
             'user_uuid': user_uuid,
-            'user_device_uuid': user_device_uuid,
         }
 
         error_fields = check_required_api_fields(fields=req_fields)
@@ -68,10 +66,10 @@ class VPNSServersConnectionsAPI(ResourceAPI):
             resp = make_api_response(data=response_data, http_code=response_data.code)
             return resp
 
-        vpnserverconn_db = VPNServerConnectionDB(storage_service=self.__db_storage_service, suuid=suuid,
-                                                 server_uuid=server_uuid, user_uuid=user_uuid, ip_device=ip_device,
-                                                 virtual_ip=virtual_ip, bytes_i=bytes_i, bytes_o=bytes_o,
-                                                 last_ref=last_ref, connected_since=connected_since)
+        vpnserverconn_db = VPNServerConnectionDB(storage_service=self.__db_storage_service,
+                                                 user_device_uuid=user_device_uuid, server_uuid=server_uuid,
+                                                 user_uuid=user_uuid, ip_device=ip_device, virtual_ip=virtual_ip,
+                                                 bytes_i=bytes_i, bytes_o=bytes_o, connected_since=connected_since)
         try:
             suuid = vpnserverconn_db.create()
         except VPNException as e:
@@ -106,17 +104,15 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         server_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
         user_uuid = request_json.get(VPNServerConnectionDB._user_uuid_field, None)
         user_device_uuid = request_json.get(VPNServerConnectionDB._user_device_uuid_field, None)
-        ip_device = request_json.get(VPNServerConnectionDB._ip_device_field, None)
+        ip_device = request_json.get(VPNServerConnectionDB._device_ip_field, None)
         virtual_ip = request_json.get(VPNServerConnectionDB._virtual_ip_field, None)
         bytes_i = request_json.get(VPNServerConnectionDB._bytes_i_field, None)
         bytes_o = request_json.get(VPNServerConnectionDB._bytes_o_field, None)
-        last_ref = request_json.get(VPNServerConnectionDB._last_ref_field, None)
         connected_since = request_json.get(VPNServerConnectionDB._connected_since_field, None)
 
         req_fields = {
             'server_uuid': server_uuid,
             'user_uuid': user_uuid,
-            'user_device_uuid': user_device_uuid,
         }
 
         error_fields = check_required_api_fields(fields=req_fields)
@@ -127,9 +123,9 @@ class VPNSServersConnectionsAPI(ResourceAPI):
             return resp
 
         vpnserverconn_db = VPNServerConnectionDB(storage_service=self.__db_storage_service, suuid=suuid,
-                                                 server_uuid=server_uuid, user_uuid=user_uuid, ip_device=ip_device,
-                                                 virtual_ip=virtual_ip, bytes_i=bytes_i, bytes_o=bytes_o,
-                                                 last_ref=last_ref, connected_since=connected_since)
+                                                 user_device_uuid=user_device_uuid, server_uuid=server_uuid,
+                                                 user_uuid=user_uuid, ip_device=ip_device, virtual_ip=virtual_ip,
+                                                 bytes_i=bytes_i, bytes_o=bytes_o, connected_since=connected_since)
 
         try:
             vpnserverconn_db.update()
@@ -174,7 +170,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
                                                    err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
 
-            # we have to find lastest connected connection with specified user_device
+            # we have to find latest connected connection with specified user_device
             try:
                 vpnserverconn = vpnserverconn_db.find_by_server_and_user_device()
                 response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
@@ -203,7 +199,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 return resp
 
         if virtual_ip is not None and is_connected is not None:
-            # we have to find lastest connected connection with specified virtual_ip
+            # we have to find latest connected connection with specified virtual_ip
             try:
                 vpnserverconn = vpnserverconn_db.find_by_server_and_virtual_ip()
                 response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
