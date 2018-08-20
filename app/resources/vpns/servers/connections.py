@@ -42,7 +42,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         self._config = config
         self.__db_storage_service = db_storage_service
 
-    def post(self) -> Response:
+    def post(self, server_uuid: str) -> Response:
         request_json = request.json
 
         server_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
@@ -89,19 +89,21 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], api_url, suuid)
         return resp
 
-    def put(self, suuid: str) -> Response:
+    def put(self, server_uuid: str, suuid: str) -> Response:
         request_json = request.json
 
         vpnserverconn_suuid = request_json.get(VPNServerConnectionDB._suuid_field, None)
+        vpnserver_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
 
         is_valid_suuid = check_uuid(suuid)
-        is_valid_vpnserver_uuid = check_uuid(vpnserverconn_suuid)
-        if not is_valid_suuid or not is_valid_vpnserver_uuid or suuid != vpnserverconn_suuid:
+        is_valid_server_uuid = check_uuid(server_uuid)
+        is_valid_server_uuid_again = check_uuid(vpnserver_uuid)
+        is_valid_vpnserverconn_uuid = check_uuid(vpnserverconn_suuid)
+        if not is_valid_suuid or not is_valid_server_uuid or not is_valid_server_uuid_again \
+                or not is_valid_vpnserverconn_uuid or suuid != vpnserverconn_suuid or server_uuid != vpnserver_uuid:
             return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
                                                err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
 
-        suuid = request_json.get(VPNServerConnectionDB._suuid_field, None)
-        server_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
         user_uuid = request_json.get(VPNServerConnectionDB._user_uuid_field, None)
         user_device_uuid = request_json.get(VPNServerConnectionDB._user_device_uuid_field, None)
         ip_device = request_json.get(VPNServerConnectionDB._device_ip_field, None)
