@@ -68,6 +68,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         req_fields = {
             'server_uuid': server_uuid,
             'user_uuid': user_uuid,
+            'virtual_ip': virtual_ip,
         }
 
         error_fields = check_required_api_fields(fields=req_fields)
@@ -127,6 +128,8 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         req_fields = {
             'server_uuid': server_uuid,
             'user_uuid': user_uuid,
+            'virtual_ip': virtual_ip,
+            'is_connected': is_connected,
         }
 
         error_fields = check_required_api_fields(fields=req_fields)
