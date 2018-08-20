@@ -354,3 +354,36 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                                             developer_message=developer_message, error_code=error_code)
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
+
+    def delete(self, server_uuid: str = None, conn_uuid: str = None) -> Response:
+        is_valid_server_uuid = check_uuid(suuid=server_uuid)
+        if not is_valid_server_uuid:
+            return make_error_request_response(HTTPStatus.NOT_FOUND, err=VPNCError.BAD_IDENTITY_ERROR)
+
+        vpnserverconn_db = VPNServerConnectionDB(storage_service=self.__db_storage_service, suuid=conn_uuid,
+                                                 server_uuid=server_uuid)
+
+        try:
+            if conn_uuid is not None:
+                # delete specific connection
+                is_valid_conn_uuid = check_uuid(suuid=conn_uuid)
+                if not is_valid_conn_uuid:
+                    return make_error_request_response(HTTPStatus.NOT_FOUND, err=VPNCError.BAD_IDENTITY_ERROR)
+
+                vpnserverconn_db.delete_by_uuid()
+            else:
+                # delete all connections belongs to server
+                vpnserverconn_db.delete_by_server()
+        except VPNException as e:
+            logger.error(e)
+            error_code = e.error_code
+            error = e.error
+            developer_message = e.developer_message
+            http_code = HTTPStatus.BAD_REQUEST
+            response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
+                                        developer_message=developer_message, error_code=error_code)
+            return make_api_response(data=response_data, http_code=http_code)
+
+        response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK)
+        resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
+        return resp

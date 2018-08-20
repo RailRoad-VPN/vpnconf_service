@@ -106,6 +106,73 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
     def __init__(self, storage_service: StorageService, **kwargs):
         super().__init__(storage_service, **kwargs)
 
+    def delete_by_uuid(self):
+        logger.debug("delete_by_uuid method")
+
+        update_sql = '''
+                    UPDATE public.vpnserver_connection 
+                    SET
+                        is_connected = FALSE
+                    WHERE 
+                      uuid = ?
+                    '''
+
+        logger.debug('Update SQL: %s' % update_sql)
+
+        update_params = (
+            self._suuid,
+        )
+
+        try:
+            logger.debug("Call database service")
+            self._storage_service.update(sql=update_sql, data=update_params)
+            logger.debug('VPNServerConnection updated.')
+        except DatabaseError as e:
+            logger.error(e)
+            try:
+                e = e.args[0]
+            except IndexError:
+                pass
+            error_message = VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.message
+            developer_message = "%s. DatabaseError.. " \
+                                "Code: %s . %s" % (
+                                    VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+            error_code = VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.code
+            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
+
+    def delete_by_server(self):
+        logger.debug("delete_by_server method")
+
+        update_sql = '''
+                    UPDATE public.vpnserver_connection 
+                    SET
+                        is_connected = FALSE
+                    WHERE 
+                      server_uuid = ?
+                    '''
+
+        logger.debug('Update SQL: %s' % update_sql)
+
+        update_params = (
+            self._server_uuid,
+        )
+
+        try:
+            logger.debug("Call database service")
+            self._storage_service.update(sql=update_sql, data=update_params)
+            logger.debug('VPNServerConnection updated.')
+        except DatabaseError as e:
+            logger.error(e)
+            try:
+                e = e.args[0]
+            except IndexError:
+                pass
+            error_message = VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.message
+            developer_message = "%s. DatabaseError. Code: %s . %s" % (
+                                    VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+            error_code = VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.code
+            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
+
     def find(self):
         logger.info('VPNServerConnectionDB find method')
         select_sql = '''
