@@ -60,7 +60,7 @@ class VPNServerConnection(object):
             'uuid': str(self._suuid),
             'server_uuid': str(self._server_uuid),
             'user_uuid': str(self._user_uuid),
-            'user_device_uuid': self._user_device_uuid,
+            'user_device_uuid': str(self._user_device_uuid),
             'device_ip': self._device_ip,
             'virtual_ip': self._virtual_ip,
             'bytes_i': self._bytes_i,
@@ -76,13 +76,14 @@ class VPNServerConnectionStored(StoredObject, VPNServerConnection):
 
     def __init__(self, storage_service: StorageService, suuid: str = None, server_uuid: str = None,
                  user_uuid: str = None, device_ip: str = None, virtual_ip: str = None, bytes_i: float = None,
-                 bytes_o: float = None, is_connected: str = None, connected_since: datetime = None,
-                 created_date: datetime = None, limit: int = None, offset: int = None, **kwargs):
+                 bytes_o: float = None, is_connected: str = None, user_device_uuid: str = None,
+                 connected_since: datetime = None, created_date: datetime = None,
+                 limit: int = None, offset: int = None, **kwargs):
         StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
         VPNServerConnection.__init__(self, suuid=suuid, server_uuid=server_uuid, user_uuid=user_uuid,
                                      device_ip=device_ip, virtual_ip=virtual_ip, bytes_i=bytes_i, bytes_o=bytes_o,
                                      is_connected=is_connected, connected_since=connected_since,
-                                     created_date=created_date)
+                                     user_device_uuid=user_device_uuid, created_date=created_date)
 
 
 class VPNServerConnectionDB(VPNServerConnectionStored):

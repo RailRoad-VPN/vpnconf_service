@@ -167,6 +167,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
 
         if user_device_uuid is not None and is_connected is not None:
             is_valid = check_uuid(user_device_uuid)
+            is_valid = check_uuid(user_device_uuid)
             if not is_valid:
                 return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
                                                    err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
