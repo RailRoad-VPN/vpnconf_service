@@ -525,9 +525,9 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         insert_sql = '''
                       INSERT INTO public.vpnserver_connection 
                         (uuid, server_uuid, user_uuid, user_device_uuid, device_ip, virtual_ip, bytes_i, bytes_o, is_connected, 
-                        connected_since, created_date) 
+                        connected_since) 
                       VALUES 
-                        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                      '''
         insert_params = (
             self._suuid,
@@ -540,7 +540,6 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
             self._bytes_o,
             self._is_connected,
             self._connected_since,
-            self._created_date,
         )
         logger.debug('Create VPNServerConnection SQL : %s' % insert_sql)
 
