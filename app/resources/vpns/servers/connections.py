@@ -173,11 +173,10 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                                                err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
 
         vpnserverconn_db = VPNServerConnectionDB(storage_service=self.__db_storage_service, suuid=conn_uuid,
-                                                 server_uuid=server_uuid, user_uuid=user_uuid,
+                                                 server_uuid=server_uuid, user_uuid=user_uuid, virtual_ip=virtual_ip,
                                                  user_device_uuid=user_device_uuid)
 
         if user_device_uuid is not None and is_connected is not None:
-            is_valid = check_uuid(user_device_uuid)
             is_valid = check_uuid(user_device_uuid)
             if not is_valid:
                 return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
