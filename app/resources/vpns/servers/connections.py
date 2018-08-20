@@ -45,7 +45,14 @@ class VPNSServersConnectionsAPI(ResourceAPI):
     def post(self, server_uuid: str) -> Response:
         request_json = request.json
 
-        server_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
+        vpnserver_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
+
+        is_valid_server_uuid = check_uuid(server_uuid)
+        is_valid_server_uuid_again = check_uuid(vpnserver_uuid)
+        if is_valid_server_uuid or not is_valid_server_uuid_again or not server_uuid != vpnserver_uuid:
+            return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
+                                               err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
+
         user_uuid = request_json.get(VPNServerConnectionDB._user_uuid_field, None)
         user_device_uuid = request_json.get(VPNServerConnectionDB._user_device_uuid_field, None)
         ip_device = request_json.get(VPNServerConnectionDB._device_ip_field, None)
