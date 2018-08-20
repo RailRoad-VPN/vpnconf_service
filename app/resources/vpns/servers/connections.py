@@ -116,11 +116,12 @@ class VPNSServersConnectionsAPI(ResourceAPI):
 
         user_uuid = request_json.get(VPNServerConnectionDB._user_uuid_field, None)
         user_device_uuid = request_json.get(VPNServerConnectionDB._user_device_uuid_field, None)
-        ip_device = request_json.get(VPNServerConnectionDB._device_ip_field, None)
+        device_ip = request_json.get(VPNServerConnectionDB._device_ip_field, None)
         virtual_ip = request_json.get(VPNServerConnectionDB._virtual_ip_field, None)
         bytes_i = request_json.get(VPNServerConnectionDB._bytes_i_field, None)
         bytes_o = request_json.get(VPNServerConnectionDB._bytes_o_field, None)
         connected_since = request_json.get(VPNServerConnectionDB._connected_since_field, None)
+        is_connected = request_json.get(VPNServerConnectionDB._is_connected_field, None)
 
         req_fields = {
             'server_uuid': server_uuid,
@@ -136,8 +137,9 @@ class VPNSServersConnectionsAPI(ResourceAPI):
 
         vpnserverconn_db = VPNServerConnectionDB(storage_service=self.__db_storage_service, suuid=conn_uuid,
                                                  user_device_uuid=user_device_uuid, server_uuid=server_uuid,
-                                                 user_uuid=user_uuid, ip_device=ip_device, virtual_ip=virtual_ip,
-                                                 bytes_i=bytes_i, bytes_o=bytes_o, connected_since=connected_since)
+                                                 user_uuid=user_uuid, ip_device=device_ip, virtual_ip=virtual_ip,
+                                                 is_connected=is_connected, bytes_i=bytes_i, bytes_o=bytes_o,
+                                                 connected_since=connected_since)
 
         try:
             vpnserverconn_db.update()
