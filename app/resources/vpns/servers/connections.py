@@ -96,18 +96,18 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         resp.headers['Location'] = '%s/%s/%s' % (self._config['API_BASE_URI'], api_url, suuid)
         return resp
 
-    def put(self, server_uuid: str, suuid: str) -> Response:
+    def put(self, server_uuid: str, conn_uuid: str) -> Response:
         request_json = request.json
 
         vpnserverconn_suuid = request_json.get(VPNServerConnectionDB._suuid_field, None)
         vpnserver_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
 
-        is_valid_suuid = check_uuid(suuid)
+        is_valid_suuid = check_uuid(conn_uuid)
         is_valid_server_uuid = check_uuid(server_uuid)
         is_valid_server_uuid_again = check_uuid(vpnserver_uuid)
         is_valid_vpnserverconn_uuid = check_uuid(vpnserverconn_suuid)
         if not is_valid_suuid or not is_valid_server_uuid or not is_valid_server_uuid_again \
-                or not is_valid_vpnserverconn_uuid or suuid != vpnserverconn_suuid or server_uuid != vpnserver_uuid:
+                or not is_valid_vpnserverconn_uuid or conn_uuid != vpnserverconn_suuid or server_uuid != vpnserver_uuid:
             return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
                                                err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
 
@@ -131,7 +131,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
             resp = make_api_response(data=response_data, http_code=response_data.code)
             return resp
 
-        vpnserverconn_db = VPNServerConnectionDB(storage_service=self.__db_storage_service, suuid=suuid,
+        vpnserverconn_db = VPNServerConnectionDB(storage_service=self.__db_storage_service, suuid=conn_uuid,
                                                  user_device_uuid=user_device_uuid, server_uuid=server_uuid,
                                                  user_uuid=user_uuid, ip_device=ip_device, virtual_ip=virtual_ip,
                                                  bytes_i=bytes_i, bytes_o=bytes_o, connected_since=connected_since)
