@@ -50,11 +50,15 @@ class VPNSServersConnectionsAPI(ResourceAPI):
 
         vpnserver_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
 
+        logger.debug("check uuids")
+
         is_valid_server_uuid = check_uuid(server_uuid)
         is_valid_server_uuid_again = check_uuid(vpnserver_uuid)
         if is_valid_server_uuid or not is_valid_server_uuid_again or not server_uuid != vpnserver_uuid:
             return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
                                                err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
+
+        logger.debug("get fields from request_json")
 
         user_uuid = request_json.get(VPNServerConnectionDB._user_uuid_field, None)
         user_device_uuid = request_json.get(VPNServerConnectionDB._user_device_uuid_field, None)
@@ -64,6 +68,8 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         bytes_o = request_json.get(VPNServerConnectionDB._bytes_o_field, None)
         connected_since = request_json.get(VPNServerConnectionDB._connected_since_field, None)
         is_connected = request_json.get(VPNServerConnectionDB._is_connected_field, None)
+
+        logger.debug("check req_fields")
 
         req_fields = {
             'server_uuid': server_uuid,
