@@ -17,6 +17,8 @@ from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
 from rest import APIResourceURL
 
+logger = logging.getLogger(__name__)
+
 
 class VPNSServersConnectionsAPI(ResourceAPI):
     __version__ = 1
@@ -80,7 +82,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         try:
             suuid = vpnserverconn_db.create()
         except VPNException as e:
-            logging.error(e)
+            logger.error(e)
             error_code = e.error_code
             error = e.error
             developer_message = e.developer_message
@@ -139,7 +141,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         try:
             vpnserverconn_db.update()
         except VPNException as e:
-            logging.error(e)
+            logger.error(e)
             error_code = e.error_code
             error = e.error
             developer_message = e.developer_message
@@ -189,7 +191,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
                 return resp
             except VPNNotFoundException as e:
-                logging.error(e)
+                logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -199,7 +201,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
             except VPNException as e:
-                logging.error(e)
+                logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -218,7 +220,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
                 return resp
             except VPNNotFoundException as e:
-                logging.error(e)
+                logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -228,7 +230,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
             except VPNException as e:
-                logging.error(e)
+                logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -254,7 +256,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
                 return resp
             except VPNNotFoundException as e:
-                logging.error(e)
+                logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -264,7 +266,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
             except VPNException as e:
-                logging.error(e)
+                logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -287,7 +289,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
                 return resp
             except VPNNotFoundException as e:
-                logging.error(e)
+                logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -297,7 +299,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
             except VPNException as e:
-                logging.error(e)
+                logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -317,7 +319,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
                 return resp
             except VPNNotFoundException as e:
-                logging.error(e)
+                logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -327,7 +329,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
             except VPNException as e:
-                logging.error(e)
+                logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
