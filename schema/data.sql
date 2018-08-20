@@ -28,8 +28,8 @@ INSERT INTO public.vpnserver_configuration(uuid, user_uuid, server_uuid, configu
 --
 
 -- ios and ikev2
-INSERT INTO public.vpnserver_connection (uuid, server_uuid, user_uuid, user_device_uuid, device_ip, virtual_ip, bytes_i, bytes_o, is_connected, connected_since) VALUES ('44cc1367-53ac-48ab-a9b0-5d6787cf8ebe', '699bba8d-7a50-4838-8c6e-ceed49d0f820', 'cf402144-0c02-4b97-98f2-73f7b56160cf', '78b752a5-2928-48a9-9fa7-ba8bebad9f61', '185.89.8.146', '10.0.0.6', 900, 800, TRUE, '2018-08-10 01:25:52.559000');
+INSERT INTO public.vpnserver_connection (uuid, server_uuid, user_uuid, user_device_uuid, device_ip, virtual_ip, bytes_i, bytes_o, is_connected, connected_since) VALUES ('44cc1367-53ac-48ab-a9b0-5d6787cf8ebe', '699bba8d-7a50-4838-8c6e-ceed49d0f820', 'cf402144-0c02-4b97-98f2-73f7b56160cf', '78b752a5-2928-48a9-9fa7-ba8bebad9f61', '127.0.0.1', '127.0.0.1', 900, 800, TRUE, '2018-08-10 01:25:52.559000');
 
 
 -- windows and openvpn
-INSERT INTO public.vpnserver_connection (uuid, server_uuid, user_uuid, user_device_uuid, device_ip, virtual_ip, bytes_i, bytes_o, is_connected, connected_since) VALUES ('d10e7099-1f18-496f-ba6b-6fe3352d565a', 'c872e7f0-76d6-4a4e-826e-c56a7c05958a', 'cf402144-0c02-4b97-98f2-73f7b56160cf', '78b752a5-2928-48a9-9fa7-ba8bebad9f61', '185.89.8.146', '10.0.0.6', 900, 800, TRUE, '2018-08-10 01:25:52.559000');
+INSERT INTO public.vpnserver_connection (uuid, server_uuid, user_uuid, user_device_uuid, device_ip, virtual_ip, bytes_i, bytes_o, is_connected, connected_since) VALUES ('d10e7099-1f18-496f-ba6b-6fe3352d565a', 'c872e7f0-76d6-4a4e-826e-c56a7c05958a', 'cf402144-0c02-4b97-98f2-73f7b56160cf', '4c23dffb-2cf2-4173-9d0c-e38caad6e12b', '185.89.8.146', '10.0.0.6', 900, 800, TRUE, '2018-08-10 01:25:52.559000');
