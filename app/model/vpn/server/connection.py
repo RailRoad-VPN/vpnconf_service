@@ -310,9 +310,9 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                         is_connected,
                         to_json(connected_since) AS connected_since,
                         to_json(created_date) AS created_date 
-                      FROM public.vpnserver_connection
+                      FROM public.vpnserver_connection vc
                       WHERE server_uuid = ? AND user_device_uuid = ?
-                      ORDER BY created_date DESC
+                      ORDER BY vc.created_date DESC
                       '''
         logging.debug(f"Select SQL: {select_sql}")
         params = (
@@ -329,20 +329,20 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                 e = e.args[0]
             except IndexError:
                 pass
-            error_message = VPNCError.VPNSERVERCONN_FIND_BY_UUID_ERROR_DB.message
-            error_code = VPNCError.VPNSERVERCONN_FIND_BY_UUID_ERROR_DB.code
+            error_message = VPNCError.VPNSERVERCONN_FIND_BY_SERVER_AND_USER_DEVICE_ERROR_DB.message
+            error_code = VPNCError.VPNSERVERCONN_FIND_BY_SERVER_AND_USER_DEVICE_ERROR_DB.code
             developer_message = "%s. DatabaseError.. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.VPNSERVERCONN_FIND_BY_UUID_ERROR_DB.developer_message, e.pgcode,
+                                    VPNCError.VPNSERVERCONN_FIND_BY_SERVER_AND_USER_DEVICE_ERROR_DB.developer_message, e.pgcode,
                                     e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         if len(vpnserver_connection_list_db) > 0:
             vpnserver_conn_db = vpnserver_connection_list_db[0]
         else:
-            error_message = VPNCError.VPNSERVERCONN_FIND_BY_UUID_ERROR.message
-            error_code = VPNCError.VPNSERVERCONN_FIND_BY_UUID_ERROR.code
-            developer_message = VPNCError.VPNSERVERCONN_FIND_BY_UUID_ERROR.developer_message
+            error_message = VPNCError.VPNSERVERCONN_FIND_BY_SERVER_AND_USER_DEVICE_ERROR.message
+            error_code = VPNCError.VPNSERVERCONN_FIND_BY_SERVER_AND_USER_DEVICE_ERROR.code
+            developer_message = VPNCError.VPNSERVERCONN_FIND_BY_SERVER_AND_USER_DEVICE_ERROR.developer_message
             raise VPNNotFoundException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         return self.__map_vpnserverconndb_to_vpnserverconn(vpnserver_conn_db)
@@ -362,9 +362,9 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                         is_connected,
                         to_json(connected_since) AS connected_since,
                         to_json(created_date) AS created_date 
-                      FROM public.vpnserver_connection
+                      FROM public.vpnserver_connection vc
                       WHERE server_uuid = ? AND virtual_ip = ?
-                      ORDER BY created_date DESC
+                      ORDER BY vc.created_date DESC
                       '''
         logging.debug(f"Select SQL: {select_sql}")
         params = (
@@ -381,20 +381,20 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                 e = e.args[0]
             except IndexError:
                 pass
-            error_message = VPNCError.VPNSERVERCONN_FIND_BY_UUID_ERROR_DB.message
-            error_code = VPNCError.VPNSERVERCONN_FIND_BY_UUID_ERROR_DB.code
+            error_message = VPNCError.VPNSERVERCONN_FIND_BY_SERVER_AND_VIRTUAL_IP_ERROR_DB.message
+            error_code = VPNCError.VPNSERVERCONN_FIND_BY_SERVER_AND_VIRTUAL_IP_ERROR_DB.code
             developer_message = "%s. DatabaseError.. " \
                                 "Code: %s . %s" % (
-                                    VPNCError.VPNSERVERCONN_FIND_BY_UUID_ERROR_DB.developer_message, e.pgcode,
+                                    VPNCError.VPNSERVERCONN_FIND_BY_SERVER_AND_VIRTUAL_IP_ERROR_DB.developer_message, e.pgcode,
                                     e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         if len(vpnserver_connection_list_db) > 0:
             vpnserver_conn_db = vpnserver_connection_list_db[0]
         else:
-            error_message = VPNCError.VPNSERVERCONN_FIND_BY_UUID_ERROR.message
-            error_code = VPNCError.VPNSERVERCONN_FIND_BY_UUID_ERROR.code
-            developer_message = VPNCError.VPNSERVERCONN_FIND_BY_UUID_ERROR.developer_message
+            error_message = VPNCError.VPNSERVERCONN_FIND_BY_SERVER_AND_VIRTUAL_IP_ERROR.message
+            error_code = VPNCError.VPNSERVERCONN_FIND_BY_SERVER_AND_VIRTUAL_IP_ERROR.code
+            developer_message = VPNCError.VPNSERVERCONN_FIND_BY_SERVER_AND_VIRTUAL_IP_ERROR.developer_message
             raise VPNNotFoundException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         return self.__map_vpnserverconndb_to_vpnserverconn(vpnserver_conn_db)
