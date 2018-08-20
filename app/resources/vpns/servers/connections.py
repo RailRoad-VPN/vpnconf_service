@@ -63,6 +63,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         bytes_i = request_json.get(VPNServerConnectionDB._bytes_i_field, None)
         bytes_o = request_json.get(VPNServerConnectionDB._bytes_o_field, None)
         connected_since = request_json.get(VPNServerConnectionDB._connected_since_field, None)
+        is_connected = request_json.get(VPNServerConnectionDB._is_connected_field, None)
 
         req_fields = {
             'server_uuid': server_uuid,
@@ -76,7 +77,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
             resp = make_api_response(data=response_data, http_code=response_data.code)
             return resp
 
-        vpnserverconn_db = VPNServerConnectionDB(storage_service=self.__db_storage_service,
+        vpnserverconn_db = VPNServerConnectionDB(storage_service=self.__db_storage_service, is_connected=is_connected,
                                                  user_device_uuid=user_device_uuid, server_uuid=server_uuid,
                                                  user_uuid=user_uuid, ip_device=ip_device, virtual_ip=virtual_ip,
                                                  bytes_i=bytes_i, bytes_o=bytes_o, connected_since=connected_since)
