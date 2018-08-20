@@ -150,6 +150,51 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
 
         return vpnserverconn_list
 
+    def find_by_user_device(self):
+        logger.info('VPNServerConnectionDB find_by_user_device method')
+        select_sql = '''
+                      SELECT 
+                        uuid,
+                        server_uuid,
+                        user_uuid,
+                        user_device_uuid,
+                        device_ip,
+                        virtual_ip,
+                        bytes_i,
+                        bytes_o,
+                        is_connected,
+                        to_json(connected_since) AS connected_since,
+                        to_json(created_date) AS created_date 
+                      FROM public.vpnserver_connection
+                      WHERE user_device_uuid = ?
+                      '''
+        if self._limit:
+            select_sql += f"\nLIMIT {self._limit}\nOFFSET {self._offset}"
+        logger.debug(f"Select SQL: {select_sql}")
+        params = (self._user_device_uuid,)
+
+        try:
+            logger.debug('Call database service')
+            vpnserverconn_list_db = self._storage_service.get(sql=select_sql, data=params)
+        except DatabaseError as e:
+            logger.error(e)
+            error_message = VPNCError.VPNSERVERCONN_FIND_BY_USER_DEVICE_DB.message
+            error_code = VPNCError.VPNSERVERCONN_FIND_BY_USER_DEVICE_DB.code
+            developer_message = "%s. DatabaseError. Code: %s . %s" % (
+                                    VPNCError.VPNSERVERCONN_FIND_BY_USER_DEVICE_DB.developer_message, e.pgcode, e.pgerror)
+            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
+
+        vpnserverconn_list = []
+
+        for vpnserverconn_db in vpnserverconn_list_db:
+            vpnserverconn = self.__map_vpnserverconndb_to_vpnserverconn(vpnserverconn_db)
+            vpnserverconn_list.append(vpnserverconn)
+
+        if len(vpnserverconn_list) == 0:
+            logger.warning('Empty VPNServers list of method find_all. Very strange behaviour.')
+
+        return vpnserverconn_list
+
     def find_by_suuid(self):
         logger.info('VPNServerConnectionDB find_by_suuid method')
         select_sql = '''

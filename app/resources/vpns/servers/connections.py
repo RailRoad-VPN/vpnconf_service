@@ -34,6 +34,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
     def get_api_urls(base_url: str) -> List[APIResourceURL]:
         url = "%s/%s" % (base_url, VPNSServersConnectionsAPI.__api_url__)
         api_urls = [
+            APIResourceURL(base_url=url.replace('/<string:server_uuid>/', '/'), resource_name='', methods=['GET']),
             APIResourceURL(base_url=url, resource_name='', methods=['GET', 'POST']),
             APIResourceURL(base_url=url, resource_name='<string:conn_uuid>', methods=['GET', 'PUT'])
         ]
@@ -154,30 +155,40 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
         return resp
 
-    def get(self, server_uuid: str, conn_uuid: str = None) -> Response:
+    def get(self, server_uuid: str = None, conn_uuid: str = None) -> Response:
         super(VPNSServersConnectionsAPI, self).get(req=request)
-
-        is_valid = check_uuid(server_uuid)
-        if not is_valid:
-            return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
-                                               err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
 
         user_uuid = request.args.get('user_uuid', None)
         user_device_uuid = request.args.get('user_device_uuid', None)
         virtual_ip = request.args.get('virtual_ip', None)
         is_connected = request.args.get('is_connected', None)
 
-        is_valid = check_uuid(suuid=server_uuid)
-        if not is_valid:
-            return make_error_request_response(HTTPStatus.BAD_REQUEST,
-                                               err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
+        if server_uuid is not None:
+            is_valid = check_uuid(suuid=server_uuid)
+            if not is_valid:
+                return make_error_request_response(HTTPStatus.BAD_REQUEST,
+                                                   err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
 
         vpnserverconn_db = VPNServerConnectionDB(storage_service=self.__db_storage_service, suuid=conn_uuid,
                                                  server_uuid=server_uuid, user_uuid=user_uuid, virtual_ip=virtual_ip,
                                                  user_device_uuid=user_device_uuid)
 
+        if user_device_uuid is not None and is_connected is None:
+            is_valid = check_uuid(suuid=user_device_uuid)
+            if not is_valid:
+                return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
+                                                   err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
+
+            vpnserverconn_list = vpnserverconn_db.find_by_user_device()
+            vpnserverconn_list_dict = [vpnserverconn_list[i].to_api_dict() for i in
+                                       range(0, len(vpnserverconn_list))]
+            response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
+                                        data=vpnserverconn_list_dict)
+            resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
+            return resp
+
         if user_device_uuid is not None and is_connected is not None:
-            is_valid = check_uuid(user_device_uuid)
+            is_valid = check_uuid(suuid=user_device_uuid)
             if not is_valid:
                 return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
                                                    err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
