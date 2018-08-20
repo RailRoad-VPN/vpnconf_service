@@ -35,8 +35,8 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         url = "%s/%s" % (base_url, VPNSServersConnectionsAPI.__api_url__)
         api_urls = [
             APIResourceURL(base_url=url.replace('/<string:server_uuid>/', '/'), resource_name='', methods=['GET']),
-            APIResourceURL(base_url=url, resource_name='', methods=['GET', 'POST']),
-            APIResourceURL(base_url=url, resource_name='<string:conn_uuid>', methods=['GET', 'PUT'])
+            APIResourceURL(base_url=url, resource_name='', methods=['GET', 'POST', 'DELETE']),
+            APIResourceURL(base_url=url, resource_name='<string:conn_uuid>', methods=['GET', 'PUT', 'DELETE'])
         ]
         return api_urls
 

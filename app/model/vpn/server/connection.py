@@ -524,8 +524,8 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         logger.info('Create object VPNServerConnection with uuid: ' + str(self._suuid))
         insert_sql = '''
                       INSERT INTO public.vpnserver_connection 
-                        (uuid, server_uuid, user_uuid, user_device_uuid, device_ip, virtual_ip, bytes_i, bytes_o, is_connected, 
-                        connected_since) 
+                        (uuid, server_uuid, user_uuid, user_device_uuid, device_ip, virtual_ip, bytes_i, bytes_o, 
+                        is_connected, connected_since) 
                       VALUES 
                         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                      '''
