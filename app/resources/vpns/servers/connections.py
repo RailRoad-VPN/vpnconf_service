@@ -57,7 +57,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
 
         is_valid_server_uuid = check_uuid(server_uuid)
         is_valid_server_uuid_again = check_uuid(vpnserver_uuid)
-        if is_valid_server_uuid or not is_valid_server_uuid_again or server_uuid != vpnserver_uuid:
+        if not is_valid_server_uuid or not is_valid_server_uuid_again or server_uuid != vpnserver_uuid:
             return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
                                                err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
 
