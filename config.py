@@ -19,6 +19,12 @@ class ProductionConfig(Config):
     PSQL_PASSWORD = ''
     PSQL_HOST = '127.0.0.1'
 
+    ANSIBLE_CONFIG = {
+        'root_path': '',
+        'playbook_path': '',
+        'inventory_file': '',
+    }
+
 
 class DevelopmentConfig(Config):
     ENV = 'development'
@@ -41,3 +47,9 @@ class TestingConfig(Config):
     PSQL_USER = 'railroadman'
     PSQL_PASSWORD = 'railroadman'
     PSQL_HOST = '127.0.0.1'
+
+    ANSIBLE_CONFIG = {
+        'root_path': '/home/dfnadm/my/',
+        'playbook_path': '/home/dfnadm/my/playbooks',
+        'inventory_file': '/home/dfnadm/my/inventory',
+    }
