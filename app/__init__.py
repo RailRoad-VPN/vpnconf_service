@@ -10,8 +10,6 @@ from app.resources.geos.cities import GeosCitiesAPI
 from app.resources.geos.countries import GeosCountriesAPI
 from app.resources.geos.states import GeosStatesAPI
 from app.resources.vpns.device_platforms import VPNSDevicePlatformsAPI
-from app.resources.vpns.mgmt.users import VPNSMGMTUsersAPI
-from app.resources.vpns.mgmt.vpns.servers.connections import MGMTVPNSServersConnections
 from app.resources.vpns.servers import VPNSServersAPI
 from app.resources.vpns.servers.config_templates import VPNSConfigTemplatesAPI
 from app.resources.vpns.servers.configurations import VPNSServersConfigurationsAPI
@@ -19,7 +17,6 @@ from app.resources.vpns.servers.connections import VPNSServersConnectionsAPI
 from app.resources.vpns.servers.meta import VPNServersMetaAPI
 from app.resources.vpns.servers.statuses import VPNSServersStatusesAPI
 from app.resources.vpns.types import VPNSTypesAPI
-from app.service import AnsibleService
 
 sys.path.insert(0, '../psql_library')
 from psql_helper import PostgreSQL
@@ -49,10 +46,6 @@ db_storage_service = DBStorageService(psql=psql)
 app_config = app.config
 api_base_uri = app_config['API_BASE_URI']
 
-ansible_service = AnsibleService(ansible_inventory_file=app_config['ANSIBLE_CONFIG']['inventory_file'],
-                                 ansible_path=app_config['ANSIBLE_CONFIG']['root_path'],
-                                 ansible_playbook_path=app_config['ANSIBLE_CONFIG']['playbook_path'])
-
 apis = [
     {'cls': VPNServersMetaAPI, 'args': [db_storage_service, app_config]},
     {'cls': VPNSServersAPI, 'args': [db_storage_service, app_config]},
@@ -66,8 +59,6 @@ apis = [
     {'cls': GeosCitiesAPI, 'args': [db_storage_service, app_config]},
     {'cls': GeosCountriesAPI, 'args': [db_storage_service, app_config]},
     {'cls': GeosStatesAPI, 'args': [db_storage_service, app_config]},
-    {'cls': VPNSMGMTUsersAPI, 'args': [ansible_service, app_config]},
-    {'cls': MGMTVPNSServersConnections, 'args': [ansible_service, app_config]},
 ]
 
 register_api(app, api_base_uri, apis)
