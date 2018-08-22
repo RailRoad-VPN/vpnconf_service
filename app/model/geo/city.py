@@ -56,7 +56,7 @@ class CityDB(CityStored):
         super().__init__(**kwargs)
 
     def find(self):
-        logging.info('CityDB find method')
+        self.logger.info('CityDB find method')
         select_sql = '''
                       SELECT 
                         id,
@@ -66,10 +66,10 @@ class CityDB(CityStored):
                       '''
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             city_list_db = self._storage_service.get(sql=select_sql)
         except DatabaseError as e:
             logging.error(e)
@@ -91,7 +91,7 @@ class CityDB(CityStored):
         return city_list
 
     def find_by_sid(self):
-        logging.info('CityDB find_by_server_uuid method')
+        self.logger.info('CityDB find_by_server_uuid method')
         select_sql = '''
                       SELECT 
                         id,
@@ -100,11 +100,11 @@ class CityDB(CityStored):
                       FROM public.city
                       WHERE id = ?
                       '''
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._sid,)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             city_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)
@@ -136,7 +136,7 @@ class CityDB(CityStored):
         return self.__map_citydb_to_city(vpnserver_db)
 
     def create(self):
-        logging.info('CityDB create method')
+        self.logger.info('CityDB create method')
         insert_sql = '''
                       INSERT INTO public.city 
                         (name) 
@@ -146,10 +146,10 @@ class CityDB(CityStored):
         insert_params = (
             self._name,
         )
-        logging.debug('Create CityDB SQL : %s' % insert_sql)
+        self.logger.debug('Create CityDB SQL : %s' % insert_sql)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             data = self._storage_service.create(sql=insert_sql, data=insert_params, is_return=True)
             self._sid = data[self._sid_field]
         except DatabaseError as e:
@@ -166,12 +166,12 @@ class CityDB(CityStored):
                                     VPNCError.CITY_CREATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
 
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
-        logging.debug('CityDB created.')
+        self.logger.debug('CityDB created.')
 
         return self._sid
 
     def update(self):
-        logging.info('City update method')
+        self.logger.info('City update method')
 
         update_sql = '''
                     UPDATE public.city 
@@ -181,7 +181,7 @@ class CityDB(CityStored):
                         id = ?
                     '''
 
-        logging.debug('Update SQL: %s' % update_sql)
+        self.logger.debug('Update SQL: %s' % update_sql)
 
         update_params = (
             self._name,
@@ -189,9 +189,9 @@ class CityDB(CityStored):
         )
 
         try:
-            logging.debug("Call database service")
+            self.logger.debug("Call database service")
             self._storage_service.update(sql=update_sql, data=update_params)
-            logging.debug('City updated.')
+            self.logger.debug('City updated.')
         except DatabaseError as e:
             logging.error(e)
             try:

@@ -56,14 +56,14 @@ class VPNDevicePlatformDB(VPNDevicePlatformStored):
         super().__init__(storage_service, **kwargs)
 
     def find(self):
-        logging.info('VPNDevicePlatformDB find method')
+        self.logger.info('VPNDevicePlatformDB find method')
         select_sql = 'SELECT * FROM public.vpn_device_platform'
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpn_device_platform_list_db = self._storage_service.get(sql=select_sql)
         except DatabaseError as e:
             logging.error(e)
@@ -85,13 +85,13 @@ class VPNDevicePlatformDB(VPNDevicePlatformStored):
         return vpnserverconfig_list
 
     def find_by_sid(self):
-        logging.info('VPNDevicePlatformDB find_by_sid method')
+        self.logger.info('VPNDevicePlatformDB find_by_sid method')
         select_sql = 'SELECT * FROM public.vpn_device_platform WHERE id = ?'
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._sid,)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpn_device_platform_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)

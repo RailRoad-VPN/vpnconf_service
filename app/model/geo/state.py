@@ -61,7 +61,7 @@ class StateDB(StateStored):
         super().__init__(storage_service, **kwargs)
 
     def find(self):
-        logging.info('StateDB find method')
+        self.logger.info('StateDB find method')
         select_sql = '''
                       SELECT 
                         code,
@@ -72,10 +72,10 @@ class StateDB(StateStored):
                       '''
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             state_list_db = self._storage_service.get(sql=select_sql)
         except DatabaseError as e:
             logging.error(e)
@@ -97,7 +97,7 @@ class StateDB(StateStored):
         return state_list
 
     def find_by_code(self):
-        logging.info('StateDB find_by_code method')
+        self.logger.info('StateDB find_by_code method')
         select_sql = '''
                       SELECT 
                         code,
@@ -107,11 +107,11 @@ class StateDB(StateStored):
                       FROM public.state 
                       WHERE code = ?
                       '''
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._code,)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             state_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)
@@ -143,7 +143,7 @@ class StateDB(StateStored):
         return self.__map_statedb_to_state(state_db)
 
     def create(self):
-        logging.info('StateDB create method')
+        self.logger.info('StateDB create method')
         insert_sql = '''
                       INSERT INTO public.state 
                         (code, country_code, name) 
@@ -155,10 +155,10 @@ class StateDB(StateStored):
             self._country_code,
             self._name,
         )
-        logging.debug('Create StateDB SQL : %s' % insert_sql)
+        self.logger.debug('Create StateDB SQL : %s' % insert_sql)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             self._storage_service.create(sql=insert_sql, data=insert_params)
         except DatabaseError as e:
             self._storage_service.rollback()
@@ -174,12 +174,12 @@ class StateDB(StateStored):
                                     VPNCError.STATE_CREATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
 
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
-        logging.debug('StateDB created.')
+        self.logger.debug('StateDB created.')
 
         return self._code
 
     def update(self):
-        logging.info('State update method')
+        self.logger.info('State update method')
 
         update_sql = '''
                     UPDATE public.state 
@@ -190,7 +190,7 @@ class StateDB(StateStored):
                         code = ?
                     '''
 
-        logging.debug('Update SQL: %s' % update_sql)
+        self.logger.debug('Update SQL: %s' % update_sql)
 
         update_params = (
             self._name,
@@ -199,9 +199,9 @@ class StateDB(StateStored):
         )
 
         try:
-            logging.debug("Call database service")
+            self.logger.debug("Call database service")
             self._storage_service.update(sql=update_sql, data=update_params)
-            logging.debug('State updated.')
+            self.logger.debug('State updated.')
         except DatabaseError as e:
             logging.error(e)
             try:

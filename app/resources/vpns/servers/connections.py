@@ -17,11 +17,11 @@ from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
 from rest import APIResourceURL
 
-logger = logging.getLogger(__name__)
-
 
 class VPNSServersConnectionsAPI(ResourceAPI):
     __version__ = 1
+
+    logger = logging.getLogger(__name__)
 
     __endpoint_name__ = __qualname__
     __api_url__ = 'vpns/servers/<string:server_uuid>/connections'
@@ -50,10 +50,10 @@ class VPNSServersConnectionsAPI(ResourceAPI):
 
         vpnserver_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
 
-        logger.debug("check uuids")
-        logger.debug(f"server uuid: {server_uuid}")
-        logger.debug(f"vpnserver_uuid: {vpnserver_uuid}")
-        logger.debug(f"server_uuid != vpnserver_uuid: {server_uuid != vpnserver_uuid}")
+        self.logger.debug("check uuids")
+        self.logger.debug(f"server uuid: {server_uuid}")
+        self.logger.debug(f"vpnserver_uuid: {vpnserver_uuid}")
+        self.logger.debug(f"server_uuid != vpnserver_uuid: {server_uuid != vpnserver_uuid}")
 
         is_valid_server_uuid = check_uuid(server_uuid)
         is_valid_server_uuid_again = check_uuid(vpnserver_uuid)
@@ -61,7 +61,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
             return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
                                                err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
 
-        logger.debug("get fields from request_json")
+        self.logger.debug("get fields from request_json")
 
         user_uuid = request_json.get(VPNServerConnectionDB._user_uuid_field, None)
         user_device_uuid = request_json.get(VPNServerConnectionDB._user_device_uuid_field, None)
@@ -72,7 +72,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         connected_since = request_json.get(VPNServerConnectionDB._connected_since_field, None)
         is_connected = request_json.get(VPNServerConnectionDB._is_connected_field, None)
 
-        logger.debug("check req_fields")
+        self.logger.debug("check req_fields")
 
         req_fields = {
             'server_uuid': server_uuid,
@@ -94,7 +94,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         try:
             suuid = vpnserverconn_db.create()
         except VPNException as e:
-            logger.error(e)
+            self.logger.error(e)
             error_code = e.error_code
             error = e.error
             developer_message = e.developer_message
@@ -157,7 +157,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         try:
             vpnserverconn_db.update()
         except VPNException as e:
-            logger.error(e)
+            self.logger.error(e)
             error_code = e.error_code
             error = e.error
             developer_message = e.developer_message
@@ -216,7 +216,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
                 return resp
             except VPNNotFoundException as e:
-                logger.error(e)
+                self.logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -226,7 +226,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
             except VPNException as e:
-                logger.error(e)
+                self.logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -245,7 +245,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
                 return resp
             except VPNNotFoundException as e:
-                logger.error(e)
+                self.logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -255,7 +255,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
             except VPNException as e:
-                logger.error(e)
+                self.logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -281,7 +281,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
                 return resp
             except VPNNotFoundException as e:
-                logger.error(e)
+                self.logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -291,7 +291,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
             except VPNException as e:
-                logger.error(e)
+                self.logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -314,7 +314,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
                 return resp
             except VPNNotFoundException as e:
-                logger.error(e)
+                self.logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -324,7 +324,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
             except VPNException as e:
-                logger.error(e)
+                self.logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -344,7 +344,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
                 return resp
             except VPNNotFoundException as e:
-                logger.error(e)
+                self.logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -354,7 +354,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 resp = make_api_response(data=response_data, http_code=http_code)
                 return resp
             except VPNException as e:
-                logger.error(e)
+                self.logger.error(e)
                 error_code = e.error_code
                 error = e.error
                 developer_message = e.developer_message
@@ -384,7 +384,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 # delete all connections belongs to server
                 vpnserverconn_db.delete_by_server()
         except VPNException as e:
-            logger.error(e)
+            self.logger.error(e)
             error_code = e.error_code
             error = e.error
             developer_message = e.developer_message

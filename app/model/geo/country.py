@@ -61,7 +61,7 @@ class CountryDB(CountryStored):
         super().__init__(storage_service, **kwargs)
 
     def find(self):
-        logging.info('CountryDB find method')
+        self.logger.info('CountryDB find method')
         select_sql = '''
                     SELECT 
                         code, 
@@ -72,10 +72,10 @@ class CountryDB(CountryStored):
                     '''
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             country_list_db = self._storage_service.get(sql=select_sql)
         except DatabaseError as e:
             logging.error(e)
@@ -97,7 +97,7 @@ class CountryDB(CountryStored):
         return country_list
 
     def find_by_code(self):
-        logging.info('CountryDB find_by_code method')
+        self.logger.info('CountryDB find_by_code method')
         select_sql = '''
                     SELECT 
                         code, 
@@ -107,11 +107,11 @@ class CountryDB(CountryStored):
                     FROM public.country
                     WHERE code = ?
                     '''
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._code,)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             country_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)
@@ -143,7 +143,7 @@ class CountryDB(CountryStored):
         return self.__map_countrydb_to_country(country_db)
 
     def find_by_str_code(self):
-        logging.info('CountryDB find_by_code method')
+        self.logger.info('CountryDB find_by_code method')
         select_sql = '''
                     SELECT 
                         code, 
@@ -153,11 +153,11 @@ class CountryDB(CountryStored):
                     FROM public.country
                     WHERE str_code = ?
                     '''
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._str_code,)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             country_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)

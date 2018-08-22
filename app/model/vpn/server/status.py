@@ -56,7 +56,7 @@ class VPNServerStatusDB(VPNServerStatusStored):
         super().__init__(**kwargs)
 
     def find(self):
-        logging.info('VPNServerStatusDB find method')
+        self.logger.info('VPNServerStatusDB find method')
         select_sql = '''
                       SELECT 
                         id,
@@ -67,10 +67,10 @@ class VPNServerStatusDB(VPNServerStatusStored):
                       '''
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserverstatus_list_db = self._storage_service.get(sql=select_sql)
         except DatabaseError as e:
             logging.error(e)
@@ -92,7 +92,7 @@ class VPNServerStatusDB(VPNServerStatusStored):
         return vpnserverconfig_list
 
     def find_by_code(self):
-        logging.info('VPNServerStatusDB find_by_sid method')
+        self.logger.info('VPNServerStatusDB find_by_sid method')
         select_sql = '''
                       SELECT 
                         id,
@@ -102,11 +102,11 @@ class VPNServerStatusDB(VPNServerStatusStored):
                       FROM public.vpnserver_status
                       WHERE code = ?
                       '''
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._code,)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserver_configuration_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)
@@ -138,7 +138,7 @@ class VPNServerStatusDB(VPNServerStatusStored):
         return self.__map_vpnserverstatusdb_to_vpnserverstatus(vpnserver_db)
 
     def find_by_sid(self):
-        logging.info('VPNServerStatusDB find_by_sid method')
+        self.logger.info('VPNServerStatusDB find_by_sid method')
         select_sql = '''
                       SELECT 
                         id,
@@ -148,11 +148,11 @@ class VPNServerStatusDB(VPNServerStatusStored):
                       FROM public.vpnserver_status
                       WHERE id = ?
                       '''
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._sid,)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserver_configuration_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)

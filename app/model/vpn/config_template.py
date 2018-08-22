@@ -64,7 +64,7 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
         super().__init__(storage_service, **kwargs)
 
     def find(self):
-        logging.info('VPNServerConfigurationTemplatesDB find method')
+        self.logger.info('VPNServerConfigurationTemplatesDB find method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -75,10 +75,10 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
                       '''
         if self._limit:
             select_sql += f"\nLIMIT {self._limit}\nOFFSET {self._offset}"
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserverconfig_list_db = self._storage_service.get(sql=select_sql)
         except DatabaseError as e:
             logging.error(e)
@@ -98,7 +98,7 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
         return vpnserverconfig_list
 
     def find_by_type_and_platform(self):
-        logging.info('VPNServerConfigurationTemplatesDB find_by_type_and_platform method')
+        self.logger.info('VPNServerConfigurationTemplatesDB find_by_type_and_platform method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -109,10 +109,10 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
                       '''
         if self._limit:
             select_sql += f"\nLIMIT {self._limit}\nOFFSET {self._offset}"
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserverconfig_list_db = self._storage_service.get(sql=select_sql)
         except DatabaseError as e:
             logging.error(e)
@@ -132,7 +132,7 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
         return vpnserverconfig_list
 
     def find_by_type(self):
-        logging.info('VPNServerConfigurationTemplatesDB find_by_type method')
+        self.logger.info('VPNServerConfigurationTemplatesDB find_by_type method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -144,10 +144,10 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
         params = (self._vpn_type_id,)
         if self._limit:
             select_sql += f"\nLIMIT {self._limit}\nOFFSET {self._offset}"
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserverconfig_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)
@@ -167,7 +167,7 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
         return vpnserverconfig_list
 
     def find_by_platform(self):
-        logging.info('VPNServerConfigurationTemplatesDB find_by_patform method')
+        self.logger.info('VPNServerConfigurationTemplatesDB find_by_patform method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -180,10 +180,10 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
         params = (self._vpn_device_platform_id,)
         if self._limit:
             select_sql += f"\nLIMIT {self._limit}\nOFFSET {self._offset}"
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserverconfig_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)
@@ -203,7 +203,7 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
         return vpnserverconfig_list
 
     def find_by_suuid(self):
-        logging.info('VPNServerConfigurationTemplatesDB find_by_server_uuid method')
+        self.logger.info('VPNServerConfigurationTemplatesDB find_by_server_uuid method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -213,11 +213,11 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
                       FROM public.vpnserver_config_templates
                       WHERE uuid = ?
                       '''
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._suuid,)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserver_config_templates_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)
@@ -250,9 +250,9 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
         return self.__map_vpnserverconfigtempldb_to_vpnserverconfigtempl(vpnserver_db)
 
     def create(self):
-        logging.info('VPNServerConfigurationTemplates create method')
+        self.logger.info('VPNServerConfigurationTemplates create method')
         self._suuid = uuid.uuid4()
-        logging.info('Create object VPNServerConfigurationTemplates with uuid: ' + str(self._suuid))
+        self.logger.info('Create object VPNServerConfigurationTemplates with uuid: ' + str(self._suuid))
         insert_sql = '''
                       INSERT INTO public.vpnserver_config_templates 
                         (uuid, vpn_device_platform_id, vpn_type_id, template_str) 
@@ -265,10 +265,10 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
             self._vpn_type_id,
             self._template_str
         )
-        logging.debug('Create VPNServerConfigurationTemplates SQL : %s' % insert_sql)
+        self.logger.debug('Create VPNServerConfigurationTemplates SQL : %s' % insert_sql)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             self._storage_service.create(sql=insert_sql, data=insert_params)
         except DatabaseError as e:
             self._storage_service.rollback()
@@ -284,12 +284,12 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
                                     VPNCError.VPNSERVER_CONFIG_TEMPLATES_CREATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
 
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
-        logging.debug('VPNServerConfigurationTemplates created.')
+        self.logger.debug('VPNServerConfigurationTemplates created.')
 
         return self._suuid
 
     def update(self):
-        logging.info('VPNServerConfigurationTemplates update method')
+        self.logger.info('VPNServerConfigurationTemplates update method')
 
         update_sql = '''
                     UPDATE public.vpnserver_config_templates 
@@ -301,7 +301,7 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
                       uuid = ?
                     '''
 
-        logging.debug('Update SQL: %s' % update_sql)
+        self.logger.debug('Update SQL: %s' % update_sql)
 
         update_params = (
             self._vpn_device_platform_id,
@@ -311,9 +311,9 @@ class VPNServerConfigurationTemplateDB(VPNServerConfigurationTemplateStored):
         )
 
         try:
-            logging.debug("Call database service")
+            self.logger.debug("Call database service")
             self._storage_service.update(sql=update_sql, data=update_params)
-            logging.debug('VPNServerConfigurationTemplates updated.')
+            self.logger.debug('VPNServerConfigurationTemplates updated.')
         except DatabaseError as e:
             logging.error(e)
             try:

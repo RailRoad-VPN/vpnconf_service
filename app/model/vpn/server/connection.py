@@ -9,11 +9,11 @@ from app.exception import *
 sys.path.insert(0, '../psql_library')
 from storage_service import StorageService, StoredObject
 
-logger = logging.getLogger(__name__)
-
 
 class VPNServerConnection(object):
     __version__ = 1
+
+    logger = logging.getLogger(__name__)
 
     suuid = None
     server_uuid = None
@@ -107,7 +107,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         super().__init__(storage_service, **kwargs)
 
     def delete_by_uuid(self):
-        logger.debug("delete_by_uuid method")
+        self.logger.debug("delete_by_uuid method")
 
         update_sql = '''
                     UPDATE public.vpnserver_connection 
@@ -117,18 +117,18 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       uuid = ?
                     '''
 
-        logger.debug('Update SQL: %s' % update_sql)
+        self.logger.debug('Update SQL: %s' % update_sql)
 
         update_params = (
             self._suuid,
         )
 
         try:
-            logger.debug("Call database service")
+            self.logger.debug("Call database service")
             self._storage_service.update(sql=update_sql, data=update_params)
-            logger.debug('VPNServerConnection updated.')
+            self.logger.debug('VPNServerConnection updated.')
         except DatabaseError as e:
-            logger.error(e)
+            self.logger.error(e)
             try:
                 e = e.args[0]
             except IndexError:
@@ -141,7 +141,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
     def delete_by_server(self):
-        logger.debug("delete_by_server method")
+        self.logger.debug("delete_by_server method")
 
         update_sql = '''
                     UPDATE public.vpnserver_connection 
@@ -151,30 +151,30 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       server_uuid = ?
                     '''
 
-        logger.debug('Update SQL: %s' % update_sql)
+        self.logger.debug('Update SQL: %s' % update_sql)
 
         update_params = (
             self._server_uuid,
         )
 
         try:
-            logger.debug("Call database service")
+            self.logger.debug("Call database service")
             self._storage_service.update(sql=update_sql, data=update_params)
-            logger.debug('VPNServerConnection updated.')
+            self.logger.debug('VPNServerConnection updated.')
         except DatabaseError as e:
-            logger.error(e)
+            self.logger.error(e)
             try:
                 e = e.args[0]
             except IndexError:
                 pass
             error_message = VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.message
             developer_message = "%s. DatabaseError. Code: %s . %s" % (
-                                    VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+                VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
             error_code = VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.code
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
     def find(self):
-        logger.info('VPNServerConnectionDB find method')
+        self.logger.info('VPNServerConnectionDB find method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -192,13 +192,13 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       '''
         if self._limit:
             select_sql += f"\nLIMIT {self._limit}\nOFFSET {self._offset}"
-        logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
 
         try:
-            logger.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserverconn_list_db = self._storage_service.get(sql=select_sql)
         except DatabaseError as e:
-            logger.error(e)
+            self.logger.error(e)
             error_message = VPNCError.VPNSERVERCONN_FIND_ERROR_DB.message
             error_code = VPNCError.VPNSERVERCONN_FIND_ERROR_DB.code
             developer_message = "%s. DatabaseError.. " \
@@ -213,12 +213,12 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
             vpnserverconn_list.append(vpnserverconn)
 
         if len(vpnserverconn_list) == 0:
-            logger.warning('Empty VPNServers list of method find_all. Very strange behaviour.')
+            self.logger.warning('Empty VPNServers list of method find_all. Very strange behaviour.')
 
         return vpnserverconn_list
 
     def find_by_user_device(self):
-        logger.info('VPNServerConnectionDB find_by_user_device method')
+        self.logger.info('VPNServerConnectionDB find_by_user_device method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -237,18 +237,18 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       '''
         if self._limit:
             select_sql += f"\nLIMIT {self._limit}\nOFFSET {self._offset}"
-        logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._user_device_uuid,)
 
         try:
-            logger.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserverconn_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
-            logger.error(e)
+            self.logger.error(e)
             error_message = VPNCError.VPNSERVERCONN_FIND_BY_USER_DEVICE_DB.message
             error_code = VPNCError.VPNSERVERCONN_FIND_BY_USER_DEVICE_DB.code
             developer_message = "%s. DatabaseError. Code: %s . %s" % (
-                                    VPNCError.VPNSERVERCONN_FIND_BY_USER_DEVICE_DB.developer_message, e.pgcode, e.pgerror)
+                VPNCError.VPNSERVERCONN_FIND_BY_USER_DEVICE_DB.developer_message, e.pgcode, e.pgerror)
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         vpnserverconn_list = []
@@ -258,12 +258,12 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
             vpnserverconn_list.append(vpnserverconn)
 
         if len(vpnserverconn_list) == 0:
-            logger.warning('Empty VPNServers list of method find_all. Very strange behaviour.')
+            self.logger.warning('Empty VPNServers list of method find_all. Very strange behaviour.')
 
         return vpnserverconn_list
 
     def find_by_suuid(self):
-        logger.info('VPNServerConnectionDB find_by_suuid method')
+        self.logger.info('VPNServerConnectionDB find_by_suuid method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -280,14 +280,14 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       FROM public.vpnserver_connection
                       WHERE uuid = ?
                       '''
-        logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._suuid,)
 
         try:
-            logger.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserver_connection_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
-            logger.error(e)
+            self.logger.error(e)
             try:
                 e = e.args[0]
             except IndexError:
@@ -317,7 +317,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         return self.__map_vpnserverconndb_to_vpnserverconn(vpnserver_conn_db)
 
     def find_by_server_uuid(self):
-        logger.info('VPNServerConnectionDB find_by_server_uuid method')
+        self.logger.info('VPNServerConnectionDB find_by_server_uuid method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -334,14 +334,14 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       FROM public.vpnserver_connection
                       WHERE server_uuid = ?
                       '''
-        logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._server_uuid,)
 
         try:
-            logger.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserverconn_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
-            logger.error(e)
+            self.logger.error(e)
             try:
                 e = e.args[0]
             except IndexError:
@@ -364,7 +364,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         return vpnserverconn_list
 
     def find_by_server_and_user(self):
-        logger.info('VPNServerConnectionDB find_by_server_and_user method')
+        self.logger.info('VPNServerConnectionDB find_by_server_and_user method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -381,14 +381,14 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       FROM public.vpnserver_connection
                       WHERE server_uuid = ? AND user_uuid = ?
                       '''
-        logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._server_uuid, self._user_uuid)
 
         try:
-            logger.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserver_connection_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
-            logger.error(e)
+            self.logger.error(e)
             try:
                 e = e.args[0]
             except IndexError:
@@ -411,7 +411,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         return vpnserverconn_list
 
     def find_by_server_and_user_device(self):
-        logger.info('VPNServerConnectionDB find_by_server_and_user_device method')
+        self.logger.info('VPNServerConnectionDB find_by_server_and_user_device method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -429,17 +429,17 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       WHERE server_uuid = ? AND user_device_uuid = ?
                       ORDER BY vc.created_date DESC
                       '''
-        logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (
             self._server_uuid,
             self._user_device_uuid,
         )
 
         try:
-            logger.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserver_connection_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
-            logger.error(e)
+            self.logger.error(e)
             try:
                 e = e.args[0]
             except IndexError:
@@ -464,9 +464,9 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         return self.__map_vpnserverconndb_to_vpnserverconn(vpnserver_conn_db)
 
     def find_by_server_and_virtual_ip(self):
-        logger.info('VPNServerConnectionDB find_by_server_and_virtual_ip method')
-        logger.debug(f'server_uuid: {self._server_uuid}')
-        logger.debug(f'virtual_ip: {self._virtual_ip}')
+        self.logger.info('VPNServerConnectionDB find_by_server_and_virtual_ip method')
+        self.logger.debug(f'server_uuid: {self._server_uuid}')
+        self.logger.debug(f'virtual_ip: {self._virtual_ip}')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -484,17 +484,17 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       WHERE server_uuid = ? AND virtual_ip = ?
                       ORDER BY vc.created_date DESC
                       '''
-        logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (
             self._server_uuid,
             self._virtual_ip,
         )
 
         try:
-            logger.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserver_connection_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
-            logger.error(e)
+            self.logger.error(e)
             try:
                 e = e.args[0]
             except IndexError:
@@ -519,9 +519,9 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         return self.__map_vpnserverconndb_to_vpnserverconn(vpnserver_conn_db)
 
     def create(self):
-        logger.info('VPNServerConnection create method')
+        self.logger.info('VPNServerConnection create method')
         self._suuid = uuid.uuid4()
-        logger.info('Create object VPNServerConnection with uuid: ' + str(self._suuid))
+        self.logger.info('Create object VPNServerConnection with uuid: ' + str(self._suuid))
         insert_sql = '''
                       INSERT INTO public.vpnserver_connection 
                         (uuid, server_uuid, user_uuid, user_device_uuid, device_ip, virtual_ip, bytes_i, bytes_o, 
@@ -541,14 +541,14 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
             self._is_connected,
             self._connected_since,
         )
-        logger.debug('Create VPNServerConnection SQL : %s' % insert_sql)
+        self.logger.debug('Create VPNServerConnection SQL : %s' % insert_sql)
 
         try:
-            logger.debug('Call database service')
+            self.logger.debug('Call database service')
             self._storage_service.create(sql=insert_sql, data=insert_params)
         except DatabaseError as e:
             self._storage_service.rollback()
-            logger.error(e)
+            self.logger.error(e)
             try:
                 e = e.args[0]
             except IndexError:
@@ -560,12 +560,12 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                                     VPNCError.VPNSERVERCONN_CREATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
 
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
-        logger.debug('VPNServerConnection created.')
+        self.logger.debug('VPNServerConnection created.')
 
         return self._suuid
 
     def update(self):
-        logger.info('VPNServerConnection update method')
+        self.logger.info('VPNServerConnection update method')
 
         update_sql = '''
                     UPDATE public.vpnserver_connection 
@@ -583,7 +583,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       uuid = ?
                     '''
 
-        logger.debug('Update SQL: %s' % update_sql)
+        self.logger.debug('Update SQL: %s' % update_sql)
 
         update_params = (
             self._server_uuid,
@@ -599,11 +599,11 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         )
 
         try:
-            logger.debug("Call database service")
+            self.logger.debug("Call database service")
             self._storage_service.update(sql=update_sql, data=update_params)
-            logger.debug('VPNServerConnection updated.')
+            self.logger.debug('VPNServerConnection updated.')
         except DatabaseError as e:
-            logger.error(e)
+            self.logger.error(e)
             try:
                 e = e.args[0]
             except IndexError:

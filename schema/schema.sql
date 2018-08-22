@@ -21,7 +21,6 @@ DROP TABLE IF EXISTS public.city CASCADE;
 DROP TABLE IF EXISTS public.geo_position CASCADE;
 DROP TABLE IF EXISTS public.vpnserver_status CASCADE;
 DROP TABLE IF EXISTS public.vpn_device_platform CASCADE;
-DROP TABLE IF EXISTS public.vpnserver_config_templates CASCADE;
 DROP TABLE IF EXISTS public.vpn_type CASCADE;
 DROP TABLE IF EXISTS public.vpnserver_connection CASCADE;
 
@@ -110,15 +109,6 @@ CREATE TABLE public.vpn_device_platform
     id SERIAL PRIMARY KEY
   , code VARCHAR(50) NOT NULL
   , description VARCHAR(255) NOT NULL
-);
-
--- Имя придумал Карен
-CREATE TABLE public.vpnserver_config_templates
-(
-    uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
-  , vpn_device_platform_id INT REFERENCES public.vpn_device_platform(id) NOT NULL
-  , vpn_type_id INT REFERENCES public.vpn_type(id) NOT NULL
-  , template_str TEXT
 );
 
 CREATE TABLE public.vpnserver_configuration

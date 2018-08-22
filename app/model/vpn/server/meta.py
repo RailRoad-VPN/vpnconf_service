@@ -55,14 +55,14 @@ class VPNServersMetaDB(VPNServersMetaStored):
         super().__init__(storage_service, **kwargs)
 
     def find(self):
-        logging.info('VPNServersMetaDB find method')
+        self.logger.info('VPNServersMetaDB find method')
         select_sql = 'SELECT * FROM public.vpnserversmeta'
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserversmeta_db = self._storage_service.get(sql=select_sql)[0]
         except DatabaseError as e:
             logging.error(e)

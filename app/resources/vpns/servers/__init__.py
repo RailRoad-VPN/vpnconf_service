@@ -17,11 +17,11 @@ from api import ResourceAPI
 from response import APIResponseStatus, APIResponse
 from rest import APIResourceURL
 
-logger = logging.getLogger(__name__)
-
 
 class VPNSServersAPI(ResourceAPI):
     __version__ = 1
+
+    logger = logging.getLogger(__name__)
 
     __endpoint_name__ = __qualname__
     __api_url__ = 'vpns/servers'
@@ -148,7 +148,7 @@ class VPNSServersAPI(ResourceAPI):
                                    bandwidth=bandwidth, load=load, geo_position_id=geo_position_id)
 
         try:
-            logger.debug('do update VPN server')
+            self.logger.debug('do update VPN server')
             vpnserver_db.update()
         except VPNException as e:
             logging.error(e)

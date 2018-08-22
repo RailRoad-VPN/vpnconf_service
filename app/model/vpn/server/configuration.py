@@ -81,7 +81,7 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
         super().__init__(storage_service, **kwargs)
 
     def find(self):
-        logging.info('VPNServerConfigurationDB find method')
+        self.logger.info('VPNServerConfigurationDB find method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -96,10 +96,10 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                       '''
         if self._limit:
             select_sql += f"\nLIMIT {self._limit}\nOFFSET {self._offset}"
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserverconfig_list_db = self._storage_service.get(sql=select_sql)
         except DatabaseError as e:
             logging.error(e)
@@ -119,7 +119,7 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
         return vpnserverconfig_list
 
     def find_by_suuid(self):
-        logging.info('VPNServerConfigurationDB find_by_server_uuid method')
+        self.logger.info('VPNServerConfigurationDB find_by_server_uuid method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -133,11 +133,11 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                       FROM public.vpnserver_configuration
                       WHERE uuid = ?
                       '''
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._suuid,)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserver_configuration_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)
@@ -170,7 +170,7 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
         return self.__map_vpnserverconfigdb_to_vpnserverconfig(vpnserver_db)
 
     def find_by_server_uuid(self):
-        logging.info('VPNServerConfigurationDB find_by_server_uuid method')
+        self.logger.info('VPNServerConfigurationDB find_by_server_uuid method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -184,11 +184,11 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                       FROM public.vpnserver_configuration
                       WHERE server_uuid = ?
                       '''
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._server_uuid,)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserverconfig_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)
@@ -214,7 +214,7 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
         return vpnserverconfig_list
 
     def find_by_server_and_user_config(self):
-        logging.info('VPNServerConfigurationDB find_by_server_and_user_config method')
+        self.logger.info('VPNServerConfigurationDB find_by_server_and_user_config method')
         select_sql = '''
                       SELECT 
                         uuid,
@@ -228,11 +228,11 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                       FROM public.vpnserver_configuration
                       WHERE server_uuid = ? AND user_uuid = ?
                       '''
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._server_uuid, self._user_uuid)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             vpnserver_configuration_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)
@@ -258,9 +258,9 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
         return vpnserverconfig_list
 
     def create(self):
-        logging.info('VPNServerConfiguration create method')
+        self.logger.info('VPNServerConfiguration create method')
         self._suuid = uuid.uuid4()
-        logging.info('Create object VPNServerConfiguration with uuid: ' + str(self._suuid))
+        self.logger.info('Create object VPNServerConfiguration with uuid: ' + str(self._suuid))
         insert_sql = '''
                       INSERT INTO public.vpnserver_configuration 
                         (uuid, server_uuid, vpn_type_id, vpn_device_platform_id, user_uuid, configuration) 
@@ -275,10 +275,10 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
             self._user_uuid,
             self._configuration,
         )
-        logging.debug('Create VPNServerConfiguration SQL : %s' % insert_sql)
+        self.logger.debug('Create VPNServerConfiguration SQL : %s' % insert_sql)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             self._storage_service.create(sql=insert_sql, data=insert_params)
         except DatabaseError as e:
             self._storage_service.rollback()
@@ -294,12 +294,12 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                                     VPNCError.VPNSERVERCONFIG_CREATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
 
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
-        logging.debug('VPNServerConfiguration created.')
+        self.logger.debug('VPNServerConfiguration created.')
 
         return self._suuid
 
     def update(self):
-        logging.info('VPNServerConfiguration update method')
+        self.logger.info('VPNServerConfiguration update method')
 
         update_sql = '''
                     UPDATE public.vpnserver_configuration 
@@ -314,7 +314,7 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                       uuid = ?
                     '''
 
-        logging.debug('Update SQL: %s' % update_sql)
+        self.logger.debug('Update SQL: %s' % update_sql)
 
         update_params = (
             self._server_uuid,
@@ -326,9 +326,9 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
         )
 
         try:
-            logging.debug("Call database service")
+            self.logger.debug("Call database service")
             self._storage_service.update(sql=update_sql, data=update_params)
-            logging.debug('VPNServerConfiguration updated.')
+            self.logger.debug('VPNServerConfiguration updated.')
         except DatabaseError as e:
             logging.error(e)
             try:

@@ -121,7 +121,7 @@ class GeoDB(GeoStored):
         super().__init__(storage_service, **kwargs)
 
     def find(self):
-        logging.info('GeoDB find method')
+        self.logger.info('GeoDB find method')
         select_sql = '''
                       SELECT 
                         id,
@@ -142,10 +142,10 @@ class GeoDB(GeoStored):
                       '''
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             geo_position_list_db = self._storage_service.get(sql=select_sql)
         except DatabaseError as e:
             logging.error(e)
@@ -167,7 +167,7 @@ class GeoDB(GeoStored):
         return geo_position_list
 
     def find_by_sid(self):
-        logging.info('GeoDB find_by_id method')
+        self.logger.info('GeoDB find_by_id method')
         select_sql = '''
                       SELECT 
                         id,
@@ -187,11 +187,11 @@ class GeoDB(GeoStored):
                       FROM public.geo_position
                       WHERE id = ?
                       '''
-        logging.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"Select SQL: {select_sql}")
         params = (self._sid,)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             geo_position_list_db = self._storage_service.get(sql=select_sql, data=params)
         except DatabaseError as e:
             logging.error(e)
@@ -223,7 +223,7 @@ class GeoDB(GeoStored):
         return self.__map_geodb_to_geo(geo_position_db)
 
     def create(self):
-        logging.info('GeoDB create method')
+        self.logger.info('GeoDB create method')
         insert_sql = '''
                       INSERT INTO public.geo_position
                       (latitude, longitude, country_code, state_code, city_id, region_common, region_dvd, 
@@ -246,10 +246,10 @@ class GeoDB(GeoStored):
             self._region_nintendo,
             self._created_date,
         )
-        logging.debug('Create GeoDB SQL : %s' % insert_sql)
+        self.logger.debug('Create GeoDB SQL : %s' % insert_sql)
 
         try:
-            logging.debug('Call database service')
+            self.logger.debug('Call database service')
             data = self._storage_service.create(sql=insert_sql, data=insert_params, is_return=True)
             self._sid = data[self._sid_field]
         except DatabaseError as e:
@@ -266,12 +266,12 @@ class GeoDB(GeoStored):
                                     VPNCError.GEO_CREATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
 
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
-        logging.debug('GeoDB created.')
+        self.logger.debug('GeoDB created.')
 
         return self._sid
 
     def update(self):
-        logging.info('Geo update method')
+        self.logger.info('Geo update method')
 
         update_sql = '''
                     UPDATE public.geo_position 
@@ -292,7 +292,7 @@ class GeoDB(GeoStored):
                         id = ?
                     '''
 
-        logging.debug('Update SQL: %s' % update_sql)
+        self.logger.debug('Update SQL: %s' % update_sql)
 
         update_params = (
             self._latitude,
@@ -310,9 +310,9 @@ class GeoDB(GeoStored):
         )
 
         try:
-            logging.debug("Call database service")
+            self.logger.debug("Call database service")
             self._storage_service.update(sql=update_sql, data=update_params)
-            logging.debug('Geo updated.')
+            self.logger.debug('Geo updated.')
         except DatabaseError as e:
             logging.error(e)
             try:
