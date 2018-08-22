@@ -14,7 +14,7 @@ SET default_with_oids = FALSE;
 
 DROP TABLE IF EXISTS public.vpnserversmeta CASCADE;
 DROP TABLE IF EXISTS public.vpnserver CASCADE;
-DROP TABLE IF EXISTS public.vpnserver_configuration CASCADE;
+DROP TABLE IF EXISTS public.vpnservers_user_config CASCADE;
 DROP TABLE IF EXISTS public.country CASCADE;
 DROP TABLE IF EXISTS public.state CASCADE;
 DROP TABLE IF EXISTS public.city CASCADE;
@@ -111,11 +111,10 @@ CREATE TABLE public.vpn_device_platform
   , description VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE public.vpnserver_configuration
+CREATE TABLE public.vpnservers_user_config
 (
     uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
   , user_uuid UUID NOT NULL
-  , server_uuid UUID REFERENCES public.vpnserver(uuid) NOT NULL
   , configuration TEXT NOT NULL
   , version INT DEFAULT 1 NOT NULL
   , vpn_device_platform_id INT REFERENCES public.vpn_device_platform(id) NOT NULL

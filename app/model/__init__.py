@@ -1,14 +1,19 @@
-from enum import IntEnum
+from enum import Enum
 
 
-class VPNServerStatusEnum(IntEnum):
-    def __new__(cls, value, phrase, description=''):
-        obj = int.__new__(cls, value)
+class VPNServerStatusEnum(Enum):
+    __version__ = 1
+
+    def __new__(cls, *args, **kwds):
+        value = len(cls.__members__) + 1
+        obj = object.__new__(cls)
         obj._value_ = value
-
-        obj.message = phrase
-        obj.developer_message = description
         return obj
+
+    def __init__(self, sid, name, description):
+        self.sid = sid
+        self.name = name
+        self.description = description
 
     UNKNOWN = (0, 'unknown', 'Unknown, for reports only')
     OP = (1, 'op', 'Operational')
@@ -21,14 +26,19 @@ class VPNServerStatusEnum(IntEnum):
     OP_NNC_TEST = (8, 'op_nnc_test', 'Operational. No new connections available, preparing for Maintenance; test mode')
 
 
-class VPNTypeEnum(IntEnum):
-    def __new__(cls, value, phrase, description=''):
-        obj = int.__new__(cls, value)
-        obj._value_ = value
+class VPNTypeEnum(Enum):
+    __version__ = 1
 
-        obj.message = phrase
-        obj.developer_message = description
+    def __new__(cls, *args, **kwds):
+        value = len(cls.__members__) + 1
+        obj = object.__new__(cls)
+        obj._value_ = value
         return obj
+
+    def __init__(self, sid, name, description):
+        self.sid = sid
+        self.name = name
+        self.description = description
 
     UNKNOWN = (0, 'unknown', 'Unknown, for reports only')
     OPENVPN = (1, 'openvpn', 'Standard OpenVPN server')

@@ -5,7 +5,7 @@ from typing import List
 from flask import Response, request
 
 from app.exception import *
-from app.model.vpn.config_template import VPNServerConfigurationTemplateDB
+from app.model.vpn.configuration import VPNServerConfigurationTemplateDB
 
 sys.path.insert(0, '../psql_library')
 from storage_service import DBStorageService
