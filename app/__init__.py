@@ -11,7 +11,6 @@ from app.resources.geos.countries import GeosCountriesAPI
 from app.resources.geos.states import GeosStatesAPI
 from app.resources.vpns.device_platforms import VPNSDevicePlatformsAPI
 from app.resources.vpns.servers import VPNSServersAPI
-from app.resources.vpns.servers.config_templates import VPNSConfigTemplatesAPI
 from app.resources.vpns.servers.configurations import VPNSServersConfigurationsAPI
 from app.resources.vpns.servers.connections import VPNSServersConnectionsAPI
 from app.resources.vpns.servers.meta import VPNServersMetaAPI
@@ -59,7 +58,6 @@ apis = [
     {'cls': VPNSServersStatusesAPI, 'args': [db_storage_service, app_config]},
     {'cls': VPNSTypesAPI, 'args': [db_storage_service, app_config]},
     {'cls': VPNSDevicePlatformsAPI, 'args': [db_storage_service, app_config]},
-    {'cls': VPNSConfigTemplatesAPI, 'args': [db_storage_service, app_config]},
     {'cls': GeosAPI, 'args': [db_storage_service, app_config]},
     {'cls': GeosCitiesAPI, 'args': [db_storage_service, app_config]},
     {'cls': GeosCountriesAPI, 'args': [db_storage_service, app_config]},

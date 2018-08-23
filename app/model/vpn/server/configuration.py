@@ -177,7 +177,7 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
                       '''
         self.logger.debug(f"Select SQL: {select_sql}")
         params = (
-            self._suuid,
+            self._user_uuid,
             self._vpn_device_platform_id,
             self._vpn_type_id,
         )
@@ -194,8 +194,9 @@ class VPNServerConfigurationDB(VPNServerConfigurationStored):
             error_message = VPNCError.VPNSERVERCONFIG_FIND_BY_USER_PLATFORM_TYPE_ERROR_DB.message
             error_code = VPNCError.VPNSERVERCONFIG_FIND_BY_USER_PLATFORM_TYPE_ERROR_DB.code
             developer_message = "%s. DatabaseError. Code: %s . %s" % (
-                                    VPNCError.VPNSERVERCONFIG_FIND_BY_USER_PLATFORM_TYPE_ERROR_DB.developer_message, e.pgcode,
-                                    e.pgerror)
+                VPNCError.VPNSERVERCONFIG_FIND_BY_USER_PLATFORM_TYPE_ERROR_DB.developer_message, e.pgcode,
+                e.pgerror
+            )
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         if len(vpnservers_user_config_list_db) == 1:

@@ -16,6 +16,7 @@ class VPNServer(object):
     _suuid = None
     _ip = None
     _hostname = None
+    _port = None
     _version = None
     _condition_version = None
     _type_id = None
@@ -27,13 +28,14 @@ class VPNServer(object):
     _created_date = None
 
     def __init__(self, suuid: str = None, ip: str = None, hostname: str = None, version: int = None,
-                 condition_version: int = None, type_id: int = None,
+                 condition_version: int = None, type_id: int = None, port: int = None,
                  status_id: int = None, bandwidth: int = None, load: int = None, num: int = None,
                  geo_position_id: int = None,
                  created_date: datetime = None):
         self._suuid = suuid
         self._ip = ip
         self._hostname = hostname
+        self._port = port
         self._version = version
         self._condition_version = condition_version
         self._type_id = type_id
@@ -49,6 +51,7 @@ class VPNServer(object):
             'uuid': str(self._suuid),
             'ip': self._ip,
             'hostname': self._hostname,
+            'port': self._port,
             'version': self._version,
             'condition_version': self._condition_version,
             'type_id': self._type_id,
@@ -64,6 +67,7 @@ class VPNServer(object):
             'uuid': str(self._suuid),
             'ip': self._ip,
             'hostname': self._hostname,
+            'port': self._port,
             'version': self._version,
             'condition_version': self._condition_version,
             'type_id': self._type_id,
@@ -80,13 +84,14 @@ class VPNServerStored(StoredObject, VPNServer):
     __version__ = 1
 
     def __init__(self, storage_service: StorageService, suuid: str = None, ip: str = None, hostname: str = None,
-                 version: int = None, condition_version: int = None, type_id: int = None, status_id: int = None,
-                 bandwidth: int = None, load: int = None, num: int = None, geo_position_id: int = None,
-                 created_date: datetime = None, limit: int = None, offset: int = None, **kwargs):
+                 port: int = None, version: int = None, condition_version: int = None, type_id: int = None,
+                 status_id: int = None, bandwidth: int = None, load: int = None, num: int = None,
+                 geo_position_id: int = None, created_date: datetime = None, limit: int = None, offset: int = None,
+                 **kwargs):
         StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
         VPNServer.__init__(self, suuid=suuid, version=version, condition_version=condition_version, type_id=type_id,
                            status_id=status_id, bandwidth=bandwidth, load=load, num=num, ip=ip, hostname=hostname,
-                           geo_position_id=geo_position_id, created_date=created_date)
+                           port=port, geo_position_id=geo_position_id, created_date=created_date)
 
 
 class VPNServerDB(VPNServerStored):
@@ -95,6 +100,7 @@ class VPNServerDB(VPNServerStored):
     _suuid_field = 'uuid'
     _ip_field = 'ip'
     _hostname_field = 'hostname'
+    _port_field = 'port'
     _version_field = 'version'
     _condition_version_field = 'condition_version'
     _type_id_field = 'type_id'
@@ -115,6 +121,7 @@ class VPNServerDB(VPNServerStored):
                           uuid, 
                           ip,
                           hostname,
+                          port,
                           version, 
                           condition_version, 
                           type_id, 
@@ -160,6 +167,7 @@ class VPNServerDB(VPNServerStored):
                           uuid, 
                           ip,
                           hostname,
+                          port,
                           version, 
                           condition_version, 
                           type_id, 
@@ -215,6 +223,7 @@ class VPNServerDB(VPNServerStored):
                           uuid, 
                           ip,
                           hostname,
+                          port,
                           version, 
                           condition_version, 
                           type_id, 
@@ -265,6 +274,7 @@ class VPNServerDB(VPNServerStored):
                           uuid, 
                           ip,
                           hostname,
+                          port,
                           version, 
                           condition_version, 
                           type_id, 
@@ -313,14 +323,15 @@ class VPNServerDB(VPNServerStored):
         self.logger.info('Create object VPNServer with uuid: ' + str(self._suuid))
         insert_sql = '''
                       INSERT INTO public.vpnserver 
-                        (uuid, ip, hostname, type_id, status_id, bandwidth, geo_position_id, load) 
+                        (uuid, ip, hostname, port, type_id, status_id, bandwidth, geo_position_id, load) 
                       VALUES 
-                        (?, ?, ?, ?, ?, ?, ?, ?)
+                        (?, ?, ?, ?, ?, ?, ?, ?, ?)
                      '''
         insert_params = (
             self._suuid,
             self._ip,
             self._hostname,
+            self._port,
             self._type_id,
             self._status_id,
             self._bandwidth,
@@ -357,6 +368,7 @@ class VPNServerDB(VPNServerStored):
                     UPDATE public.vpnserver 
                     SET ip = ?,
                         hostname = ?,
+                        port = ?,
                         type_id = ?,
                         status_id = ?,
                         bandwidth = ?,
@@ -372,6 +384,7 @@ class VPNServerDB(VPNServerStored):
         update_params = (
             self._ip,
             self._hostname,
+            self._port,
             self._type_id,
             self._status_id,
             self._bandwidth,
@@ -402,7 +415,7 @@ class VPNServerDB(VPNServerStored):
 
     def __map_vpnserverdb_to_vpnserver(self, vpnserver_db):
         return VPNServer(suuid=vpnserver_db[self._suuid_field], version=vpnserver_db[self._version_field],
-                         condition_version=vpnserver_db[self._condition_version_field],
+                         condition_version=vpnserver_db[self._condition_version_field], port=vpnserver_db[self._port_field],
                          ip=vpnserver_db[self._ip_field], hostname=vpnserver_db[self._hostname_field],
                          type_id=vpnserver_db[self._type_id_field], status_id=vpnserver_db[self._status_id_field],
                          bandwidth=vpnserver_db[self._bandwidth_field], load=vpnserver_db[self._load_field],

@@ -54,6 +54,7 @@ class VPNSServersAPI(ResourceAPI):
 
         ip = request_json.get(VPNServerDB._ip_field, None)
         hostname = request_json.get(VPNServerDB._hostname_field, None)
+        port = request_json.get(VPNServerDB._port_field, None)
         version = request_json.get(VPNServerDB._version_field, None)
         condition_version = request_json.get(VPNServerDB._condition_version_field, None)
         type_id = request_json.get(VPNServerDB._type_id_field, None)
@@ -65,6 +66,7 @@ class VPNSServersAPI(ResourceAPI):
         req_fields = {
             'ip': ip,
             'hostname': hostname,
+            'port': port,
             'type_id': type_id,
             'status_id': status_id,
             'bandwidth': bandwidth,
@@ -79,7 +81,7 @@ class VPNSServersAPI(ResourceAPI):
             resp = make_api_response(data=response_data, http_code=response_data.code)
             return resp
 
-        vpnserver_db = VPNServerDB(storage_service=self.__db_storage_service, version=version,
+        vpnserver_db = VPNServerDB(storage_service=self.__db_storage_service, version=version, port=port,
                                    ip=ip, hostname=hostname, condition_version=condition_version, type_id=type_id,
                                    status_id=status_id, bandwidth=bandwidth, load=load, geo_position_id=geo_position_id)
 
@@ -116,6 +118,7 @@ class VPNSServersAPI(ResourceAPI):
 
         ip = request_json.get(VPNServerDB._ip_field, None)
         hostname = request_json.get(VPNServerDB._hostname_field, None)
+        port = request_json.get(VPNServerDB._port_field, None)
         version = request_json.get(VPNServerDB._version_field, None)
         condition_version = request_json.get(VPNServerDB._condition_version_field, None)
         type_id = request_json.get(VPNServerDB._type_id_field, None)
@@ -127,6 +130,7 @@ class VPNSServersAPI(ResourceAPI):
         req_fields = {
             'ip': ip,
             'hostname': hostname,
+            'port': port,
             'version': version,
             'condition_version': condition_version,
             'type_id': type_id,
@@ -143,7 +147,7 @@ class VPNSServersAPI(ResourceAPI):
             resp = make_api_response(data=response_data, http_code=response_data.code)
             return resp
 
-        vpnserver_db = VPNServerDB(storage_service=self.__db_storage_service, suuid=suuid, version=version,
+        vpnserver_db = VPNServerDB(storage_service=self.__db_storage_service, suuid=suuid, version=version, port=port,
                                    condition_version=condition_version, type_id=type_id, status_id=status_id,
                                    bandwidth=bandwidth, load=load, geo_position_id=geo_position_id)
 
@@ -168,8 +172,7 @@ class VPNSServersAPI(ResourceAPI):
         super(VPNSServersAPI, self).get(req=request)
 
         vpnserver_db = VPNServerDB(storage_service=self.__db_storage_service, suuid=suuid, type_id=type_id,
-                                   status_id=status_id,
-                                   limit=self.pagination.limit, offset=self.pagination.offset)
+                                   status_id=status_id, limit=self.pagination.limit, offset=self.pagination.offset)
         if suuid is not None:
             is_valid = check_uuid(suuid)
             if not is_valid:
