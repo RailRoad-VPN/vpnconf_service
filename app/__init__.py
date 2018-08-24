@@ -11,7 +11,6 @@ from app.resources.geos.countries import GeosCountriesAPI
 from app.resources.geos.states import GeosStatesAPI
 from app.resources.vpns.device_platforms import VPNSDevicePlatformsAPI
 from app.resources.vpns.servers import VPNSServersAPI
-from app.resources.vpns.servers.configurations import VPNSServersConfigurationsAPI
 from app.resources.vpns.servers.connections import VPNSServersConnectionsAPI
 from app.resources.vpns.servers.meta import VPNServersMetaAPI
 from app.resources.vpns.servers.statuses import VPNSServersStatusesAPI
@@ -53,7 +52,6 @@ api_base_uri = app_config['API_BASE_URI']
 apis = [
     {'cls': VPNServersMetaAPI, 'args': [db_storage_service, app_config]},
     {'cls': VPNSServersAPI, 'args': [db_storage_service, app_config]},
-    {'cls': VPNSServersConfigurationsAPI, 'args': [db_storage_service, app_config]},
     {'cls': VPNSServersConnectionsAPI, 'args': [db_storage_service, app_config]},
     {'cls': VPNSServersStatusesAPI, 'args': [db_storage_service, app_config]},
     {'cls': VPNSTypesAPI, 'args': [db_storage_service, app_config]},
