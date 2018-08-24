@@ -92,6 +92,7 @@ CREATE TABLE public.vpnserver
     uuid UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL
   , ip INET NOT NULL
   , hostname VARCHAR(200)
+  , port VARCHAR(100) NOT NULL
   , num SERIAL NOT NULL
   , version INT DEFAULT 1 NOT NULL
   , condition_version INT DEFAULT 1 NOT NULL

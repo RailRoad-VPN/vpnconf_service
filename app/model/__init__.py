@@ -10,9 +10,9 @@ class VPNServerStatusEnum(Enum):
         obj._value_ = value
         return obj
 
-    def __init__(self, sid, name, description):
+    def __init__(self, sid, sname, description):
         self.sid = sid
-        self.name = name
+        self.sname = sname
         self.description = description
 
     UNKNOWN = (0, 'unknown', 'Unknown, for reports only')

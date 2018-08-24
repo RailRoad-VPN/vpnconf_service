@@ -8,10 +8,7 @@ INSERT INTO public.geo_position(id, latitude, longitude, country_code, state_cod
 --
 
 -- openvpn server
-INSERT INTO public.vpnserver (uuid, ip, hostname, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('c872e7f0-76d6-4a4e-826e-c56a7c05958a', '192.168.0.1', 'rroad.net', 1, 1, 1, 1, 0, 0, 1);
-
--- ikev2 server
-INSERT INTO public.vpnserver (uuid, ip, hostname, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('699bba8d-7a50-4838-8c6e-ceed49d0f820', '192.168.0.1', 'rroad.net', 1, 1, 1, 1, 0, 0, 1);
+INSERT INTO public.vpnserver (uuid, ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('c872e7f0-76d6-4a4e-826e-c56a7c05958a', '192.168.0.1', 'rroad.net', '1194', 1, 1, 1, 1, 0, 0, 1);
 
 --
 -- vpn server connection
