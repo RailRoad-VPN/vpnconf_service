@@ -15,10 +15,10 @@ INSERT INTO public.vpn_type(id, code, description) VALUES (1, 'openvpn', 'Standa
 INSERT INTO public.vpn_type(id, code, description) VALUES (2, 'ikev2', 'IPSec w IKEv2');
 
 -- vpn device platforms
-INSERT INTO public.vpn_device_platform (id, code, description) VALUES (1, 'iOS', 'Apple iPhone and iPad mobile OS');
-INSERT INTO public.vpn_device_platform (id, code, description) VALUES (2, 'Android', 'All Android devices OS');
-INSERT INTO public.vpn_device_platform (id, code, description) VALUES (3, 'Windows', 'Windows OS');
-INSERT INTO public.vpn_device_platform (id, code, description) VALUES (4, 'macOS', 'Apple Mac OS');
+INSERT INTO public.vpn_device_platform (id, code, description) VALUES (1, 'ios', 'Apple iPhone and iPad mobile OS');
+INSERT INTO public.vpn_device_platform (id, code, description) VALUES (2, 'android', 'All Android devices OS');
+INSERT INTO public.vpn_device_platform (id, code, description) VALUES (3, 'windows', 'Windows OS');
+INSERT INTO public.vpn_device_platform (id, code, description) VALUES (4, 'macos', 'Apple Mac OS');
 
 -- geos counries
 INSERT INTO public.country(name, code, str_code) VALUES ('Afghanistan', 004, 'AFG');
