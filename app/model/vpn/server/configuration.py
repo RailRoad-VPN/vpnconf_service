@@ -57,8 +57,8 @@ class VPNServerConfigurationStored(StoredObject, VPNServerConfiguration):
                  version: int = None, limit: int = None, offset: int = None, **kwargs):
         StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
         VPNServerConfiguration.__init__(self, suuid=suuid, user_uuid=user_uuid, vpn_type_id=vpn_type_id,
-                                        vpn_device_platform_id=vpn_device_platform_id,
-                                        configuration=configuration, version=version)
+                                        vpn_device_platform_id=vpn_device_platform_id, configuration=configuration,
+                                        version=version)
 
 
 class VPNServerConfigurationDB(VPNServerConfigurationStored):

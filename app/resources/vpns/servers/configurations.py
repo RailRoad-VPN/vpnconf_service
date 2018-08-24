@@ -118,8 +118,7 @@ class VPNSServersConfigurationsAPI(ResourceAPI):
             return resp
 
         vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service, suuid=suuid,
-                                                      user_uuid=user_uuid, server_uuid=server_uuid,
-                                                      vpn_device_platform_id=vpn_device_platform_id,
+                                                      user_uuid=user_uuid, vpn_device_platform_id=vpn_device_platform_id,
                                                       configuration=configuration)
         try:
             vpnserverconfig_db.update()
@@ -163,7 +162,7 @@ class VPNSServersConfigurationsAPI(ResourceAPI):
 
         vpnserverconfig_db = VPNServerConfigurationDB(storage_service=self.__db_storage_service, suuid=conf_uuid,
                                                       vpn_device_platform_id=platform_id, vpn_type_id=vpn_type_id,
-                                                      server_uuid=server_uuid, user_uuid=user_uuid)
+                                                      user_uuid=user_uuid)
         if user_uuid is not None and platform_id is not None and vpn_type_id is not None:
             is_valid_user_uuid = check_uuid(suuid=user_uuid)
             if not is_valid_user_uuid:
@@ -177,6 +176,7 @@ class VPNSServersConfigurationsAPI(ResourceAPI):
                                                    err=VPNCError.VPNSERVERCONFIG_IDENTIFIER_ERROR)
             try:
                 vpnserverconfig = vpnserverconfig_db.find_by_user_platform_type()
+                # TODO using server_uuid fix server_name and server_port in configuration
                 response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
                                             data=vpnserverconfig.to_api_dict())
                 resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
