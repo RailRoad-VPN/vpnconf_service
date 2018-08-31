@@ -72,7 +72,7 @@ class StateDB(StateStored):
                       '''
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        self.logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
 
         try:
             self.logger.debug('Call database service')
@@ -107,7 +107,7 @@ class StateDB(StateStored):
                       FROM public.state 
                       WHERE code = ?
                       '''
-        self.logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
         params = (self._code,)
 
         try:

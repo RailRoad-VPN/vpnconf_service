@@ -51,9 +51,9 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         vpnserver_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
 
         self.logger.debug("check uuids")
-        self.logger.debug(f"server uuid: {server_uuid}")
-        self.logger.debug(f"vpnserver_uuid: {vpnserver_uuid}")
-        self.logger.debug(f"server_uuid != vpnserver_uuid: {server_uuid != vpnserver_uuid}")
+        self.logger.debug(f"{self.__class__}: server uuid: {server_uuid}")
+        self.logger.debug(f"{self.__class__}: vpnserver_uuid: {vpnserver_uuid}")
+        self.logger.debug(f"{self.__class__}: server_uuid != vpnserver_uuid: {server_uuid != vpnserver_uuid}")
 
         is_valid_server_uuid = check_uuid(server_uuid)
         is_valid_server_uuid_again = check_uuid(vpnserver_uuid)

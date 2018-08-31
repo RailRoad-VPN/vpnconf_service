@@ -192,7 +192,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       '''
         if self._limit:
             select_sql += f"\nLIMIT {self._limit}\nOFFSET {self._offset}"
-        self.logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
 
         try:
             self.logger.debug('Call database service')
@@ -237,7 +237,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       '''
         if self._limit:
             select_sql += f"\nLIMIT {self._limit}\nOFFSET {self._offset}"
-        self.logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
         params = (self._user_device_uuid,)
 
         try:
@@ -280,7 +280,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       FROM public.vpnserver_connection
                       WHERE uuid = ?
                       '''
-        self.logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
         params = (self._suuid,)
 
         try:
@@ -334,7 +334,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       FROM public.vpnserver_connection
                       WHERE server_uuid = ?
                       '''
-        self.logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
         params = (self._server_uuid,)
 
         try:
@@ -381,7 +381,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       FROM public.vpnserver_connection
                       WHERE server_uuid = ? AND user_uuid = ?
                       '''
-        self.logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
         params = (self._server_uuid, self._user_uuid)
 
         try:
@@ -429,7 +429,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       WHERE server_uuid = ? AND user_device_uuid = ?
                       ORDER BY vc.created_date DESC
                       '''
-        self.logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
         params = (
             self._server_uuid,
             self._user_device_uuid,
@@ -484,7 +484,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                       WHERE server_uuid = ? AND virtual_ip = ?
                       ORDER BY vc.created_date DESC
                       '''
-        self.logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
         params = (
             self._server_uuid,
             self._virtual_ip,

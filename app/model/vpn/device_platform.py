@@ -60,7 +60,7 @@ class VPNDevicePlatformDB(VPNDevicePlatformStored):
         select_sql = 'SELECT * FROM public.vpn_device_platform'
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        self.logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
 
         try:
             self.logger.debug('Call database service')
@@ -87,7 +87,7 @@ class VPNDevicePlatformDB(VPNDevicePlatformStored):
     def find_by_sid(self):
         self.logger.info('VPNDevicePlatformDB find_by_sid method')
         select_sql = 'SELECT * FROM public.vpn_device_platform WHERE id = ?'
-        self.logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
         params = (self._sid,)
 
         try:

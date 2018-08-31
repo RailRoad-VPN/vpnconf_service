@@ -66,7 +66,7 @@ class CityDB(CityStored):
                       '''
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
-        self.logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
 
         try:
             self.logger.debug('Call database service')
@@ -100,7 +100,7 @@ class CityDB(CityStored):
                       FROM public.city
                       WHERE id = ?
                       '''
-        self.logger.debug(f"Select SQL: {select_sql}")
+        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
         params = (self._sid,)
 
         try:
