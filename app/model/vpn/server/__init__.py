@@ -394,7 +394,7 @@ class VPNServerDB(VPNServerStored):
         )
 
         try:
-            self.logger.debug("Call database service")
+            self.logger.debug(f"{self.__class__}: Call database service")
             updated = self._storage_service.update(sql=update_sql, data=update_params, is_return=True)
             updated = updated[0]
         except DatabaseError as e:

@@ -107,7 +107,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         super().__init__(storage_service, **kwargs)
 
     def delete_by_uuid(self):
-        self.logger.debug("delete_by_uuid method")
+        self.logger.debug(f"{self.__class__}: delete_by_uuid method")
 
         update_sql = '''
                     UPDATE public.vpnserver_connection 
@@ -124,7 +124,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         )
 
         try:
-            self.logger.debug("Call database service")
+            self.logger.debug(f"{self.__class__}: Call database service")
             self._storage_service.update(sql=update_sql, data=update_params)
             self.logger.debug('VPNServerConnection updated.')
         except DatabaseError as e:
@@ -141,7 +141,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
     def delete_by_server(self):
-        self.logger.debug("delete_by_server method")
+        self.logger.debug(f"{self.__class__}: delete_by_server method")
 
         update_sql = '''
                     UPDATE public.vpnserver_connection 
@@ -158,7 +158,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         )
 
         try:
-            self.logger.debug("Call database service")
+            self.logger.debug(f"{self.__class__}: Call database service")
             self._storage_service.update(sql=update_sql, data=update_params)
             self.logger.debug('VPNServerConnection updated.')
         except DatabaseError as e:
@@ -599,7 +599,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         )
 
         try:
-            self.logger.debug("Call database service")
+            self.logger.debug(f"{self.__class__}: Call database service")
             self._storage_service.update(sql=update_sql, data=update_params)
             self.logger.debug('VPNServerConnection updated.')
         except DatabaseError as e:

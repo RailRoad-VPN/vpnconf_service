@@ -189,7 +189,7 @@ class CityDB(CityStored):
         )
 
         try:
-            self.logger.debug("Call database service")
+            self.logger.debug(f"{self.__class__}: Call database service")
             self._storage_service.update(sql=update_sql, data=update_params)
             self.logger.debug('City updated.')
         except DatabaseError as e:
