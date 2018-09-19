@@ -285,7 +285,7 @@ class VPNServerDB(VPNServerStored):
                           geo_position_id, 
                           to_json(created_date) AS created_date 
                       FROM public.vpnserver 
-                      WHERE type_id = ?
+                      WHERE type_id = ? AND status_id = 1
                       ORDER BY num
                       '''
         self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
