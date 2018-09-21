@@ -1,3 +1,14 @@
+TRUNCATE public.vpnserversmeta CASCADE;
+TRUNCATE public.vpnserver CASCADE;
+TRUNCATE public.country CASCADE;
+TRUNCATE public.state CASCADE;
+TRUNCATE public.city CASCADE;
+TRUNCATE public.geo_position CASCADE;
+TRUNCATE public.vpnserver_status CASCADE;
+TRUNCATE public.vpn_device_platform CASCADE;
+TRUNCATE public.vpn_type CASCADE;
+TRUNCATE public.vpnserver_connection CASCADE;
+
 INSERT INTO public.vpnserversmeta(id, version, condition_version) VALUES (0, 0, 0);
 
 -- geo position
