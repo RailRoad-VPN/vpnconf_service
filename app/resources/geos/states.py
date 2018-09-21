@@ -24,8 +24,6 @@ class GeosStatesAPI(ResourceAPI):
     __endpoint_name__ = __qualname__
     __api_url__ = 'geo_positions/states'
 
-    _config = None
-
     __db_storage_service = None
 
     @staticmethod

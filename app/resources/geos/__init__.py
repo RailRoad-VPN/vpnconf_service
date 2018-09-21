@@ -24,8 +24,6 @@ class GeosAPI(ResourceAPI):
     __endpoint_name__ = __qualname__
     __api_url__ = 'geo_positions'
 
-    _config = None
-
     __db_storage_service = None
 
     @staticmethod
@@ -37,9 +35,8 @@ class GeosAPI(ResourceAPI):
         ]
         return api_urls
 
-    def __init__(self, db_storage_service: DBStorageService, config: dict) -> None:
-        super().__init__()
-        self._config = config
+    def __init__(self, db_storage_service: DBStorageService, *args) -> None:
+        super().__init__(*args)
         self.__db_storage_service = db_storage_service
 
     def post(self) -> Response:

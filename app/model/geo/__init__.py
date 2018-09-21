@@ -28,10 +28,16 @@ class Geo(object):
     _region_nintendo = None
     _created_date = None
 
+    _city_name = None
+    _country_str_code = None
+    _country_name = None
+    _state_name = None
+
     def __init__(self, sid: int = None, latitude: str = None, longitude: str = None, country_code: int = None,
                  state_code: str = None, city_id: int = None, region_common: int = None, region_dvd: int = None,
                  region_xbox360: int = None, region_xboxone: int = None, region_playstation3: int = None,
-                 region_playstation4: int = None, region_nintendo: int = None, created_date: datetime = None):
+                 region_playstation4: int = None, region_nintendo: int = None, created_date: datetime = None,
+                 city_name: str = None, country_str_code: str = None, country_name: str = None, state_name: str = None):
         self._sid = sid
         self._latitude = latitude
         self._longitude = longitude
@@ -46,6 +52,10 @@ class Geo(object):
         self._region_playstation4 = region_playstation4
         self._region_nintendo = region_nintendo
         self._created_date = created_date
+        self._city_name = city_name
+        self._country_str_code = country_str_code
+        self._country_name = country_name
+        self._state_name = state_name
 
     def to_dict(self):
         return {
@@ -70,9 +80,19 @@ class Geo(object):
             'id': self._sid,
             'latitude': self._latitude,
             'longitude': self._longitude,
-            'country_code': self._country_code,
-            'state_code': self._state_code,
-            'city_id': self._city_id,
+            'country': {
+                'code': self._country_code,
+                'name': self._country_name,
+                'str_code': self._country_str_code,
+            },
+            'city': {
+                'id': self._city_id,
+                'name': self._city_name,
+            },
+            'state': {
+                'code': self._state_code,
+                'name': self._state_name,
+            },
             'region_common': self._region_common,
             'region_dvd': self._region_dvd,
             'region_xbox360': self._region_xbox360,
@@ -90,13 +110,15 @@ class GeoStored(StoredObject, Geo):
                  country_code: int = None, state_code: str = None, city_id: int = None, region_common: int = None,
                  region_dvd: int = None, region_xbox360: int = None, region_xboxone: int = None,
                  region_playstation3: int = None, region_playstation4: int = None, region_nintendo: int = None,
-                 created_date: datetime = None, limit: int = None, offset: int = None, **kwargs):
+                 created_date: datetime = None, city_name: str = None, country_str_code: str = None,
+                 country_name: str = None, state_name: str = None, limit: int = None, offset: int = None, **kwargs):
         StoredObject.__init__(self, storage_service=storage_service, limit=limit, offset=offset)
         Geo.__init__(self, sid=sid, latitude=latitude, longitude=longitude, country_code=country_code,
                      state_code=state_code, city_id=city_id, region_common=region_common, region_dvd=region_dvd,
                      region_xbox360=region_xbox360, region_xboxone=region_xboxone,
                      region_playstation3=region_playstation3, region_playstation4=region_playstation4,
-                     region_nintendo=region_nintendo, created_date=created_date)
+                     region_nintendo=region_nintendo, created_date=created_date, city_name=city_name,
+                     country_str_code=country_str_code, country_name=country_name, state_name=state_name)
 
 
 class GeoDB(GeoStored):
@@ -117,28 +139,39 @@ class GeoDB(GeoStored):
     _region_nintendo_field = 'region_nintendo'
     _created_date_field = 'created_date'
 
+    _city_name_field = 'city_name'
+    _country_str_code_field = 'country_str_code'
+    _country_name_field = 'country_name'
+    _state_name_field = 'state_name'
+
     def __init__(self, storage_service: StorageService, **kwargs):
         super().__init__(storage_service, **kwargs)
 
     def find(self):
         self.logger.info('GeoDB find method')
         select_sql = '''
-                      SELECT 
-                        id,
-                        latitude,
-                        longitude,
-                        country_code,
-                        state_code,
-                        city_id,
-                        region_common,
-                        region_dvd,
-                        region_xbox360,
-                        region_xboxone,
-                        region_playstation3,
-                        region_playstation4,
-                        region_nintendo,
-                        to_json(created_date) AS created_date 
-                      FROM public.geo_position
+SELECT gp.id AS id,
+       latitude,
+       longitude,
+       gp.country_code AS country_code,
+       c2.name AS country_name,
+       c2.str_code AS country_str_code,
+       c3.name AS city_name,
+       s2.name AS state_name,
+       state_code,
+       city_id,
+       region_common,
+       region_dvd,
+       region_xbox360,
+       region_xboxone,
+       region_playstation3,
+       region_playstation4,
+       region_nintendo,
+       to_json(gp.created_date) AS created_date
+FROM public.geo_position gp
+JOIN country c2 on gp.country_code = c2.code
+JOIN city c3 on gp.city_id = c3.id
+JOIN state s2 on c2.code = s2.country_code
                       '''
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
@@ -169,23 +202,29 @@ class GeoDB(GeoStored):
     def find_by_sid(self):
         self.logger.info('GeoDB find_by_id method')
         select_sql = '''
-                      SELECT 
-                        id,
-                        latitude,
-                        longitude,
-                        country_code,
-                        state_code,
-                        city_id,
-                        region_common,
-                        region_dvd,
-                        region_xbox360,
-                        region_xboxone,
-                        region_playstation3,
-                        region_playstation4,
-                        region_nintendo,
-                        to_json(created_date) AS created_date 
-                      FROM public.geo_position
-                      WHERE id = ?
+SELECT gp.id AS id,
+       latitude,
+       longitude,
+       gp.country_code AS country_code,
+       c2.name AS country_name,
+       c2.str_code AS country_str_code,
+       c3.name AS city_name,
+       s2.name AS state_name,
+       state_code,
+       city_id,
+       region_common,
+       region_dvd,
+       region_xbox360,
+       region_xboxone,
+       region_playstation3,
+       region_playstation4,
+       region_nintendo,
+       to_json(gp.created_date) AS created_date
+FROM public.geo_position gp
+JOIN country c2 on gp.country_code = c2.code
+JOIN city c3 on gp.city_id = c3.id
+JOIN state s2 on c2.code = s2.country_code
+WHERE gp.id = ?
                       '''
         self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
         params = (self._sid,)
@@ -342,4 +381,8 @@ class GeoDB(GeoStored):
             region_playstation4=geo_position_db[self._region_playstation4_field],
             region_nintendo=geo_position_db[self._region_nintendo_field],
             created_date=geo_position_db[self._created_date_field],
+            city_name=geo_position_db[self._city_name_field],
+            country_str_code=geo_position_db[self._country_str_code_field],
+            country_name=geo_position_db[self._country_name_field],
+            state_name=geo_position_db[self._state_name_field],
         )
