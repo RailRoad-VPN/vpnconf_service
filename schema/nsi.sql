@@ -283,3 +283,6 @@ INSERT INTO public.city(id, name, created_date) VALUES (2, 'Moscow', '2018-05-23
 -- states
 INSERT INTO public.state (code, country_code, name, created_date) VALUES ('1', 826, 'SY', '2018-05-31 16:58:48.984279');
 INSERT INTO public.state (code, country_code, name, created_date) VALUES ('2', 643, 'NY', '2018-05-31 16:58:55.672343');
+INSERT INTO public.state (code, country_code, name, created_date) VALUES ('3', 36, 'JK', '2018-09-27 15:59:12.874928');
+INSERT INTO public.state (code, country_code, name, created_date) VALUES ('4', 533, 'IIE', '2018-09-27 15:59:12.874928');
+INSERT INTO public.state (code, country_code, name, created_date) VALUES ('5', 248, 'KLL', '2018-09-27 15:59:12.874928');
