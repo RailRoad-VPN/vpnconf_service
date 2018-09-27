@@ -1,3 +1,10 @@
+TRUNCATE public.country CASCADE;
+TRUNCATE public.state CASCADE;
+TRUNCATE public.city CASCADE;
+TRUNCATE public.vpnserver_status CASCADE;
+TRUNCATE public.vpn_device_platform CASCADE;
+TRUNCATE public.vpn_type CASCADE;
+
 -- vpn server statuses
 INSERT INTO public.vpnserver_status(id, code, description) VALUES(0, 'unknown', 'Unknown, for reports only');
 INSERT INTO public.vpnserver_status(id, code, description) VALUES(1, 'op', 'Operational');
