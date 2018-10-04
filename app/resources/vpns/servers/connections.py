@@ -45,7 +45,12 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         self.__db_storage_service = db_storage_service
 
     def post(self, server_uuid: str) -> Response:
+        super(VPNSServersConnectionsAPI, self).post(req=request)
+
         request_json = request.json
+
+        if request_json is None:
+            return make_error_request_response(HTTPStatus.BAD_REQUEST, err=VPNCError.REQUEST_NO_JSON)
 
         vpnserver_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
 
