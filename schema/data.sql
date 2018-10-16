@@ -16,11 +16,11 @@ INSERT INTO public.geo_position(id, latitude, longitude, country_code, state_cod
 --
 
 -- openvpn server
-INSERT INTO public.vpnserver (uuid, ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('c872e7f0-76d6-4a4e-826e-c56a7c05958a', '194.87.235.49', 'giftshaker.com', '1194', 1, 1, 1, 1, 0, 0, 1);
-INSERT INTO public.vpnserver (ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('194.87.235.49', 'giftshaker.com', '1194', 1, 1, 1, 1, 0, 0, 1);
-INSERT INTO public.vpnserver (ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('194.87.235.49', 'giftshaker.com', '1194', 1, 1, 1, 1, 0, 0, 2);
-INSERT INTO public.vpnserver (ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('194.87.235.49', 'giftshaker.com', '1194', 1, 1, 1, 1, 0, 0, 3);
-INSERT INTO public.vpnserver (ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('194.87.235.49', 'giftshaker.com', '1194', 1, 1, 1, 1, 0, 0, 4);
+INSERT INTO public.vpnserver (uuid, ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('c872e7f0-76d6-4a4e-826e-c56a7c05958a', '193.70.73.242', '193.70.73.242', '51242', 1, 1, 1, 1, 0, 0, 1);
+INSERT INTO public.vpnserver (ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('193.70.73.242', '193.70.73.242', '51242', 1, 1, 1, 1, 0, 0, 1);
+INSERT INTO public.vpnserver (ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('193.70.73.242', '193.70.73.242', '51242', 1, 1, 1, 1, 0, 0, 2);
+INSERT INTO public.vpnserver (ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('193.70.73.242', '193.70.73.242', '51242', 1, 1, 1, 1, 0, 0, 3);
+INSERT INTO public.vpnserver (ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('193.70.73.242', '193.70.73.242', '51242', 1, 1, 1, 1, 0, 0, 4);
 
 --
 -- vpn server connection
