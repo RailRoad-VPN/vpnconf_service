@@ -16,15 +16,4 @@ INSERT INTO public.geo_position(id, latitude, longitude, country_code, state_cod
 --
 
 -- openvpn server
-INSERT INTO public.vpnserver (uuid, ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('c872e7f0-76d6-4a4e-826e-c56a7c05958a', '193.70.73.242', '193.70.73.242', '51242', 1, 1, 1, 1, 0, 0, 1);
-INSERT INTO public.vpnserver (ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('193.70.73.242', '193.70.73.242', '51242', 1, 1, 1, 1, 0, 0, 1);
-INSERT INTO public.vpnserver (ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('193.70.73.242', '193.70.73.242', '51242', 1, 1, 1, 1, 0, 0, 2);
-INSERT INTO public.vpnserver (ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('193.70.73.242', '193.70.73.242', '51242', 1, 1, 1, 1, 0, 0, 3);
-INSERT INTO public.vpnserver (ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('193.70.73.242', '193.70.73.242', '51242', 1, 1, 1, 1, 0, 0, 4);
-
---
--- vpn server connection
---
-
--- windows and openvpn
-INSERT INTO public.vpnserver_connection (uuid, server_uuid, user_uuid, user_device_uuid, device_ip, virtual_ip, bytes_i, bytes_o, is_connected, connected_since) VALUES ('d10e7099-1f18-496f-ba6b-6fe3352d565a', 'c872e7f0-76d6-4a4e-826e-c56a7c05958a', 'cf402144-0c02-4b97-98f2-73f7b56160cf', '4c23dffb-2cf2-4173-9d0c-e38caad6e12b', '185.89.8.146', '10.10.0.6', 900, 800, TRUE, now());
+INSERT INTO public.vpnserver (uuid, ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('c872e7f0-76d6-4a4e-826e-c56a7c05958a', '91.121.50.14', 'rrnovpn2', '51241', 1, 1, 1, 1, 0, 0, 1);
