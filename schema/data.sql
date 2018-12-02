@@ -16,4 +16,4 @@ INSERT INTO public.geo_position(id, latitude, longitude, country_code, state_cod
 --
 
 -- openvpn server
-INSERT INTO public.vpnserver (uuid, ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('c872e7f0-76d6-4a4e-826e-c56a7c05958a', '91.121.50.14', 'rrnovpn2', '51241', 1, 1, 1, 1, 0, 0, 1);
+INSERT INTO public.vpnserver (uuid, ip, hostname, port, version, condition_version, type_id, status_id, bandwidth, load, geo_position_id) VALUES ('c872e7f0-76d6-4a4e-826e-c56a7c05958a', '193.70.73.242', 'rrnovpn1', '51241', 1, 1, 1, 1, 0, 0, 1);
