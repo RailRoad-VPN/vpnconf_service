@@ -572,7 +572,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                     SET
                         bytes_i = ?,
                         bytes_o = ?,
-                        is_connected = ?,
+                        is_connected = ?
                     WHERE 
                       uuid = ?
                     '''
