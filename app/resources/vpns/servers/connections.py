@@ -117,11 +117,9 @@ class VPNSServersConnectionsAPI(ResourceAPI):
     def put(self, server_uuid: str, conn_uuid: str) -> Response:
         request_json = request.json
 
-        vpnserverconn_suuid = request_json.get(VPNServerConnectionDB._suuid_field, None)
-
         is_valid_suuid = check_uuid(conn_uuid)
         is_valid_server_uuid = check_uuid(server_uuid)
-        if not is_valid_suuid or not is_valid_server_uuid or conn_uuid != vpnserverconn_suuid:
+        if not is_valid_suuid or not is_valid_server_uuid:
             return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
                                                err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
 
