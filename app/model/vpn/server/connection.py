@@ -564,6 +564,45 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
 
         return self._suuid
 
+    def update_traffic(self):
+        self.logger.info('VPNServerConnection update_traffic method')
+
+        update_sql = '''
+                    UPDATE public.vpnserver_connection 
+                    SET
+                        bytes_i = ?,
+                        bytes_o = ?,
+                        is_connected = ?,
+                    WHERE 
+                      uuid = ?
+                    '''
+
+        self.logger.debug('Update Traffic SQL: %s' % update_sql)
+
+        update_params = (
+            self._bytes_i,
+            self._bytes_o,
+            self._is_connected,
+            self._suuid,
+        )
+
+        try:
+            self.logger.debug(f"{self.__class__}: Call database service")
+            self._storage_service.update(sql=update_sql, data=update_params)
+            self.logger.debug('VPNServerConnection updated.')
+        except DatabaseError as e:
+            self.logger.error(e)
+            try:
+                e = e.args[0]
+            except IndexError:
+                pass
+            error_message = VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.message
+            developer_message = "%s. DatabaseError.. " \
+                                "Code: %s . %s" % (
+                                    VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+            error_code = VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.code
+            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
+
     def update(self):
         self.logger.info('VPNServerConnection update method')
 

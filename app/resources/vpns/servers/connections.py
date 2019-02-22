@@ -118,14 +118,10 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         request_json = request.json
 
         vpnserverconn_suuid = request_json.get(VPNServerConnectionDB._suuid_field, None)
-        vpnserver_uuid = request_json.get(VPNServerConnectionDB._server_uuid_field, None)
 
         is_valid_suuid = check_uuid(conn_uuid)
         is_valid_server_uuid = check_uuid(server_uuid)
-        is_valid_server_uuid_again = check_uuid(vpnserver_uuid)
-        is_valid_vpnserverconn_uuid = check_uuid(vpnserverconn_suuid)
-        if not is_valid_suuid or not is_valid_server_uuid or not is_valid_server_uuid_again \
-                or not is_valid_vpnserverconn_uuid or conn_uuid != vpnserverconn_suuid or server_uuid != vpnserver_uuid:
+        if not is_valid_suuid or not is_valid_server_uuid or conn_uuid != vpnserverconn_suuid:
             return make_error_request_response(http_code=HTTPStatus.BAD_REQUEST,
                                                err=VPNCError.VPNSERVERCONN_IDENTIFIER_ERROR)
 
@@ -139,10 +135,11 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         is_connected = request_json.get(VPNServerConnectionDB._is_connected_field, None)
 
         req_fields = {
-            'server_uuid': server_uuid,
-            'user_uuid': user_uuid,
-            'virtual_ip': virtual_ip,
+            'bytes_i': bytes_i,
+            'bytes_o': bytes_o,
             'is_connected': is_connected,
+            'server_uuid': server_uuid,
+            'uuid': conn_uuid
         }
 
         error_fields = check_required_api_fields(fields=req_fields)
@@ -159,7 +156,12 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                                                  connected_since=connected_since)
 
         try:
-            vpnserverconn_db.update()
+            if not user_uuid or not user_device_uuid or not device_ip or not virtual_ip:
+                self.logger.debug("some required fields not filled, let's update traffic information")
+                vpnserverconn_db.update_traffic()
+            else:
+                self.logger.debug("all required fields filled")
+                vpnserverconn_db.update()
         except VPNException as e:
             self.logger.error(e)
             error_code = e.error_code
