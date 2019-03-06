@@ -571,8 +571,7 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
                     UPDATE public.vpnserver_connection 
                     SET
                         bytes_i = ?,
-                        bytes_o = ?,
-                        is_connected = ?
+                        bytes_o = ?
                     WHERE 
                       uuid = ?
                     '''
@@ -582,6 +581,40 @@ class VPNServerConnectionDB(VPNServerConnectionStored):
         update_params = (
             self._bytes_i,
             self._bytes_o,
+            self._suuid,
+        )
+
+        try:
+            self.logger.debug(f"{self.__class__}: Call database service")
+            self._storage_service.update(sql=update_sql, data=update_params)
+            self.logger.debug('VPNServerConnection updated.')
+        except DatabaseError as e:
+            self.logger.error(e)
+            try:
+                e = e.args[0]
+            except IndexError:
+                pass
+            error_message = VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.message
+            developer_message = "%s. DatabaseError.. " \
+                                "Code: %s . %s" % (
+                                    VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.developer_message, e.pgcode, e.pgerror)
+            error_code = VPNCError.VPNSERVERCONN_UPDATE_ERROR_DB.code
+            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
+
+    def update_active(self):
+        self.logger.info('VPNServerConnection update_active method')
+
+        update_sql = '''
+                    UPDATE public.vpnserver_connection 
+                    SET
+                        is_connected = ?
+                    WHERE 
+                      uuid = ?
+                    '''
+
+        self.logger.debug('Update Traffic SQL: %s' % update_sql)
+
+        update_params = (
             self._is_connected,
             self._suuid,
         )

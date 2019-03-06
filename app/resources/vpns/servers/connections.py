@@ -132,21 +132,6 @@ class VPNSServersConnectionsAPI(ResourceAPI):
         connected_since = request_json.get(VPNServerConnectionDB._connected_since_field, None)
         is_connected = request_json.get(VPNServerConnectionDB._is_connected_field, None)
 
-        req_fields = {
-            'bytes_i': bytes_i,
-            'bytes_o': bytes_o,
-            'is_connected': is_connected,
-            'server_uuid': server_uuid,
-            'uuid': conn_uuid
-        }
-
-        error_fields = check_required_api_fields(fields=req_fields)
-        if len(error_fields) > 0:
-            response_data = APIResponse(status=APIResponseStatus.failed.status, code=HTTPStatus.BAD_REQUEST,
-                                        errors=error_fields)
-            resp = make_api_response(data=response_data, http_code=response_data.code)
-            return resp
-
         vpnserverconn_db = VPNServerConnectionDB(storage_service=self.__db_storage_service, suuid=conn_uuid,
                                                  user_device_uuid=user_device_uuid, server_uuid=server_uuid,
                                                  user_uuid=user_uuid, ip_device=device_ip, virtual_ip=virtual_ip,
@@ -154,12 +139,16 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                                                  connected_since=connected_since)
 
         try:
-            if not user_uuid or not user_device_uuid or not device_ip or not virtual_ip:
-                self.logger.debug("some required fields not filled, let's update traffic information")
-                vpnserverconn_db.update_traffic()
-            else:
+            if user_uuid and user_device_uuid and device_ip and virtual_ip and connected_since and bytes_i and bytes_o \
+                    and is_connected:
                 self.logger.debug("all required fields filled")
                 vpnserverconn_db.update()
+            elif bytes_i and bytes_o and is_connected:
+                self.logger.debug("update traffic")
+                vpnserverconn_db.update_traffic()
+            elif is_connected:
+                self.logger.debug("update is_connected")
+                vpnserverconn_db.update_active()
         except VPNException as e:
             self.logger.error(e)
             error_code = e.error_code
