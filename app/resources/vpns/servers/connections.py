@@ -139,19 +139,19 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                                                  connected_since=connected_since)
 
         try:
-            if user_uuid and user_device_uuid and device_ip and virtual_ip and connected_since and bytes_i and bytes_o \
-                    and is_connected:
+            if user_uuid is not None and user_device_uuid is not None and device_ip is not None and virtual_ip is not None and connected_since is not None and bytes_i is not None and bytes_o is not None \
+                    and is_connected is not None:
                 self.logger.debug("all required fields filled")
                 vpnserverconn_db.update()
-            elif bytes_i and bytes_o and is_connected:
+            elif bytes_i is not None and bytes_o is not None and is_connected is not None:
                 # TODO traffic and active in one sql
                 self.logger.debug("update traffic")
                 vpnserverconn_db.update_traffic()
                 vpnserverconn_db.update_active()
-            elif bytes_i and bytes_o:
+            elif bytes_i is not None and bytes_o is not None:
                 self.logger.debug("update traffic")
                 vpnserverconn_db.update_traffic()
-            elif is_connected:
+            elif is_connected is not None:
                 self.logger.debug("update is_connected")
                 vpnserverconn_db.update_active()
             else:
