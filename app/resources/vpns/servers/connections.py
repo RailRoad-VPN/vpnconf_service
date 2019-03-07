@@ -146,6 +146,10 @@ class VPNSServersConnectionsAPI(ResourceAPI):
             elif bytes_i and bytes_o and is_connected:
                 self.logger.debug("update traffic")
                 vpnserverconn_db.update_traffic()
+                vpnserverconn_db.update_active()
+            elif bytes_i and bytes_o:
+                self.logger.debug("update traffic")
+                vpnserverconn_db.update_traffic()
             elif is_connected:
                 self.logger.debug("update is_connected")
                 vpnserverconn_db.update_active()
