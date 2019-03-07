@@ -144,6 +144,7 @@ class VPNSServersConnectionsAPI(ResourceAPI):
                 self.logger.debug("all required fields filled")
                 vpnserverconn_db.update()
             elif bytes_i and bytes_o and is_connected:
+                # TODO traffic and active in one sql
                 self.logger.debug("update traffic")
                 vpnserverconn_db.update_traffic()
                 vpnserverconn_db.update_active()
@@ -153,6 +154,16 @@ class VPNSServersConnectionsAPI(ResourceAPI):
             elif is_connected:
                 self.logger.debug("update is_connected")
                 vpnserverconn_db.update_active()
+            else:
+                self.logger.debug("something bad data links")
+                self.logger.debug("user_uuid: " + str(user_uuid))
+                self.logger.debug("user_device_uuid: " + str(user_device_uuid))
+                self.logger.debug("device_ip: " + str(device_ip))
+                self.logger.debug("virtual_ip: " + str(virtual_ip))
+                self.logger.debug("bytes_i: " + str(bytes_i))
+                self.logger.debug("bytes_o: " + str(bytes_o))
+                self.logger.debug("connected_since: " + str(connected_since))
+                self.logger.debug("is_connected: " + str(is_connected))
         except VPNException as e:
             self.logger.error(e)
             error_code = e.error_code
