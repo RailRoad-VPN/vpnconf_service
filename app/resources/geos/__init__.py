@@ -13,9 +13,8 @@ from storage_service import DBStorageService
 
 sys.path.insert(1, '../rest_api_library')
 from response import make_api_response, make_error_request_response, check_required_api_fields
-from api import ResourceAPI
+from api import ResourceAPI, APIResourceURL
 from response import APIResponseStatus, APIResponse
-from rest import APIResourceURL
 
 
 class GeosAPI(ResourceAPI):

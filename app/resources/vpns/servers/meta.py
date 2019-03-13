@@ -7,14 +7,13 @@ from flask import Response, request
 
 from app.exception import *
 from app.model.vpn.server.meta import VPNServersMetaDB
-from rest import APIResourceURL
 
 sys.path.insert(0, '../psql_library')
 from storage_service import DBStorageService
 
 sys.path.insert(1, '../rest_api_library')
 from response import make_api_response
-from api import ResourceAPI
+from api import ResourceAPI, APIResourceURL
 from response import APIResponseStatus, APIResponse
 
 

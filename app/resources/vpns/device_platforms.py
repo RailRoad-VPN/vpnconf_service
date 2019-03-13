@@ -6,14 +6,13 @@ from flask import Response, request
 
 from app.exception import *
 from app.model.vpn.device_platform import VPNDevicePlatformDB
-from rest import APIResourceURL
 
 sys.path.insert(0, '../psql_library')
 from storage_service import DBStorageService
 
 sys.path.insert(1, '../rest_api_library')
 from response import make_api_response, make_error_request_response
-from api import ResourceAPI
+from api import ResourceAPI, APIResourceURL
 from response import APIResponseStatus, APIResponse
 
 

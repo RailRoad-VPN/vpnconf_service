@@ -132,8 +132,18 @@ class VPNServerDB(VPNServerStored):
                           geo_position_id, 
                           to_json(created_date) AS created_date 
                       FROM public.vpnserver
-                      ORDER BY num
                       '''
+        if self._status_id or self._type_id:
+            select_sql += "\nWHERE "
+            if self._status_id:
+                select_sql += f"{self._status_id_field} = '{self._status_id}' "
+            if self._type_id:
+                if "WHERE" in select_sql:
+                    select_sql += "AND "
+                select_sql += f"{self._type_id_field} = '{self._type_id}' "
+
+        select_sql += f"ORDER BY {self._num_field}"
+
         if self._limit:
             select_sql += "\nLIMIT %s\nOFFSET %s" % (self._limit, self._offset)
         self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
@@ -215,108 +225,6 @@ class VPNServerDB(VPNServerStored):
             raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
 
         return self.__map_vpnserverdb_to_vpnserver(vpnserver_db)
-
-    def find_by_status_id(self):
-        self.logger.info('Find VPNServer by uuid')
-        select_sql = '''
-                      SELECT 
-                          uuid, 
-                          ip,
-                          hostname,
-                          port,
-                          version, 
-                          condition_version, 
-                          type_id, 
-                          status_id, 
-                          bandwidth, 
-                          load, 
-                          num,
-                          geo_position_id, 
-                          to_json(created_date) AS created_date 
-                      FROM public.vpnserver 
-                      WHERE status_id = ?
-                      ORDER BY num
-                      '''
-        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
-        params = (self._status_id,)
-
-        try:
-            self.logger.debug('Call database service')
-            vpnserver_list_db = self._storage_service.get(sql=select_sql, data=params)
-        except DatabaseError as e:
-            logging.error(e)
-            try:
-                e = e.args[0]
-            except IndexError:
-                pass
-            error_message = VPNCError.VPNSERVER_FIND_BY_STATUS_ID_DB.message
-            error_code = VPNCError.VPNSERVER_FIND_BY_STATUS_ID_DB.code
-            developer_message = "%s. DatabaseError.. " \
-                                "Code: %s . %s" % (
-                                    VPNCError.VPNSERVER_FIND_BY_STATUS_ID_DB.developer_message, e.pgcode, e.pgerror)
-            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
-
-        vpnserver_list = []
-
-        for vpnserver_db in vpnserver_list_db:
-            vpnserver = self.__map_vpnserverdb_to_vpnserver(vpnserver_db)
-            vpnserver_list.append(vpnserver)
-
-        if len(vpnserver_list) == 0:
-            logging.warning('Empty VPNServers list of method find by status id. Very strange behaviour.')
-
-        return vpnserver_list
-
-    def find_by_type_id(self):
-        self.logger.info('Find VPNServer by uuid')
-        select_sql = '''
-                      SELECT 
-                          uuid, 
-                          ip,
-                          hostname,
-                          port,
-                          version, 
-                          condition_version, 
-                          type_id, 
-                          status_id, 
-                          bandwidth, 
-                          load, 
-                          num, 
-                          geo_position_id, 
-                          to_json(created_date) AS created_date 
-                      FROM public.vpnserver 
-                      WHERE type_id = ? AND status_id = 1
-                      ORDER BY num
-                      '''
-        self.logger.debug(f"{self.__class__}: Select SQL: {select_sql}")
-        params = (self._type_id,)
-
-        try:
-            self.logger.debug('Call database service')
-            vpnserver_list_db = self._storage_service.get(sql=select_sql, data=params)
-        except DatabaseError as e:
-            logging.error(e)
-            try:
-                e = e.args[0]
-            except IndexError:
-                pass
-            error_message = VPNCError.VPNSERVER_FIND_BY_TYPE_ID_DB.message
-            error_code = VPNCError.VPNSERVER_FIND_BY_TYPE_ID_DB.code
-            developer_message = "%s. DatabaseError.. " \
-                                "Code: %s . %s" % (
-                                    VPNCError.VPNSERVER_FIND_BY_TYPE_ID_DB.developer_message, e.pgcode, e.pgerror)
-            raise VPNException(error=error_message, error_code=error_code, developer_message=developer_message)
-
-        vpnserver_list = []
-
-        for vpnserver_db in vpnserver_list_db:
-            vpnserver = self.__map_vpnserverdb_to_vpnserver(vpnserver_db)
-            vpnserver_list.append(vpnserver)
-
-        if len(vpnserver_list) == 0:
-            logging.warning('Empty VPNServers list of method find by status id. Very strange behaviour.')
-
-        return vpnserver_list
 
     def create(self):
         self._suuid = uuid.uuid4()

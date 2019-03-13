@@ -13,9 +13,8 @@ from storage_service import DBStorageService
 sys.path.insert(1, '../rest_api_library')
 from utils import check_uuid
 from response import make_api_response, make_error_request_response, check_required_api_fields
-from api import ResourceAPI
+from api import ResourceAPI, APIResourceURL
 from response import APIResponseStatus, APIResponse
-from rest import APIResourceURL
 
 
 class VPNSServersAPI(ResourceAPI):
@@ -35,9 +34,7 @@ class VPNSServersAPI(ResourceAPI):
         url = "%s/%s" % (base_url, VPNSServersAPI.__api_url__)
         api_urls = [
             APIResourceURL(base_url=url, resource_name='', methods=['GET', 'POST']),
-            APIResourceURL(base_url=url, resource_name='<string:suuid>', methods=['GET', 'PUT']),
-            APIResourceURL(base_url=url, resource_name='type/<int:type_id>', methods=['GET']),
-            APIResourceURL(base_url=url, resource_name='status/<int:status_id>', methods=['GET']),
+            APIResourceURL(base_url=url, resource_name='<string:suuid>', methods=['GET', 'PUT'])
         ]
         return api_urls
 
@@ -164,8 +161,11 @@ class VPNSServersAPI(ResourceAPI):
         resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
         return resp
 
-    def get(self, suuid: str = None, type_id: int = None, status_id: int = None) -> Response:
+    def get(self, suuid: str = None) -> Response:
         super(VPNSServersAPI, self).get(req=request)
+
+        type_id = request.args.get("type_id", None)
+        status_id = request.args.get("status_id", None)
 
         vpnserver_db = VPNServerDB(storage_service=self.__db_storage_service, suuid=suuid, type_id=type_id,
                                    status_id=status_id, limit=self.pagination.limit, offset=self.pagination.offset)
@@ -205,64 +205,8 @@ class VPNSServersAPI(ResourceAPI):
             response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
                                         data=vpnserver.to_api_dict())
             resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
-        elif type_id is not None:
-            # list of servers by specific type id
-            try:
-                vpnserver_list = vpnserver_db.find_by_type_id()
-            except VPNNotFoundException as e:
-                logging.error(e)
-                error_code = e.error_code
-                error = e.error
-                developer_message = e.developer_message
-                http_code = HTTPStatus.NOT_FOUND
-                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
-                                            developer_message=developer_message, error_code=error_code)
-                return make_api_response(data=response_data, http_code=http_code)
-            except VPNException as e:
-                logging.error(e)
-                error_code = e.error_code
-                error = e.error
-                developer_message = e.developer_message
-                http_code = HTTPStatus.BAD_REQUEST
-                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
-                                            developer_message=developer_message, error_code=error_code)
-                return make_api_response(data=response_data, http_code=http_code)
-
-            vpnservers_dict = [vpnserver_list[i].to_api_dict() for i in range(0, len(vpnserver_list))]
-            response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
-                                        data=vpnservers_dict, limit=self.pagination.limit,
-                                        offset=self.pagination.offset)
-            resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
-        elif status_id is not None:
-            # list of servers by specific status id
-            try:
-                vpnserver_list = vpnserver_db.find_by_status_id()
-            except VPNNotFoundException as e:
-                logging.error(e)
-                error_code = e.error_code
-                error = e.error
-                developer_message = e.developer_message
-                http_code = HTTPStatus.NOT_FOUND
-                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
-                                            developer_message=developer_message, error_code=error_code)
-                return make_api_response(data=response_data, http_code=http_code)
-            except VPNException as e:
-                logging.error(e)
-                error_code = e.error_code
-                error = e.error
-                developer_message = e.developer_message
-                http_code = HTTPStatus.BAD_REQUEST
-                response_data = APIResponse(status=APIResponseStatus.failed.status, code=http_code, error=error,
-                                            developer_message=developer_message, error_code=error_code)
-                return make_api_response(data=response_data, http_code=http_code)
-
-            vpnservers_dict = [vpnserver_list[i].to_api_dict() for i in range(0, len(vpnserver_list))]
-            response_data = APIResponse(status=APIResponseStatus.success.status, code=HTTPStatus.OK,
-                                        data=vpnservers_dict, limit=self.pagination.limit,
-                                        offset=self.pagination.offset)
-            resp = make_api_response(data=response_data, http_code=HTTPStatus.OK)
         else:
-            # list of all servers
+            # list of all servers (but with specific type_id or status_id (if exists)
             try:
                 vpnserver_list = vpnserver_db.find()
             except VPNNotFoundException as e:
